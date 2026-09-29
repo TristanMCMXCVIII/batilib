@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: postgres:17
+    container_name: batilib-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: batilib
+      POSTGRES_PASSWORD: batilib
+      POSTGRES_DB: batilib
+    ports:
+      - "5432:5432"
+    volumes:
+      - batilib_postgres_data:/var/lib/postgresql/data
+
+volumes:
+  batilib_postgres_data:
