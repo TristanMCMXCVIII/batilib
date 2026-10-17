@@ -5,25 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="91bb42b5-23ba-4990-b282-3e17123ba51e" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/frontend/app/admin/page.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/app/api/auth/[...all]/route.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/app/app/page.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/app/login/page.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/app/register/page.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/lib/auth-client.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/lib/auth.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/backend/prisma/schema.prisma" beforeDir="false" afterPath="$PROJECT_DIR$/backend/backend/prisma/schema.prisma" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/backend/src/generated/prisma/browser.ts" beforeDir="false" afterPath="$PROJECT_DIR$/backend/backend/src/generated/prisma/browser.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/backend/src/generated/prisma/client.ts" beforeDir="false" afterPath="$PROJECT_DIR$/backend/backend/src/generated/prisma/client.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/backend/src/generated/prisma/commonInputTypes.ts" beforeDir="false" afterPath="$PROJECT_DIR$/backend/backend/src/generated/prisma/commonInputTypes.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/backend/src/generated/prisma/internal/class.ts" beforeDir="false" afterPath="$PROJECT_DIR$/backend/backend/src/generated/prisma/internal/class.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/backend/src/generated/prisma/internal/prismaNamespace.ts" beforeDir="false" afterPath="$PROJECT_DIR$/backend/backend/src/generated/prisma/internal/prismaNamespace.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/backend/src/generated/prisma/internal/prismaNamespaceBrowser.ts" beforeDir="false" afterPath="$PROJECT_DIR$/backend/backend/src/generated/prisma/internal/prismaNamespaceBrowser.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/backend/src/generated/prisma/models.ts" beforeDir="false" afterPath="$PROJECT_DIR$/backend/backend/src/generated/prisma/models.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/backend/src/generated/prisma/models/User.ts" beforeDir="false" afterPath="$PROJECT_DIR$/backend/backend/src/generated/prisma/models/User.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/prisma/schema.prisma" beforeDir="false" afterPath="$PROJECT_DIR$/backend/prisma/schema.prisma" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/pnpm-lock.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/pnpm-lock.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -33,9 +15,9 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 0
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 0
+}</component>
   <component name="ProjectId" id="3K0LaeK9WUg4w5SSWZhxagt3fem" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <ConfirmationsSetting value="2" id="Add" />
@@ -44,20 +26,20 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "main",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "ts.external.directory.path": "/Users/tristannocent/Desktop/Batilib/frontend/node_modules/typescript/lib",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;/Users/tristannocent/Desktop/Batilib/frontend/node_modules/typescript/lib&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -74,6 +56,8 @@
       <option name="presentableId" value="Default" />
       <updated>1790689603911</updated>
       <workItem from="1790689605919" duration="10040000" />
+      <workItem from="1790711473501" duration="1310000" />
+      <workItem from="1792073546981" duration="1027000" />
     </task>
     <servers />
   </component>

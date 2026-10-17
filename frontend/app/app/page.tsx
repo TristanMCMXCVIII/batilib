@@ -1,16 +1,15 @@
-"use client";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
+import LogoutButton from "@/components/auth/logout-button";
 
-import { useRouter } from "next/navigation";
-import { authClient } from "@/lib/auth-client";
+export default async function AppPage() {
+    const session = await auth.api.getSession({
+        headers: await headers(),
+    });
 
-export default function AppPage() {
-    const router = useRouter();
-
-    async function handleLogout() {
-        await authClient.signOut();
-
-        router.push("/login");
-        router.refresh();
+    if (!session) {
+        redirect("/login");
     }
 
     return (
@@ -23,17 +22,11 @@ export default function AppPage() {
                         </h1>
 
                         <p className="mt-1 text-sm text-neutral-500">
-                            Votre espace
+                            Bonjour {session.user.name}
                         </p>
                     </div>
 
-                    <button
-                        type="button"
-                        onClick={handleLogout}
-                        className="rounded-lg border border-neutral-300 bg-white px-4 py-2 text-sm font-medium text-neutral-800 hover:bg-neutral-100"
-                    >
-                        Se déconnecter
-                    </button>
+                    <LogoutButton />
                 </div>
             </div>
         </main>

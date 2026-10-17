@@ -10,8 +10,8 @@
 */
 
 export const PlatformRole = {
-  USER: 'USER',
-  ADMIN: 'ADMIN'
+  user: 'user',
+  admin: 'admin'
 } as const
 
 export type PlatformRole = (typeof PlatformRole)[keyof typeof PlatformRole]

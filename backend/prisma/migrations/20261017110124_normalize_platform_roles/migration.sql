@@ -1,0 +1,3 @@
+ALTER TYPE "PlatformRole" RENAME VALUE 'USER' TO 'user';
+ALTER TYPE "PlatformRole" RENAME VALUE 'ADMIN' TO 'admin';
+ALTER TABLE "User" ALTER COLUMN "role" SET DEFAULT 'user';

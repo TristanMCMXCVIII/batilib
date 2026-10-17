@@ -1,4 +1,5 @@
 import { betterAuth } from "better-auth";
+import { admin } from "better-auth/plugins";
 import { Pool } from "pg";
 
 export const auth = betterAuth({
@@ -14,9 +15,9 @@ export const auth = betterAuth({
         modelName: "User",
         additionalFields: {
             role: {
-                type: ["USER", "ADMIN"],
+                type: ["user", "admin"],
                 required: false,
-                defaultValue: "USER",
+                defaultValue: "user",
                 input: false,
             },
         },
@@ -33,4 +34,11 @@ export const auth = betterAuth({
     verification: {
         modelName: "Verification",
     },
+
+    plugins: [
+        admin({
+            defaultRole: "user",
+            adminRoles: ["admin"],
+        }),
+    ],
 });
