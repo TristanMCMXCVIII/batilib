@@ -34,6 +34,13 @@ export default function LoginPage() {
         router.refresh();
     }
 
+    async function handleGoogleLogin() {
+        await authClient.signIn.social({
+            provider: "google",
+            callbackURL: "/app",
+        });
+    }
+
     return (
         <main className="flex min-h-screen items-center justify-center bg-neutral-50 px-6">
             <div className="w-full max-w-md rounded-2xl border border-neutral-200 bg-white p-8 shadow-sm">
@@ -101,6 +108,7 @@ export default function LoginPage() {
 
                 <button
                     type="button"
+                    onClick={handleGoogleLogin}
                     className="w-full rounded-lg border border-neutral-300 px-4 py-2.5 text-sm font-medium text-neutral-800 hover:bg-neutral-50"
                 >
                     Continuer avec Google
