@@ -35,9 +35,11 @@ export default function LoginPage() {
     }
 
     async function handleGoogleLogin() {
+
         await authClient.signIn.social({
             provider: "google",
             callbackURL: "/app",
+            errorCallbackURL: "/auth/error",
         });
     }
 

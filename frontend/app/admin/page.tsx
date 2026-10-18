@@ -13,6 +13,12 @@ export default async function AdminPage() {
         redirect("/login");
     }
 
+    if (!session.user.emailVerified) {
+        redirect(
+            `/verify-email?email=${encodeURIComponent(session.user.email)}`
+        );
+    }
+
     if (session.user.role !== "admin") {
         redirect("/app");
     }

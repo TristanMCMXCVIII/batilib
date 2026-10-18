@@ -32,7 +32,20 @@ export default function RegisterPage() {
             return;
         }
 
-        router.push("/app");
+        await authClient.emailOtp.sendVerificationOtp({
+            email,
+            type: "email-verification",
+        });
+
+        router.push(`/verify-email?email=${encodeURIComponent(email)}`);
+    }
+
+    async function handleGoogleRegister() {
+        await authClient.signIn.social({
+            provider: "google",
+            callbackURL: "/app",
+            errorCallbackURL: "/auth/error",
+        });
     }
 
     return (
@@ -108,6 +121,20 @@ export default function RegisterPage() {
                         {loading ? "Création..." : "Créer mon compte"}
                     </button>
                 </form>
+
+                <div className="my-6 flex items-center gap-3">
+                    <div className="h-px flex-1 bg-neutral-200" />
+                    <span className="text-xs text-neutral-400">ou</span>
+                    <div className="h-px flex-1 bg-neutral-200" />
+                </div>
+
+                <button
+                    type="button"
+                    onClick={handleGoogleRegister}
+                    className="w-full rounded-lg border border-neutral-300 px-4 py-2.5 text-sm font-medium text-neutral-800 hover:bg-neutral-50"
+                >
+                    Continuer avec Google
+                </button>
 
                 <p className="mt-6 text-center text-sm text-neutral-500">
                     Déjà un compte ?{" "}

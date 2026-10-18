@@ -12,6 +12,12 @@ export default async function AppPage() {
         redirect("/login");
     }
 
+    if (!session.user.emailVerified) {
+        redirect(
+            `/verify-email?email=${encodeURIComponent(session.user.email)}`
+        );
+    }
+
     return (
         <main className="min-h-screen bg-neutral-50 p-8">
             <div className="mx-auto max-w-5xl">
