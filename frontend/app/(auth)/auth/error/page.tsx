@@ -23,7 +23,7 @@ export default function AuthErrorPage() {
 
                 <p className="mt-3 text-sm leading-6 text-neutral-500">
                     {isAccountNotLinked
-                        ? "Cette adresse email est déjà associée à un compte Batilib qui n’a pas encore été vérifié. Vérifiez d’abord votre adresse ou connectez-vous avec votre mot de passe."
+                        ? "Cette adresse email est déjà associée à un compte Batilib qui n'a pas encore été vérifié. Vérifiez d'abord votre adresse ou connectez-vous avec votre mot de passe."
                         : "Une erreur est survenue pendant la connexion. Vous pouvez réessayer."}
                 </p>
 

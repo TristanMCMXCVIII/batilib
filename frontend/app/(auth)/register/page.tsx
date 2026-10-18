@@ -3,10 +3,14 @@
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
+import Button from "@/components/ui/button";
+import Input from "@/components/ui/input";
+import Card from "@/components/ui/card";
 
-export default function LoginPage() {
+export default function RegisterPage() {
     const router = useRouter();
 
+    const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState<string | null>(null);
@@ -18,24 +22,24 @@ export default function LoginPage() {
         setLoading(true);
         setError(null);
 
-        const { error } = await authClient.signIn.email({
-            email,
-            password,
-        });
+        const { error } = await authClient.signUp.email({ name, email, password });
 
         setLoading(false);
 
         if (error) {
-            setError(error.message ?? "Email ou mot de passe incorrect.");
+            setError(error.message ?? "Une erreur est survenue.");
             return;
         }
 
-        router.push("/app");
-        router.refresh();
+        await authClient.emailOtp.sendVerificationOtp({
+            email,
+            type: "email-verification",
+        });
+
+        router.push(`/verify-email?email=${encodeURIComponent(email)}`);
     }
 
-    async function handleGoogleLogin() {
-
+    async function handleGoogleRegister() {
         await authClient.signIn.social({
             provider: "google",
             callbackURL: "/app",
@@ -45,29 +49,34 @@ export default function LoginPage() {
 
     return (
         <main className="flex min-h-screen items-center justify-center bg-neutral-50 px-6">
-            <div className="w-full max-w-md rounded-2xl border border-neutral-200 bg-white p-8 shadow-sm">
+            <Card className="w-full max-w-md p-8 shadow-sm">
                 <div className="mb-8">
-                    <h1 className="text-2xl font-semibold text-neutral-900">
-                        Se connecter à Batilib
-                    </h1>
-
-                    <p className="mt-2 text-sm text-neutral-500">
-                        Accédez à votre espace.
-                    </p>
+                    <h1 className="text-2xl font-semibold text-neutral-900">Créer un compte</h1>
+                    <p className="mt-2 text-sm text-neutral-500">Rejoignez Batilib.</p>
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
                         <label className="mb-1 block text-sm font-medium text-neutral-700">
+                            Nom
+                        </label>
+                        <Input
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            required
+                            placeholder="Tristan Nocent"
+                        />
+                    </div>
+
+                    <div>
+                        <label className="mb-1 block text-sm font-medium text-neutral-700">
                             Email
                         </label>
-
-                        <input
+                        <Input
                             type="email"
                             value={email}
-                            onChange={(event) => setEmail(event.target.value)}
+                            onChange={(e) => setEmail(e.target.value)}
                             required
-                            className="w-full rounded-lg border border-neutral-300 px-3 py-2 outline-none focus:border-neutral-900"
                             placeholder="vous@entreprise.fr"
                         />
                     </div>
@@ -76,30 +85,21 @@ export default function LoginPage() {
                         <label className="mb-1 block text-sm font-medium text-neutral-700">
                             Mot de passe
                         </label>
-
-                        <input
+                        <Input
                             type="password"
                             value={password}
-                            onChange={(event) => setPassword(event.target.value)}
+                            onChange={(e) => setPassword(e.target.value)}
                             required
-                            className="w-full rounded-lg border border-neutral-300 px-3 py-2 outline-none focus:border-neutral-900"
+                            minLength={8}
                             placeholder="••••••••"
                         />
                     </div>
 
-                    {error && (
-                        <p className="text-sm text-red-600">
-                            {error}
-                        </p>
-                    )}
+                    {error && <p className="text-sm text-red-600">{error}</p>}
 
-                    <button
-                        type="submit"
-                        disabled={loading}
-                        className="w-full rounded-lg bg-neutral-900 px-4 py-2.5 text-sm font-medium text-white hover:bg-neutral-800 disabled:opacity-50"
-                    >
-                        {loading ? "Connexion..." : "Se connecter"}
-                    </button>
+                    <Button type="submit" disabled={loading} className="w-full">
+                        {loading ? "Création..." : "Créer mon compte"}
+                    </Button>
                 </form>
 
                 <div className="my-6 flex items-center gap-3">
@@ -108,21 +108,22 @@ export default function LoginPage() {
                     <div className="h-px flex-1 bg-neutral-200" />
                 </div>
 
-                <button
+                <Button
                     type="button"
-                    onClick={handleGoogleLogin}
-                    className="w-full rounded-lg border border-neutral-300 px-4 py-2.5 text-sm font-medium text-neutral-800 hover:bg-neutral-50"
+                    variant="outline"
+                    onClick={handleGoogleRegister}
+                    className="w-full"
                 >
                     Continuer avec Google
-                </button>
+                </Button>
 
                 <p className="mt-6 text-center text-sm text-neutral-500">
-                    Pas encore de compte ?{" "}
-                    <a href="/register" className="font-medium text-neutral-900">
-                        Créer un compte
+                    Déjà un compte ?{" "}
+                    <a href="/login" className="font-medium text-neutral-900">
+                        Se connecter
                     </a>
                 </p>
-            </div>
+            </Card>
         </main>
     );
 }
