@@ -15,3 +15,20 @@ export const PlatformRole = {
 } as const
 
 export type PlatformRole = (typeof PlatformRole)[keyof typeof PlatformRole]
+
+
+export const OrganizationKind = {
+  PERSONAL_GROUP: 'PERSONAL_GROUP',
+  BUSINESS: 'BUSINESS'
+} as const
+
+export type OrganizationKind = (typeof OrganizationKind)[keyof typeof OrganizationKind]
+
+
+export const MembershipStatus = {
+  PENDING: 'PENDING',
+  ACTIVE: 'ACTIVE',
+  SUSPENDED: 'SUSPENDED'
+} as const
+
+export type MembershipStatus = (typeof MembershipStatus)[keyof typeof MembershipStatus]

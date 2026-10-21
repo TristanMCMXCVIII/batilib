@@ -1,0 +1,76 @@
+Organization
+id
+
+kind (PERSONAL_GROUP | BUSINESS)
+name
+legalName?
+siren?
+vatNumber?
+logoUrl?
+professionalProfile? → BuildingProfessionalProfile
+
+createdAt
+updatedAt
+
+Espace de travail d’une personne, d’un groupe ou d’une entreprise. Le rôle client / lead / sous-traitant est défini projet par projet. Les informations spécifiques au bâtiment peuvent être portées par un profil professionnel optionnel.
+
+
+
+OrganizationRole
+id
+
+organizationId →
+
+name
+permissions JSONB
+systemKey?
+isProtected
+position?
+
+createdAt
+updatedAt
+
+Rôle interne personnalisable. Le rôle système FOUNDER est protégé et possède toutes les permissions ; les autres rôles sont configurés par l’organisation. Le serveur valide les clés de permissions autorisées.
+
+
+
+
+OrganizationMembership
+id
+
+organizationId →
+userId →
+organizationRoleId →
+
+status
+
+createdAt
+updatedAt
+
+Relie une personne à un espace de travail et à un rôle. Un utilisateur peut appartenir à plusieurs organisations, mais n’en consulte qu’une à la fois. L’organisation doit toujours avoir un membre actif avec le rôle FOUNDER ; le transfert change les rôles dans une opération atomique.
+
+
+
+
+TradeCategory
+id
+
+code
+label
+
+createdAt
+updatedAt
+
+Taxonomie métier universelle gérée par BatiLib : électricité, plomberie, peinture… Sert de langage commun entre entreprises, templates, ouvrages, lots et appels d’offres.
+
+
+
+
+
+OrganizationTradeCategory
+
+organizationId
+tradeCategoryId
+
+Déclare les métiers exercés par une entreprise. Sert au matching, à la découverte de partenaires et, plus tard, aux alertes d’appels d’offres correspondant à ses compétences. Table souvent ignorée dans prisma utilisée pour les relations N:N
+

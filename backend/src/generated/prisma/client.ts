@@ -57,6 +57,31 @@ export type Session = Prisma.SessionModel
  */
 export type Account = Prisma.AccountModel
 /**
+ * Model Organization
+ * 
+ */
+export type Organization = Prisma.OrganizationModel
+/**
+ * Model OrganizationRole
+ * 
+ */
+export type OrganizationRole = Prisma.OrganizationRoleModel
+/**
+ * Model OrganizationMembership
+ * 
+ */
+export type OrganizationMembership = Prisma.OrganizationMembershipModel
+/**
+ * Model TradeCategory
+ * 
+ */
+export type TradeCategory = Prisma.TradeCategoryModel
+/**
+ * Model OrganizationTradeCategory
+ * 
+ */
+export type OrganizationTradeCategory = Prisma.OrganizationTradeCategoryModel
+/**
  * Model Verification
  * 
  */

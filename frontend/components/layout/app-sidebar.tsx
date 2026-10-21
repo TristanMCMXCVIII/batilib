@@ -3,6 +3,16 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { ChevronUp, User } from "lucide-react";
 
 type User = {
     id: string;
@@ -28,21 +38,17 @@ export default function AppSidebar({ user }: { user: User }) {
     }
 
     return (
-        <aside className="w-56 flex-shrink-0 flex flex-col h-full bg-white border-r border-neutral-200">
-            <div className="px-4 h-14 flex items-center border-b border-neutral-200">
-                <span className="font-semibold text-neutral-900">Batilib</span>
+        <aside className="flex h-full w-56 flex-shrink-0 flex-col border-r border-border bg-subtle">
+            <div className="flex h-14 items-center border-b border-border px-4">
+                <span className="font-semibold text-foreground">Batilib</span>
             </div>
 
-            <nav className="flex-1 p-3 space-y-0.5">
+            <nav className="flex-1 space-y-0.5 p-3">
                 {navItems.map((item) => (
                     <Link
                         key={item.href}
                         href={item.href}
-                        className={`flex items-center px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                            pathname === item.href
-                                ? "bg-neutral-100 text-neutral-900"
-                                : "text-neutral-500 hover:bg-neutral-50 hover:text-neutral-900"
-                        }`}
+                        className={`nav-item ${pathname === item.href ? "nav-item-active" : ""}`}
                     >
                         {item.label}
                     </Link>
@@ -51,42 +57,60 @@ export default function AppSidebar({ user }: { user: User }) {
                 {user.role === "admin" && (
                     <Link
                         href="/admin/users"
-                        className={`flex items-center px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                            pathname.startsWith("/admin")
-                                ? "bg-neutral-100 text-neutral-900"
-                                : "text-neutral-500 hover:bg-neutral-50 hover:text-neutral-900"
-                        }`}
+                        className={`nav-item ${pathname.startsWith("/admin") ? "nav-item-active" : ""}`}
                     >
                         Administration
                     </Link>
                 )}
             </nav>
 
-            <div className="p-3 border-t border-neutral-200">
-                <div className="flex items-center gap-2.5 px-2 py-2 mb-1">
-                    {user.image ? (
-                        <img
-                            src={user.image}
-                            alt={user.name}
-                            className="h-7 w-7 rounded-full object-cover flex-shrink-0"
-                        />
-                    ) : (
-                        <div className="h-7 w-7 rounded-full bg-neutral-100 flex items-center justify-center text-xs font-medium text-neutral-600 flex-shrink-0">
-                            {user.name.charAt(0).toUpperCase()}
-                        </div>
-                    )}
-                    <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-neutral-900 truncate">{user.name}</p>
-                        <p className="text-xs text-neutral-400 truncate">{user.email}</p>
-                    </div>
-                </div>
+            <div className="border-t border-border p-2">
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <button className="flex w-full items-center gap-2.5 rounded-md px-2 py-2 text-left transition-colors hover:bg-hover focus-visible:outline-none">
+                            <Avatar className="h-7 w-7 shrink-0">
+                                <AvatarImage src={user.image ?? undefined} alt={user.name} />
+                                <AvatarFallback>
+                                    <User className="h-4 w-4 text-muted-foreground" />
+                                </AvatarFallback>
+                            </Avatar>
+                            <div className="min-w-0 flex-1">
+                                <p className="truncate text-sm font-medium text-foreground">{user.name}</p>
+                                <p className="truncate text-xs text-muted-foreground">{user.email}</p>
+                            </div>
+                            <ChevronUp className="h-4 w-4 shrink-0 text-muted-foreground" />
+                        </button>
+                    </DropdownMenuTrigger>
 
-                <button
-                    onClick={handleSignOut}
-                    className="w-full text-left px-3 py-2 rounded-lg text-sm text-neutral-500 hover:bg-neutral-50 hover:text-neutral-900 transition-colors"
-                >
-                    Se déconnecter
-                </button>
+                    <DropdownMenuContent side="top" align="start" className="w-52">
+                        <DropdownMenuLabel className="font-normal">
+                            <p className="font-medium text-foreground">{user.name}</p>
+                            <p className="text-xs text-muted-foreground">{user.email}</p>
+                        </DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem asChild>
+                            <Link href="/app">Accueil</Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                            <Link href="/profile">Mon compte</Link>
+                        </DropdownMenuItem>
+                        {user.role === "admin" && (
+                            <>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem asChild>
+                                    <Link href="/admin/users">Administration</Link>
+                                </DropdownMenuItem>
+                            </>
+                        )}
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem
+                            onClick={handleSignOut}
+                            className="text-destructive focus:text-destructive"
+                        >
+                            Se déconnecter
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
             </div>
         </aside>
     );

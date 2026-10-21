@@ -13,31 +13,27 @@ export default function AdminSidebar() {
     const pathname = usePathname();
 
     return (
-        <aside className="w-56 flex-shrink-0 flex flex-col h-full bg-neutral-900 text-white">
-            <div className="px-4 h-14 flex items-center border-b border-neutral-700">
+        <aside className="flex h-full w-56 flex-shrink-0 flex-col bg-[oklch(0.10_0_0)] text-white">
+            <div className="flex h-14 items-center border-b border-[oklch(0.22_0_0)] px-4">
                 <span className="font-semibold text-white">Administration</span>
             </div>
 
-            <nav className="flex-1 p-3 space-y-0.5">
+            <nav className="flex-1 space-y-0.5 p-3">
                 {navItems.map((item) => (
                     <Link
                         key={item.href}
                         href={item.href}
-                        className={`flex items-center px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                            pathname.startsWith(item.href)
-                                ? "bg-neutral-700 text-white"
-                                : "text-neutral-400 hover:bg-neutral-800 hover:text-white"
-                        }`}
+                        className={`nav-item-dark ${pathname.startsWith(item.href) ? "nav-item-dark-active" : ""}`}
                     >
                         {item.label}
                     </Link>
                 ))}
             </nav>
 
-            <div className="p-3 border-t border-neutral-700">
+            <div className="border-t border-[oklch(0.22_0_0)] p-3">
                 <Link
                     href="/app"
-                    className="flex items-center px-3 py-2 rounded-lg text-sm text-neutral-400 hover:bg-neutral-800 hover:text-white transition-colors"
+                    className="nav-item-dark"
                 >
                     ← Retour à l'application
                 </Link>

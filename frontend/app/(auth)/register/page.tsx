@@ -3,9 +3,10 @@
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
-import Button from "@/components/ui/button";
-import Input from "@/components/ui/input";
-import Card from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
 
 export default function RegisterPage() {
     const router = useRouter();
@@ -48,19 +49,18 @@ export default function RegisterPage() {
     }
 
     return (
-        <main className="flex min-h-screen items-center justify-center bg-neutral-50 px-6">
+        <main className="flex min-h-screen items-center justify-center bg-background px-6">
             <Card className="w-full max-w-md p-8 shadow-sm">
                 <div className="mb-8">
-                    <h1 className="text-2xl font-semibold text-neutral-900">Créer un compte</h1>
-                    <p className="mt-2 text-sm text-neutral-500">Rejoignez Batilib.</p>
+                    <h1 className="page-title">Créer un compte</h1>
+                    <p className="mt-2 caption">Rejoignez Batilib.</p>
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-4">
-                    <div>
-                        <label className="mb-1 block text-sm font-medium text-neutral-700">
-                            Nom
-                        </label>
+                    <div className="flex flex-col gap-1">
+                        <Label htmlFor="name">Nom</Label>
                         <Input
+                            id="name"
                             value={name}
                             onChange={(e) => setName(e.target.value)}
                             required
@@ -68,11 +68,10 @@ export default function RegisterPage() {
                         />
                     </div>
 
-                    <div>
-                        <label className="mb-1 block text-sm font-medium text-neutral-700">
-                            Email
-                        </label>
+                    <div className="flex flex-col gap-1">
+                        <Label htmlFor="email">Email</Label>
                         <Input
+                            id="email"
                             type="email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
@@ -81,11 +80,10 @@ export default function RegisterPage() {
                         />
                     </div>
 
-                    <div>
-                        <label className="mb-1 block text-sm font-medium text-neutral-700">
-                            Mot de passe
-                        </label>
+                    <div className="flex flex-col gap-1">
+                        <Label htmlFor="password">Mot de passe</Label>
                         <Input
+                            id="password"
                             type="password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
@@ -95,18 +93,14 @@ export default function RegisterPage() {
                         />
                     </div>
 
-                    {error && <p className="text-sm text-red-600">{error}</p>}
+                    {error && <p className="text-error">{error}</p>}
 
                     <Button type="submit" disabled={loading} className="w-full">
                         {loading ? "Création..." : "Créer mon compte"}
                     </Button>
                 </form>
 
-                <div className="my-6 flex items-center gap-3">
-                    <div className="h-px flex-1 bg-neutral-200" />
-                    <span className="text-xs text-neutral-400">ou</span>
-                    <div className="h-px flex-1 bg-neutral-200" />
-                </div>
+                <div className="auth-divider my-6">ou</div>
 
                 <Button
                     type="button"
@@ -117,9 +111,9 @@ export default function RegisterPage() {
                     Continuer avec Google
                 </Button>
 
-                <p className="mt-6 text-center text-sm text-neutral-500">
+                <p className="mt-6 text-center caption">
                     Déjà un compte ?{" "}
-                    <a href="/login" className="font-medium text-neutral-900">
+                    <a href="/login" className="font-medium text-foreground">
                         Se connecter
                     </a>
                 </p>

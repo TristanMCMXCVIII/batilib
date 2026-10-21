@@ -32,8 +32,9 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  accounts Account[]
-  sessions Session[]
+  accounts    Account[]
+  sessions    Session[]
+  memberships OrganizationMembership[]
 }
 
 model Session {
@@ -67,6 +68,80 @@ model Account {
   updatedAt             DateTime  @updatedAt
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+enum OrganizationKind {
+  PERSONAL_GROUP
+  BUSINESS
+}
+
+model Organization {
+  id        String           @id @default(cuid())
+  kind      OrganizationKind
+  name      String
+  legalName String?
+  siren     String?
+  vatNumber String?
+  logoUrl   String?
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+
+  roles           OrganizationRole[]
+  memberships     OrganizationMembership[]
+  tradeCategories OrganizationTradeCategory[]
+}
+
+enum MembershipStatus {
+  PENDING
+  ACTIVE
+  SUSPENDED
+}
+
+model OrganizationRole {
+  id             String       @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  name           String
+  permissions    Json
+  systemKey      String?
+  isProtected    Boolean      @default(false)
+  position       Int?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  memberships OrganizationMembership[]
+}
+
+model OrganizationMembership {
+  id                 String           @id @default(cuid())
+  organizationId     String
+  organization       Organization     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  userId             String
+  user               User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  organizationRoleId String
+  organizationRole   OrganizationRole @relation(fields: [organizationRoleId], references: [id])
+  status             MembershipStatus
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
+}
+
+model TradeCategory {
+  id        String   @id @default(cuid())
+  code      String   @unique
+  label     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  organizations OrganizationTradeCategory[]
+}
+
+model OrganizationTradeCategory {
+  organizationId  String
+  organization    Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  tradeCategoryId String
+  tradeCategory   TradeCategory @relation(fields: [tradeCategoryId], references: [id], onDelete: Cascade)
+
+  @@id([organizationId, tradeCategoryId])
 }
 
 model Verification {

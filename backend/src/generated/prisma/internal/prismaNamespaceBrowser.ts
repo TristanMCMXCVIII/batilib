@@ -54,6 +54,11 @@ export const ModelName = {
   User: 'User',
   Session: 'Session',
   Account: 'Account',
+  Organization: 'Organization',
+  OrganizationRole: 'OrganizationRole',
+  OrganizationMembership: 'OrganizationMembership',
+  TradeCategory: 'TradeCategory',
+  OrganizationTradeCategory: 'OrganizationTradeCategory',
   Verification: 'Verification'
 } as const
 
@@ -124,6 +129,68 @@ export const AccountScalarFieldEnum = {
 export type AccountScalarFieldEnum = (typeof AccountScalarFieldEnum)[keyof typeof AccountScalarFieldEnum]
 
 
+export const OrganizationScalarFieldEnum = {
+  id: 'id',
+  kind: 'kind',
+  name: 'name',
+  legalName: 'legalName',
+  siren: 'siren',
+  vatNumber: 'vatNumber',
+  logoUrl: 'logoUrl',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type OrganizationScalarFieldEnum = (typeof OrganizationScalarFieldEnum)[keyof typeof OrganizationScalarFieldEnum]
+
+
+export const OrganizationRoleScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  name: 'name',
+  permissions: 'permissions',
+  systemKey: 'systemKey',
+  isProtected: 'isProtected',
+  position: 'position',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type OrganizationRoleScalarFieldEnum = (typeof OrganizationRoleScalarFieldEnum)[keyof typeof OrganizationRoleScalarFieldEnum]
+
+
+export const OrganizationMembershipScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  userId: 'userId',
+  organizationRoleId: 'organizationRoleId',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type OrganizationMembershipScalarFieldEnum = (typeof OrganizationMembershipScalarFieldEnum)[keyof typeof OrganizationMembershipScalarFieldEnum]
+
+
+export const TradeCategoryScalarFieldEnum = {
+  id: 'id',
+  code: 'code',
+  label: 'label',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type TradeCategoryScalarFieldEnum = (typeof TradeCategoryScalarFieldEnum)[keyof typeof TradeCategoryScalarFieldEnum]
+
+
+export const OrganizationTradeCategoryScalarFieldEnum = {
+  organizationId: 'organizationId',
+  tradeCategoryId: 'tradeCategoryId'
+} as const
+
+export type OrganizationTradeCategoryScalarFieldEnum = (typeof OrganizationTradeCategoryScalarFieldEnum)[keyof typeof OrganizationTradeCategoryScalarFieldEnum]
+
+
 export const VerificationScalarFieldEnum = {
   id: 'id',
   identifier: 'identifier',
@@ -144,6 +211,13 @@ export const SortOrder = {
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
 
 
+export const JsonNullValueInput = {
+  JsonNull: JsonNull
+} as const
+
+export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
+
+
 export const QueryMode = {
   default: 'default',
   insensitive: 'insensitive'
@@ -158,4 +232,13 @@ export const NullsOrder = {
 } as const
 
 export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
+
+
+export const JsonNullValueFilter = {
+  DbNull: DbNull,
+  JsonNull: JsonNull,
+  AnyNull: AnyNull
+} as const
+
+export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
 
