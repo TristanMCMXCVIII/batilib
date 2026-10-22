@@ -7,12 +7,15 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
+import { Eye, EyeOff } from "lucide-react";
+import { GoogleIcon } from "@/components/ui/google-icon";
 
 export default function LoginPage() {
     const router = useRouter();
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
 
@@ -52,7 +55,7 @@ export default function LoginPage() {
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-4">
-                    <div className="flex flex-col gap-1">
+                    <div className="flex flex-col gap-2.5">
                         <Label htmlFor="email">Email</Label>
                         <Input
                             id="email"
@@ -64,16 +67,27 @@ export default function LoginPage() {
                         />
                     </div>
 
-                    <div className="flex flex-col gap-1">
+                    <div className="flex flex-col gap-2.5">
                         <Label htmlFor="password">Mot de passe</Label>
-                        <Input
-                            id="password"
-                            type="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            required
-                            placeholder="••••••••"
-                        />
+                        <div className="relative">
+                            <Input
+                                id="password"
+                                type={showPassword ? "text" : "password"}
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                required
+                                placeholder="••••••••"
+                                className="pr-10"
+                            />
+                            <button
+                                type="button"
+                                onClick={() => setShowPassword((v) => !v)}
+                                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                                tabIndex={-1}
+                            >
+                                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                            </button>
+                        </div>
                     </div>
 
                     {error && <p className="text-error">{error}</p>}
@@ -91,6 +105,7 @@ export default function LoginPage() {
                     onClick={handleGoogleLogin}
                     className="w-full"
                 >
+                    <GoogleIcon className="h-4 w-4" />
                     Continuer avec Google
                 </Button>
 

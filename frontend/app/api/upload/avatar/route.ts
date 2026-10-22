@@ -47,14 +47,23 @@ export async function POST(request: Request) {
     const key = `avatars/${session.user.id}/${randomUUID()}.${ext}`;
 
     const buffer = Buffer.from(await file.arrayBuffer());
-    await r2.send(
-        new PutObjectCommand({
-            Bucket: R2_BUCKET,
-            Key: key,
-            Body: buffer,
-            ContentType: file.type,
-        })
-    );
+
+    try {
+        await r2.send(
+            new PutObjectCommand({
+                Bucket: R2_BUCKET,
+                Key: key,
+                Body: buffer,
+                ContentType: file.type,
+            })
+        );
+    } catch (err) {
+        console.error("[upload avatar] R2 error:", err);
+        return Response.json(
+            { error: "Le stockage est temporairement indisponible. Réessayez plus tard." },
+            { status: 503 }
+        );
+    }
 
     return Response.json({ url: `/api/files/${key}` });
 }
