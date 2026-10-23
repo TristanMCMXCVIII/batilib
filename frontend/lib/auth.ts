@@ -14,6 +14,24 @@ export const auth = betterAuth({
 
     emailAndPassword: {
         enabled: true,
+        async sendResetPassword({ user, url }) {
+            await sendEmail({
+                to: user.email,
+                subject: "Réinitialisez votre mot de passe Batilib",
+                html: `
+          <div style="font-family: Arial, sans-serif; line-height: 1.5;">
+            <h2>Réinitialisation de votre mot de passe</h2>
+            <p>Vous avez demandé à réinitialiser votre mot de passe Batilib.</p>
+            <p>
+              <a href="${url}" style="display:inline-block;padding:10px 20px;background:#000;color:#fff;text-decoration:none;border-radius:6px;">
+                Réinitialiser mon mot de passe
+              </a>
+            </p>
+            <p style="color:#666;font-size:13px;">Ce lien expire dans 1 heure. Si vous n'avez pas fait cette demande, ignorez cet email.</p>
+          </div>
+        `,
+            });
+        },
     },
 
     socialProviders: {

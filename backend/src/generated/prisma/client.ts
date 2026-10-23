@@ -62,15 +62,15 @@ export type Account = Prisma.AccountModel
  */
 export type Organization = Prisma.OrganizationModel
 /**
- * Model OrganizationRole
- * 
- */
-export type OrganizationRole = Prisma.OrganizationRoleModel
-/**
  * Model OrganizationMembership
  * 
  */
 export type OrganizationMembership = Prisma.OrganizationMembershipModel
+/**
+ * Model OrganizationInvitation
+ * 
+ */
+export type OrganizationInvitation = Prisma.OrganizationInvitationModel
 /**
  * Model TradeCategory
  * 

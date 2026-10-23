@@ -1,7 +1,7 @@
 "use client";
 
-import { FormEvent, useState } from "react";
-import { useRouter } from "next/navigation";
+import { FormEvent, Suspense, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,8 +10,10 @@ import { Label } from "@/components/ui/label";
 import { Eye, EyeOff } from "lucide-react";
 import { GoogleIcon } from "@/components/ui/google-icon";
 
-export default function LoginPage() {
+function LoginContent() {
     const router = useRouter();
+    const searchParams = useSearchParams();
+    const passwordReset = searchParams.get("reset") === "1";
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -54,6 +56,12 @@ export default function LoginPage() {
                     <p className="mt-2 caption">Accédez à votre espace.</p>
                 </div>
 
+                {passwordReset && (
+                    <p className="mb-4 text-sm text-success">
+                        Mot de passe mis à jour. Vous pouvez vous connecter.
+                    </p>
+                )}
+
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div className="flex flex-col gap-2.5">
                         <Label htmlFor="email">Email</Label>
@@ -68,7 +76,12 @@ export default function LoginPage() {
                     </div>
 
                     <div className="flex flex-col gap-2.5">
-                        <Label htmlFor="password">Mot de passe</Label>
+                        <div className="flex items-center justify-between">
+                            <Label htmlFor="password">Mot de passe</Label>
+                            <a href="/forgot-password" className="text-xs text-muted-foreground hover:text-foreground">
+                                Mot de passe oublié ?
+                            </a>
+                        </div>
                         <div className="relative">
                             <Input
                                 id="password"
@@ -117,5 +130,13 @@ export default function LoginPage() {
                 </p>
             </Card>
         </main>
+    );
+}
+
+export default function LoginPage() {
+    return (
+        <Suspense>
+            <LoginContent />
+        </Suspense>
     );
 }

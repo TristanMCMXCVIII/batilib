@@ -401,8 +401,8 @@ export const ModelName = {
   Session: 'Session',
   Account: 'Account',
   Organization: 'Organization',
-  OrganizationRole: 'OrganizationRole',
   OrganizationMembership: 'OrganizationMembership',
+  OrganizationInvitation: 'OrganizationInvitation',
   TradeCategory: 'TradeCategory',
   OrganizationTradeCategory: 'OrganizationTradeCategory',
   Verification: 'Verification'
@@ -421,7 +421,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "session" | "account" | "organization" | "organizationRole" | "organizationMembership" | "tradeCategory" | "organizationTradeCategory" | "verification"
+    modelProps: "user" | "session" | "account" | "organization" | "organizationMembership" | "organizationInvitation" | "tradeCategory" | "organizationTradeCategory" | "verification"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -721,80 +721,6 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
-    OrganizationRole: {
-      payload: Prisma.$OrganizationRolePayload<ExtArgs>
-      fields: Prisma.OrganizationRoleFieldRefs
-      operations: {
-        findUnique: {
-          args: Prisma.OrganizationRoleFindUniqueArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$OrganizationRolePayload> | null
-        }
-        findUniqueOrThrow: {
-          args: Prisma.OrganizationRoleFindUniqueOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$OrganizationRolePayload>
-        }
-        findFirst: {
-          args: Prisma.OrganizationRoleFindFirstArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$OrganizationRolePayload> | null
-        }
-        findFirstOrThrow: {
-          args: Prisma.OrganizationRoleFindFirstOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$OrganizationRolePayload>
-        }
-        findMany: {
-          args: Prisma.OrganizationRoleFindManyArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$OrganizationRolePayload>[]
-        }
-        create: {
-          args: Prisma.OrganizationRoleCreateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$OrganizationRolePayload>
-        }
-        createMany: {
-          args: Prisma.OrganizationRoleCreateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        createManyAndReturn: {
-          args: Prisma.OrganizationRoleCreateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$OrganizationRolePayload>[]
-        }
-        delete: {
-          args: Prisma.OrganizationRoleDeleteArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$OrganizationRolePayload>
-        }
-        update: {
-          args: Prisma.OrganizationRoleUpdateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$OrganizationRolePayload>
-        }
-        deleteMany: {
-          args: Prisma.OrganizationRoleDeleteManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        updateMany: {
-          args: Prisma.OrganizationRoleUpdateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        updateManyAndReturn: {
-          args: Prisma.OrganizationRoleUpdateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$OrganizationRolePayload>[]
-        }
-        upsert: {
-          args: Prisma.OrganizationRoleUpsertArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$OrganizationRolePayload>
-        }
-        aggregate: {
-          args: Prisma.OrganizationRoleAggregateArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AggregateOrganizationRole>
-        }
-        groupBy: {
-          args: Prisma.OrganizationRoleGroupByArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.OrganizationRoleGroupByOutputType>[]
-        }
-        count: {
-          args: Prisma.OrganizationRoleCountArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.OrganizationRoleCountAggregateOutputType> | number
-        }
-      }
-    }
     OrganizationMembership: {
       payload: Prisma.$OrganizationMembershipPayload<ExtArgs>
       fields: Prisma.OrganizationMembershipFieldRefs
@@ -866,6 +792,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.OrganizationMembershipCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.OrganizationMembershipCountAggregateOutputType> | number
+        }
+      }
+    }
+    OrganizationInvitation: {
+      payload: Prisma.$OrganizationInvitationPayload<ExtArgs>
+      fields: Prisma.OrganizationInvitationFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.OrganizationInvitationFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OrganizationInvitationPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.OrganizationInvitationFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OrganizationInvitationPayload>
+        }
+        findFirst: {
+          args: Prisma.OrganizationInvitationFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OrganizationInvitationPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.OrganizationInvitationFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OrganizationInvitationPayload>
+        }
+        findMany: {
+          args: Prisma.OrganizationInvitationFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OrganizationInvitationPayload>[]
+        }
+        create: {
+          args: Prisma.OrganizationInvitationCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OrganizationInvitationPayload>
+        }
+        createMany: {
+          args: Prisma.OrganizationInvitationCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.OrganizationInvitationCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OrganizationInvitationPayload>[]
+        }
+        delete: {
+          args: Prisma.OrganizationInvitationDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OrganizationInvitationPayload>
+        }
+        update: {
+          args: Prisma.OrganizationInvitationUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OrganizationInvitationPayload>
+        }
+        deleteMany: {
+          args: Prisma.OrganizationInvitationDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.OrganizationInvitationUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.OrganizationInvitationUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OrganizationInvitationPayload>[]
+        }
+        upsert: {
+          args: Prisma.OrganizationInvitationUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OrganizationInvitationPayload>
+        }
+        aggregate: {
+          args: Prisma.OrganizationInvitationAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateOrganizationInvitation>
+        }
+        groupBy: {
+          args: Prisma.OrganizationInvitationGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.OrganizationInvitationGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.OrganizationInvitationCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.OrganizationInvitationCountAggregateOutputType> | number
         }
       }
     }
@@ -1185,8 +1185,10 @@ export const OrganizationScalarFieldEnum = {
   id: 'id',
   kind: 'kind',
   name: 'name',
+  description: 'description',
   legalName: 'legalName',
   siren: 'siren',
+  siret: 'siret',
   vatNumber: 'vatNumber',
   logoUrl: 'logoUrl',
   createdAt: 'createdAt',
@@ -1196,32 +1198,31 @@ export const OrganizationScalarFieldEnum = {
 export type OrganizationScalarFieldEnum = (typeof OrganizationScalarFieldEnum)[keyof typeof OrganizationScalarFieldEnum]
 
 
-export const OrganizationRoleScalarFieldEnum = {
-  id: 'id',
-  organizationId: 'organizationId',
-  name: 'name',
-  permissions: 'permissions',
-  systemKey: 'systemKey',
-  isProtected: 'isProtected',
-  position: 'position',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-} as const
-
-export type OrganizationRoleScalarFieldEnum = (typeof OrganizationRoleScalarFieldEnum)[keyof typeof OrganizationRoleScalarFieldEnum]
-
-
 export const OrganizationMembershipScalarFieldEnum = {
   id: 'id',
   organizationId: 'organizationId',
   userId: 'userId',
-  organizationRoleId: 'organizationRoleId',
+  role: 'role',
   status: 'status',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
 export type OrganizationMembershipScalarFieldEnum = (typeof OrganizationMembershipScalarFieldEnum)[keyof typeof OrganizationMembershipScalarFieldEnum]
+
+
+export const OrganizationInvitationScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  email: 'email',
+  role: 'role',
+  token: 'token',
+  expiresAt: 'expiresAt',
+  invitedById: 'invitedById',
+  createdAt: 'createdAt'
+} as const
+
+export type OrganizationInvitationScalarFieldEnum = (typeof OrganizationInvitationScalarFieldEnum)[keyof typeof OrganizationInvitationScalarFieldEnum]
 
 
 export const TradeCategoryScalarFieldEnum = {
@@ -1263,13 +1264,6 @@ export const SortOrder = {
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
 
 
-export const JsonNullValueInput = {
-  JsonNull: JsonNull
-} as const
-
-export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
-
-
 export const QueryMode = {
   default: 'default',
   insensitive: 'insensitive'
@@ -1284,15 +1278,6 @@ export const NullsOrder = {
 } as const
 
 export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
-
-
-export const JsonNullValueFilter = {
-  DbNull: DbNull,
-  JsonNull: JsonNull,
-  AnyNull: AnyNull
-} as const
-
-export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
 
 
 
@@ -1365,30 +1350,16 @@ export type ListEnumOrganizationKindFieldRefInput<$PrismaModel> = FieldRefInputT
 
 
 /**
- * Reference to a field of type 'Json'
+ * Reference to a field of type 'OrganizationMemberRole'
  */
-export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
+export type EnumOrganizationMemberRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OrganizationMemberRole'>
     
 
 
 /**
- * Reference to a field of type 'QueryMode'
+ * Reference to a field of type 'OrganizationMemberRole[]'
  */
-export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>
-    
-
-
-/**
- * Reference to a field of type 'Int'
- */
-export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
-    
-
-
-/**
- * Reference to a field of type 'Int[]'
- */
-export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
+export type ListEnumOrganizationMemberRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OrganizationMemberRole[]'>
     
 
 
@@ -1407,16 +1378,16 @@ export type ListEnumMembershipStatusFieldRefInput<$PrismaModel> = FieldRefInputT
 
 
 /**
- * Reference to a field of type 'Float'
+ * Reference to a field of type 'Int'
  */
-export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
+export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
     
 
 
 /**
- * Reference to a field of type 'Float[]'
+ * Reference to a field of type 'Int[]'
  */
-export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
+export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
     
 
 /**
@@ -1574,8 +1545,8 @@ export type GlobalOmitConfig = {
   session?: Prisma.SessionOmit
   account?: Prisma.AccountOmit
   organization?: Prisma.OrganizationOmit
-  organizationRole?: Prisma.OrganizationRoleOmit
   organizationMembership?: Prisma.OrganizationMembershipOmit
+  organizationInvitation?: Prisma.OrganizationInvitationOmit
   tradeCategory?: Prisma.TradeCategoryOmit
   organizationTradeCategory?: Prisma.OrganizationTradeCategoryOmit
   verification?: Prisma.VerificationOmit

@@ -18,8 +18,9 @@ export type PlatformRole = (typeof PlatformRole)[keyof typeof PlatformRole]
 
 
 export const OrganizationKind = {
-  PERSONAL_GROUP: 'PERSONAL_GROUP',
-  BUSINESS: 'BUSINESS'
+  BUILDING_COMPANY: 'BUILDING_COMPANY',
+  CLIENT_COMPANY: 'CLIENT_COMPANY',
+  INDIVIDUAL_CLIENT: 'INDIVIDUAL_CLIENT'
 } as const
 
 export type OrganizationKind = (typeof OrganizationKind)[keyof typeof OrganizationKind]
@@ -32,3 +33,12 @@ export const MembershipStatus = {
 } as const
 
 export type MembershipStatus = (typeof MembershipStatus)[keyof typeof MembershipStatus]
+
+
+export const OrganizationMemberRole = {
+  FOUNDER: 'FOUNDER',
+  MANAGER: 'MANAGER',
+  MEMBER: 'MEMBER'
+} as const
+
+export type OrganizationMemberRole = (typeof OrganizationMemberRole)[keyof typeof OrganizationMemberRole]

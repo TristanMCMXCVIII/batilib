@@ -1,10 +1,8 @@
-export default function AppPage() {
-    return (
-        <div className="p-8">
-            <div className="mx-auto max-w-5xl">
-                <h1 className="page-title">Accueil</h1>
-                <p className="mt-1 caption">Bienvenue sur Batilib.</p>
-            </div>
-        </div>
-    );
+import { redirect } from "next/navigation";
+import { getUserPrimaryOrgId } from "@/lib/actions/organization";
+
+export default async function AppIndexPage() {
+    const orgId = await getUserPrimaryOrgId();
+    if (!orgId) redirect("/onboarding");
+    redirect(`/app/${orgId}`);
 }

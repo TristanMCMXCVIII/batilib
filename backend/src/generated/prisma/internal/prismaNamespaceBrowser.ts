@@ -55,8 +55,8 @@ export const ModelName = {
   Session: 'Session',
   Account: 'Account',
   Organization: 'Organization',
-  OrganizationRole: 'OrganizationRole',
   OrganizationMembership: 'OrganizationMembership',
+  OrganizationInvitation: 'OrganizationInvitation',
   TradeCategory: 'TradeCategory',
   OrganizationTradeCategory: 'OrganizationTradeCategory',
   Verification: 'Verification'
@@ -133,8 +133,10 @@ export const OrganizationScalarFieldEnum = {
   id: 'id',
   kind: 'kind',
   name: 'name',
+  description: 'description',
   legalName: 'legalName',
   siren: 'siren',
+  siret: 'siret',
   vatNumber: 'vatNumber',
   logoUrl: 'logoUrl',
   createdAt: 'createdAt',
@@ -144,32 +146,31 @@ export const OrganizationScalarFieldEnum = {
 export type OrganizationScalarFieldEnum = (typeof OrganizationScalarFieldEnum)[keyof typeof OrganizationScalarFieldEnum]
 
 
-export const OrganizationRoleScalarFieldEnum = {
-  id: 'id',
-  organizationId: 'organizationId',
-  name: 'name',
-  permissions: 'permissions',
-  systemKey: 'systemKey',
-  isProtected: 'isProtected',
-  position: 'position',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-} as const
-
-export type OrganizationRoleScalarFieldEnum = (typeof OrganizationRoleScalarFieldEnum)[keyof typeof OrganizationRoleScalarFieldEnum]
-
-
 export const OrganizationMembershipScalarFieldEnum = {
   id: 'id',
   organizationId: 'organizationId',
   userId: 'userId',
-  organizationRoleId: 'organizationRoleId',
+  role: 'role',
   status: 'status',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
 export type OrganizationMembershipScalarFieldEnum = (typeof OrganizationMembershipScalarFieldEnum)[keyof typeof OrganizationMembershipScalarFieldEnum]
+
+
+export const OrganizationInvitationScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  email: 'email',
+  role: 'role',
+  token: 'token',
+  expiresAt: 'expiresAt',
+  invitedById: 'invitedById',
+  createdAt: 'createdAt'
+} as const
+
+export type OrganizationInvitationScalarFieldEnum = (typeof OrganizationInvitationScalarFieldEnum)[keyof typeof OrganizationInvitationScalarFieldEnum]
 
 
 export const TradeCategoryScalarFieldEnum = {
@@ -211,13 +212,6 @@ export const SortOrder = {
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
 
 
-export const JsonNullValueInput = {
-  JsonNull: JsonNull
-} as const
-
-export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
-
-
 export const QueryMode = {
   default: 'default',
   insensitive: 'insensitive'
@@ -232,13 +226,4 @@ export const NullsOrder = {
 } as const
 
 export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
-
-
-export const JsonNullValueFilter = {
-  DbNull: DbNull,
-  JsonNull: JsonNull,
-  AnyNull: AnyNull
-} as const
-
-export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
 

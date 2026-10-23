@@ -32,9 +32,10 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  accounts    Account[]
-  sessions    Session[]
-  memberships OrganizationMembership[]
+  accounts         Account[]
+  sessions         Session[]
+  memberships      OrganizationMembership[]
+  sentInvitations  OrganizationInvitation[]
 }
 
 model Session {
@@ -71,23 +72,26 @@ model Account {
 }
 
 enum OrganizationKind {
-  PERSONAL_GROUP
-  BUSINESS
+  BUILDING_COMPANY
+  CLIENT_COMPANY
+  INDIVIDUAL_CLIENT
 }
 
 model Organization {
   id        String           @id @default(cuid())
   kind      OrganizationKind
-  name      String
-  legalName String?
-  siren     String?
+  name        String
+  description String?
+  legalName   String?
+  siren       String?
+  siret       String?
   vatNumber String?
   logoUrl   String?
   createdAt DateTime         @default(now())
   updatedAt DateTime         @updatedAt
 
-  roles           OrganizationRole[]
   memberships     OrganizationMembership[]
+  invitations     OrganizationInvitation[]
   tradeCategories OrganizationTradeCategory[]
 }
 
@@ -97,32 +101,37 @@ enum MembershipStatus {
   SUSPENDED
 }
 
-model OrganizationRole {
-  id             String       @id @default(cuid())
-  organizationId String
-  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  name           String
-  permissions    Json
-  systemKey      String?
-  isProtected    Boolean      @default(false)
-  position       Int?
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt
-
-  memberships OrganizationMembership[]
+enum OrganizationMemberRole {
+  FOUNDER
+  MANAGER
+  MEMBER
 }
 
 model OrganizationMembership {
-  id                 String           @id @default(cuid())
-  organizationId     String
-  organization       Organization     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  userId             String
-  user               User             @relation(fields: [userId], references: [id], onDelete: Cascade)
-  organizationRoleId String
-  organizationRole   OrganizationRole @relation(fields: [organizationRoleId], references: [id])
-  status             MembershipStatus
-  createdAt          DateTime         @default(now())
-  updatedAt          DateTime         @updatedAt
+  id             String                 @id @default(cuid())
+  organizationId String
+  organization   Organization           @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  userId         String
+  user           User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role           OrganizationMemberRole @default(MEMBER)
+  status         MembershipStatus
+  createdAt      DateTime               @default(now())
+  updatedAt      DateTime               @updatedAt
+
+  @@unique([organizationId, userId])
+}
+
+model OrganizationInvitation {
+  id             String                 @id @default(cuid())
+  organizationId String
+  organization   Organization           @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  email          String
+  role           OrganizationMemberRole @default(MEMBER)
+  token          String                 @unique
+  expiresAt      DateTime
+  invitedById    String
+  invitedBy      User                   @relation(fields: [invitedById], references: [id], onDelete: Cascade)
+  createdAt      DateTime               @default(now())
 }
 
 model TradeCategory {

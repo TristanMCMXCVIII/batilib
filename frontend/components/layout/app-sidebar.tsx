@@ -22,14 +22,15 @@ type User = {
     role?: string | null;
 };
 
-const navItems = [
-    { href: "/app", label: "Accueil" },
-    { href: "/profile", label: "Mon compte" },
-];
-
-export default function AppSidebar({ user }: { user: User }) {
+export default function AppSidebar({ user, orgId }: { user: User; orgId: string | null }) {
     const pathname = usePathname();
     const router = useRouter();
+
+    const navItems = [
+        ...(orgId ? [{ href: `/app/${orgId}`, label: "Accueil" }] : []),
+        ...(orgId ? [{ href: `/app/${orgId}/organization`, label: "Mon organisation" }] : []),
+        { href: "/profile", label: "Mon compte" },
+    ];
 
     async function handleSignOut() {
         await authClient.signOut();
@@ -48,7 +49,7 @@ export default function AppSidebar({ user }: { user: User }) {
                     <Link
                         key={item.href}
                         href={item.href}
-                        className={`nav-item ${pathname === item.href ? "nav-item-active" : ""}`}
+                        className={`nav-item ${pathname === item.href || pathname.startsWith(item.href + "/") ? "nav-item-active" : ""}`}
                     >
                         {item.label}
                     </Link>
@@ -88,9 +89,11 @@ export default function AppSidebar({ user }: { user: User }) {
                             <p className="text-xs text-muted-foreground">{user.email}</p>
                         </DropdownMenuLabel>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem asChild>
-                            <Link href="/app">Accueil</Link>
-                        </DropdownMenuItem>
+                        {orgId && (
+                            <DropdownMenuItem asChild>
+                                <Link href={`/app/${orgId}`}>Accueil</Link>
+                            </DropdownMenuItem>
+                        )}
                         <DropdownMenuItem asChild>
                             <Link href="/profile">Mon compte</Link>
                         </DropdownMenuItem>
