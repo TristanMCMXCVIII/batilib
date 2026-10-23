@@ -8,7 +8,7 @@ export default async function BillingPage({ params }: Props) {
     const data = await getOrgWithRole(orgId);
 
     if (!data) redirect("/onboarding?context=kicked");
-    if (data.org.kind !== "BUILDING_COMPANY") redirect(`/app/${orgId}/organization/presentation`);
+    if (data.org.kind !== "BUILDING_COMPANY") redirect(`/app/${orgId}/my-organization/presentation`);
 
     return (
         <div className="max-w-lg">

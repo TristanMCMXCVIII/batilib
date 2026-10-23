@@ -13,10 +13,10 @@ export default async function OrganizationLayout({ children, params }: Props) {
     if (!data) redirect("/onboarding?context=kicked");
 
     const tabs = [
-        { label: "Présentation", href: `/app/${orgId}/organization/presentation` },
-        { label: "Membres", href: `/app/${orgId}/organization/members` },
+        { label: "Présentation", href: `/app/${orgId}/my-organization/presentation` },
+        { label: "Membres", href: `/app/${orgId}/my-organization/members` },
         ...(data.org.kind === "BUILDING_COMPANY"
-            ? [{ label: "Facturation", href: `/app/${orgId}/organization/billing` }]
+            ? [{ label: "Facturation", href: `/app/${orgId}/my-organization/billing` }]
             : []),
     ];
 

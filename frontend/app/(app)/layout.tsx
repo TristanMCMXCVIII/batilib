@@ -2,7 +2,8 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import AppSidebar from "@/components/layout/app-sidebar";
-import { getUserPrimaryOrgId } from "@/lib/actions/organization";
+import { getUserOrgs } from "@/lib/actions/organization";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
     const session = await auth.api.getSession({ headers: await headers() });
@@ -12,14 +13,14 @@ export default async function AppLayout({ children }: { children: React.ReactNod
         redirect(`/verify-email?email=${encodeURIComponent(session.user.email)}`);
     }
 
-    const orgId = await getUserPrimaryOrgId();
+    const orgs = await getUserOrgs();
 
     return (
-        <div className="flex h-screen overflow-hidden">
-            <AppSidebar user={session.user} orgId={orgId} />
-            <main className="flex-1 overflow-auto bg-background">
+        <SidebarProvider className="h-screen overflow-hidden">
+            <AppSidebar user={session.user} orgs={orgs} />
+            <SidebarInset className="overflow-auto">
                 {children}
-            </main>
-        </div>
+            </SidebarInset>
+        </SidebarProvider>
     );
 }

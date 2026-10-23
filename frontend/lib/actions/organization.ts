@@ -58,3 +58,50 @@ export async function getUserPrimaryOrgId(): Promise<string | null> {
 
     return result.rows[0]?.organizationId ?? null;
 }
+
+export type OrgInfo = {
+    orgId: string;
+    orgName: string;
+    orgKind: string;
+};
+
+export type PrimaryOrg = OrgInfo | null;
+
+export async function getUserPrimaryOrg(): Promise<PrimaryOrg> {
+    const session = await auth.api.getSession({ headers: await headers() });
+    if (!session) return null;
+
+    const result = await db.query<{ organizationId: string; name: string; kind: string }>(
+        `SELECT m."organizationId", o.name, o.kind
+         FROM "OrganizationMembership" m
+         JOIN "Organization" o ON o.id = m."organizationId"
+         WHERE m."userId" = $1 AND m.status = 'ACTIVE'
+         ORDER BY m."createdAt" ASC
+         LIMIT 1`,
+        [session.user.id],
+    );
+
+    const row = result.rows[0];
+    if (!row) return null;
+    return { orgId: row.organizationId, orgName: row.name, orgKind: row.kind };
+}
+
+export async function getUserOrgs(): Promise<OrgInfo[]> {
+    const session = await auth.api.getSession({ headers: await headers() });
+    if (!session) return [];
+
+    const result = await db.query<{ organizationId: string; name: string; kind: string }>(
+        `SELECT m."organizationId", o.name, o.kind
+         FROM "OrganizationMembership" m
+         JOIN "Organization" o ON o.id = m."organizationId"
+         WHERE m."userId" = $1 AND m.status = 'ACTIVE'
+         ORDER BY m."createdAt" ASC`,
+        [session.user.id],
+    );
+
+    return result.rows.map((row) => ({
+        orgId: row.organizationId,
+        orgName: row.name,
+        orgKind: row.kind,
+    }));
+}
