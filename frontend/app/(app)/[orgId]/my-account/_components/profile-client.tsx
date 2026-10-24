@@ -230,8 +230,8 @@ export default function ProfileClient({ user }: ProfileClientProps) {
     const hasGoogle = accounts.some((a) => a.providerId === "google");
 
     return (
-        <main className="px-6 py-10">
-            <div className="mx-auto max-w-2xl">
+        <main className="page-outer pt-8 pb-10">
+            <div className="max-w-2xl">
                 <div className="mb-10">
                     <h1 className="page-title">Mon compte</h1>
                     <p className="mt-2 caption">

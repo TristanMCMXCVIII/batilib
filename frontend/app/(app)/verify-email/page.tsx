@@ -3,9 +3,9 @@
 import { FormEvent, Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
-import Button from "@/components/ui/button";
-import Input from "@/components/ui/input";
-import Card from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card } from "@/components/ui/card";
 
 function VerifyEmailContent() {
     const router = useRouter();
@@ -34,7 +34,7 @@ function VerifyEmailContent() {
             return;
         }
 
-        router.push("/app");
+        router.push("/");
         router.refresh();
     }
 

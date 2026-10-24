@@ -13,5 +13,5 @@ export default async function RootPage() {
 
     const orgId = await getUserPrimaryOrgId();
     if (!orgId) redirect("/onboarding");
-    redirect(`/app/${orgId}`);
+    redirect(`/${orgId}`);
 }

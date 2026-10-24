@@ -312,3 +312,15 @@ Template OTP : HTML inline simple (no-framework). Clé `BREVO_API_KEY` côté se
 - DB partagée entre Next (pg Pool direct) et Nest (Prisma) — pas de seconde base.
 - Fichiers dans **Cloudflare R2**, accédés via proxy signé `/api/files/[...key]`.
 - Google et mot de passe seulement — pas d'autre provider en V0.
+
+---
+
+## 16. Architecture cible — éditeur de chantier (temps réel)
+
+Décisions validées avant implémentation :
+
+- **Temps réel** : WebSockets via `@nestjs/websockets` + Socket.io. Une "room" par chantier. Guard d'auth sur la connexion WebSocket (valider le cookie de session Better Auth).
+- **Conflits** : last-write-wins par champ (quantité, prix, libellé). Pas de CRDT (Yjs/Automerge) — réservé à l'édition de texte concurrent, inutile pour des champs structurés.
+- **Cache client** : TanStack Query pour le fetch initial et l'invalidation après mutation. Le socket pousse les updates live, Query gère le cache.
+- **Structure composants** : page = Server Component (fetch initial), composants d'édition = Client Components (useState + socket.io-client).
+- **Nest** : c'est le bon endroit pour la Gateway WebSocket et la persistence des changements via Prisma.

@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import Link from "next/link";
 import { useParams, usePathname, useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
@@ -26,6 +27,7 @@ import {
     SidebarMenuSub,
     SidebarMenuSubButton,
     SidebarMenuSubItem,
+    useSidebar,
 } from "@/components/ui/sidebar";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import {
@@ -63,6 +65,11 @@ export default function AppSidebar({ user, orgs }: { user: UserInfo; orgs: OrgIn
     const pathname = usePathname();
     const params = useParams();
     const router = useRouter();
+    const { setOpenMobile } = useSidebar();
+
+    useEffect(() => {
+        setOpenMobile(false);
+    }, [pathname, setOpenMobile]);
 
     const currentOrgId = typeof params.orgId === "string" ? params.orgId : null;
     const currentOrg = orgs.find((o) => o.orgId === currentOrgId) ?? orgs[0] ?? null;
@@ -76,7 +83,7 @@ export default function AppSidebar({ user, orgs }: { user: UserInfo; orgs: OrgIn
     const isMyOrgActive = pathname.includes("/my-organization");
 
     return (
-        <Sidebar collapsible="none" className="border-r border-sidebar-border">
+        <Sidebar collapsible="offcanvas" className="border-r border-sidebar-border">
             {/* ── Header : sélecteur d'organisation ─── */}
             <SidebarHeader>
                 <SidebarMenu>
@@ -119,7 +126,7 @@ export default function AppSidebar({ user, orgs }: { user: UserInfo; orgs: OrgIn
                                         asChild
                                         className="cursor-pointer"
                                     >
-                                        <Link href={`/app/${org.orgId}`}>
+                                        <Link href={`/${org.orgId}`}>
                                             <div className="flex size-6 items-center justify-center rounded-md border bg-subtle shrink-0">
                                                 <Building2 className="size-3.5 text-muted-foreground" />
                                             </div>
@@ -137,7 +144,7 @@ export default function AppSidebar({ user, orgs }: { user: UserInfo; orgs: OrgIn
                                 ))}
                                 <DropdownMenuSeparator />
                                 <DropdownMenuItem asChild className="cursor-pointer">
-                                    <Link href="/app/new-organization">
+                                    <Link href={currentOrg ? `/${currentOrg.orgId}/new-organization` : "/onboarding"}>
                                         <Plus className="size-4 mr-2" />
                                         Nouvelle organisation
                                     </Link>
@@ -160,9 +167,9 @@ export default function AppSidebar({ user, orgs }: { user: UserInfo; orgs: OrgIn
                                     <SidebarMenuItem>
                                         <SidebarMenuButton
                                             asChild
-                                            isActive={pathname === `/app/${currentOrg.orgId}`}
+                                            isActive={pathname === `/${currentOrg.orgId}`}
                                         >
-                                            <Link href={`/app/${currentOrg.orgId}`}>
+                                            <Link href={`/${currentOrg.orgId}`}>
                                                 <Home />
                                                 <span>Accueil</span>
                                             </Link>
@@ -172,9 +179,9 @@ export default function AppSidebar({ user, orgs }: { user: UserInfo; orgs: OrgIn
                                     <SidebarMenuItem>
                                         <SidebarMenuButton
                                             asChild
-                                            isActive={pathname.startsWith(`/app/${currentOrg.orgId}/projects`)}
+                                            isActive={pathname.startsWith(`/${currentOrg.orgId}/projects`)}
                                         >
-                                            <Link href={`/app/${currentOrg.orgId}/projects`}>
+                                            <Link href={`/${currentOrg.orgId}/projects`}>
                                                 <FolderOpen />
                                                 <span>Projets</span>
                                             </Link>
@@ -184,9 +191,9 @@ export default function AppSidebar({ user, orgs }: { user: UserInfo; orgs: OrgIn
                                     <SidebarMenuItem>
                                         <SidebarMenuButton
                                             asChild
-                                            isActive={pathname.startsWith(`/app/${currentOrg.orgId}/economy`)}
+                                            isActive={pathname.startsWith(`/${currentOrg.orgId}/economy`)}
                                         >
-                                            <Link href={`/app/${currentOrg.orgId}/economy`}>
+                                            <Link href={`/${currentOrg.orgId}/economy`}>
                                                 <TrendingUp />
                                                 <span>Économie</span>
                                             </Link>
@@ -196,9 +203,9 @@ export default function AppSidebar({ user, orgs }: { user: UserInfo; orgs: OrgIn
                                     <SidebarMenuItem>
                                         <SidebarMenuButton
                                             asChild
-                                            isActive={pathname.startsWith(`/app/${currentOrg.orgId}/documents`)}
+                                            isActive={pathname.startsWith(`/${currentOrg.orgId}/documents`)}
                                         >
-                                            <Link href={`/app/${currentOrg.orgId}/documents`}>
+                                            <Link href={`/${currentOrg.orgId}/documents`}>
                                                 <FileText />
                                                 <span>Documents</span>
                                             </Link>
@@ -208,9 +215,9 @@ export default function AppSidebar({ user, orgs }: { user: UserInfo; orgs: OrgIn
                                     <SidebarMenuItem>
                                         <SidebarMenuButton
                                             asChild
-                                            isActive={pathname.startsWith(`/app/${currentOrg.orgId}/library`)}
+                                            isActive={pathname.startsWith(`/${currentOrg.orgId}/library`)}
                                         >
-                                            <Link href={`/app/${currentOrg.orgId}/library`}>
+                                            <Link href={`/${currentOrg.orgId}/library`}>
                                                 <BookOpen />
                                                 <span>Bibliothèque</span>
                                             </Link>
@@ -221,9 +228,9 @@ export default function AppSidebar({ user, orgs }: { user: UserInfo; orgs: OrgIn
                                         <SidebarMenuItem>
                                             <SidebarMenuButton
                                                 asChild
-                                                isActive={pathname.startsWith(`/app/${currentOrg.orgId}/tenders`)}
+                                                isActive={pathname.startsWith(`/${currentOrg.orgId}/tenders`)}
                                             >
-                                                <Link href={`/app/${currentOrg.orgId}/tenders`}>
+                                                <Link href={`/${currentOrg.orgId}/tenders`}>
                                                     <Megaphone />
                                                     <span>Appels à projet</span>
                                                 </Link>
@@ -242,9 +249,9 @@ export default function AppSidebar({ user, orgs }: { user: UserInfo; orgs: OrgIn
                                     <SidebarMenuItem>
                                         <SidebarMenuButton
                                             asChild
-                                            isActive={pathname === "/profile"}
+                                            isActive={pathname === `/${currentOrg?.orgId}/my-account`}
                                         >
-                                            <Link href="/profile">
+                                            <Link href={`/${currentOrg?.orgId}/my-account`}>
                                                 <User />
                                                 <span>Mon profil</span>
                                             </Link>
@@ -262,7 +269,7 @@ export default function AppSidebar({ user, orgs }: { user: UserInfo; orgs: OrgIn
                                                     isActive={isMyOrgActive}
                                                     onClick={() =>
                                                         router.push(
-                                                            `/app/${currentOrg.orgId}/my-organization/presentation`
+                                                            `/${currentOrg.orgId}/my-organization/presentation`
                                                         )
                                                     }
                                                 >
@@ -277,10 +284,10 @@ export default function AppSidebar({ user, orgs }: { user: UserInfo; orgs: OrgIn
                                                         <SidebarMenuSubButton
                                                             asChild
                                                             isActive={pathname.startsWith(
-                                                                `/app/${currentOrg.orgId}/my-organization/presentation`
+                                                                `/${currentOrg.orgId}/my-organization/presentation`
                                                             )}
                                                         >
-                                                            <Link href={`/app/${currentOrg.orgId}/my-organization/presentation`}>
+                                                            <Link href={`/${currentOrg.orgId}/my-organization/presentation`}>
                                                                 <FileText className="size-3.5" />
                                                                 Présentation
                                                             </Link>
@@ -290,10 +297,10 @@ export default function AppSidebar({ user, orgs }: { user: UserInfo; orgs: OrgIn
                                                         <SidebarMenuSubButton
                                                             asChild
                                                             isActive={pathname.startsWith(
-                                                                `/app/${currentOrg.orgId}/my-organization/members`
+                                                                `/${currentOrg.orgId}/my-organization/members`
                                                             )}
                                                         >
-                                                            <Link href={`/app/${currentOrg.orgId}/my-organization/members`}>
+                                                            <Link href={`/${currentOrg.orgId}/my-organization/members`}>
                                                                 <Users className="size-3.5" />
                                                                 Membres
                                                             </Link>
@@ -304,10 +311,10 @@ export default function AppSidebar({ user, orgs }: { user: UserInfo; orgs: OrgIn
                                                             <SidebarMenuSubButton
                                                                 asChild
                                                                 isActive={pathname.startsWith(
-                                                                    `/app/${currentOrg.orgId}/my-organization/billing`
+                                                                    `/${currentOrg.orgId}/my-organization/billing`
                                                                 )}
                                                             >
-                                                                <Link href={`/app/${currentOrg.orgId}/my-organization/billing`}>
+                                                                <Link href={`/${currentOrg.orgId}/my-organization/billing`}>
                                                                     <CreditCard className="size-3.5" />
                                                                     Facturation
                                                                 </Link>
@@ -355,7 +362,7 @@ export default function AppSidebar({ user, orgs }: { user: UserInfo; orgs: OrgIn
                                 sideOffset={4}
                             >
                                 <DropdownMenuItem asChild>
-                                    <Link href="/profile" className="cursor-pointer">
+                                    <Link href={`/${currentOrg?.orgId}/my-account`} className="cursor-pointer">
                                         <User className="mr-2 h-4 w-4" />
                                         Mon profil
                                     </Link>

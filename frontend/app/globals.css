@@ -238,6 +238,12 @@
     background-color: var(--border);
   }
 
+  /* ── Layout page ──────────────────────────────────── */
+
+  .page-outer {
+    @apply px-4 sm:px-10 lg:px-20;
+  }
+
   /* ── Typographie ──────────────────────────────────── */
 
   .page-title {

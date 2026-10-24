@@ -11,14 +11,13 @@ type Props = {
 export default async function OnboardingPage({ searchParams }: Props) {
     const session = await auth.api.getSession({ headers: await headers() });
 
-    if (!session) redirect("/login");
-    if (!session.user.emailVerified) {
-        redirect(`/verify-email?email=${encodeURIComponent(session.user.email)}`);
+    if (!session?.user.emailVerified) {
+        redirect(`/verify-email?email=${encodeURIComponent(session?.user.email ?? "")}`);
     }
 
     // If the user already has an active org, send them to the app
     const orgId = await getUserPrimaryOrgId();
-    if (orgId) redirect(`/app/${orgId}`);
+    if (orgId) redirect(`/${orgId}`);
 
     const { context } = await searchParams;
 

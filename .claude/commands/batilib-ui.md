@@ -26,6 +26,7 @@ Quand tu crées une nouvelle page ou un nouveau composant avec une UI non trivia
 ## Classes utilitaires définies dans globals.css
 
 ```
+page-outer      → padding horizontal responsive (16px mobile / 40px tablette / 80px desktop)
 page-title      → h1 de page
 section-title   → h2 de section
 body-sm         → texte corps 14px
@@ -41,15 +42,24 @@ avatar-initials → avatar fallback initiales (avec CSS vars --avatar-bg, --avat
 
 ## Layout standard d'une page
 
+Toujours utiliser `page-outer` pour le padding horizontal — jamais de `px-*` hardcodé.
+Le contenu part du bord gauche du padding (pas de `mx-auto`).
+Le h1 est toujours à `pt-8` (32px) depuis le header — cohérent sur toutes les pages.
+
+**Page simple (sans onglets) :**
 ```tsx
-<div className="p-8">
-    <div className="mx-auto max-w-2xl">   {/* ou max-w-5xl pour les tableaux */}
+<main className="page-outer pt-8 pb-10">
+    <div className="max-w-2xl">          {/* ou max-w-5xl pour les tableaux */}
         <h1 className="page-title">Titre</h1>
-        <p className="mt-1 caption">Sous-titre</p>
+        <p className="mt-2 caption">Sous-titre</p>
         {/* contenu */}
     </div>
-</div>
+</main>
 ```
+
+**Page avec en-tête + onglets (layout dédié) :**
+Le layout gère `page-outer pt-8` sur le header et `page-outer` sur le contenu.
+Les composants enfants n'ont qu'à mettre `py-10 max-w-2xl`.
 
 ---
 

@@ -15,7 +15,6 @@ export default async function MembersPage({ params }: Props) {
         getOrgMembers(orgId),
     ]);
 
-    if (!session) redirect("/login");
     if (!data) redirect("/onboarding?context=kicked");
 
     return (
@@ -23,7 +22,7 @@ export default async function MembersPage({ params }: Props) {
             members={members}
             orgId={orgId}
             isFounder={data.role === "FOUNDER"}
-            currentUserId={session.user.id}
+            currentUserId={session!.user.id}
         />
     );
 }
