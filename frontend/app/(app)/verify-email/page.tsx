@@ -12,6 +12,8 @@ function VerifyEmailContent() {
     const searchParams = useSearchParams();
 
     const email = searchParams.get("email") ?? "";
+    const redirectTo = searchParams.get("redirectTo");
+    const safeRedirect = redirectTo?.startsWith("/") && !redirectTo.startsWith("//") ? redirectTo : null;
 
     const [otp, setOtp] = useState("");
     const [error, setError] = useState<string | null>(null);
@@ -34,7 +36,7 @@ function VerifyEmailContent() {
             return;
         }
 
-        router.push("/");
+        router.push(safeRedirect ?? "/");
         router.refresh();
     }
 

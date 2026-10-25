@@ -1,7 +1,7 @@
 "use client";
 
-import { FormEvent, useState } from "react";
-import { useRouter } from "next/navigation";
+import { FormEvent, Suspense, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,8 +10,11 @@ import { Label } from "@/components/ui/label";
 import { Eye, EyeOff, Check } from "lucide-react";
 import { GoogleIcon } from "@/components/ui/google-icon";
 
-export default function RegisterPage() {
+function RegisterContent() {
     const router = useRouter();
+    const searchParams = useSearchParams();
+    const redirectTo = searchParams.get("redirectTo");
+    const safeRedirect = redirectTo?.startsWith("/") && !redirectTo.startsWith("//") ? redirectTo : null;
 
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
@@ -54,13 +57,16 @@ export default function RegisterPage() {
             type: "email-verification",
         });
 
-        router.push(`/verify-email?email=${encodeURIComponent(email)}`);
+        const verifyUrl = safeRedirect
+            ? `/verify-email?email=${encodeURIComponent(email)}&redirectTo=${encodeURIComponent(safeRedirect)}`
+            : `/verify-email?email=${encodeURIComponent(email)}`;
+        router.push(verifyUrl);
     }
 
     async function handleGoogleRegister() {
         await authClient.signIn.social({
             provider: "google",
-            callbackURL: "/app",
+            callbackURL: safeRedirect ?? "/app",
             errorCallbackURL: "/auth/error",
         });
     }
@@ -176,11 +182,22 @@ export default function RegisterPage() {
 
                 <p className="mt-6 text-center caption">
                     Déjà un compte ?{" "}
-                    <a href="/login" className="font-medium text-foreground">
+                    <a
+                        href={safeRedirect ? `/login?redirectTo=${encodeURIComponent(safeRedirect)}` : "/login"}
+                        className="font-medium text-foreground"
+                    >
                         Se connecter
                     </a>
                 </p>
             </Card>
         </main>
+    );
+}
+
+export default function RegisterPage() {
+    return (
+        <Suspense>
+            <RegisterContent />
+        </Suspense>
     );
 }

@@ -14,6 +14,8 @@ function LoginContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const passwordReset = searchParams.get("reset") === "1";
+    const redirectTo = searchParams.get("redirectTo");
+    const safeRedirect = redirectTo?.startsWith("/") && !redirectTo.startsWith("//") ? redirectTo : null;
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -36,14 +38,14 @@ function LoginContent() {
             return;
         }
 
-        router.push("/app");
+        router.push(safeRedirect ?? "/app");
         router.refresh();
     }
 
     async function handleGoogleLogin() {
         await authClient.signIn.social({
             provider: "google",
-            callbackURL: "/app",
+            callbackURL: safeRedirect ?? "/app",
             errorCallbackURL: "/auth/error",
         });
     }
@@ -124,7 +126,10 @@ function LoginContent() {
 
                 <p className="mt-6 text-center caption">
                     Pas encore de compte ?{" "}
-                    <a href="/register" className="font-medium text-foreground">
+                    <a
+                        href={safeRedirect ? `/register?redirectTo=${encodeURIComponent(safeRedirect)}` : "/register"}
+                        className="font-medium text-foreground"
+                    >
                         Créer un compte
                     </a>
                 </p>

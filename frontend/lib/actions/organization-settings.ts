@@ -8,6 +8,7 @@ import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
 import type { OrgKind } from "./organization";
 import { slugify } from "@/lib/slug";
+import { sendEmail } from "@/lib/mail/send-email";
 export type { OrgKind };
 
 // ─── Types ────────────────────────────────────────────────
@@ -247,12 +248,12 @@ export async function transferFounder(
     try {
         await client.query("BEGIN");
         await client.query(
-            `UPDATE "OrganizationMembership" SET role = 'FOUNDER', "updatedAt" = NOW() WHERE id = $1`,
-            [targetMembershipId],
-        );
-        await client.query(
             `UPDATE "OrganizationMembership" SET role = 'MANAGER', "updatedAt" = NOW() WHERE id = $1`,
             [callerMembership.rows[0].id],
+        );
+        await client.query(
+            `UPDATE "OrganizationMembership" SET role = 'FOUNDER', "updatedAt" = NOW() WHERE id = $1`,
+            [targetMembershipId],
         );
         await client.query("COMMIT");
     } catch (err) {
@@ -261,6 +262,102 @@ export async function transferFounder(
     } finally {
         client.release();
     }
+
+    revalidatePath(`/${orgSlug}/my-organization/members`);
+    return {};
+}
+
+export type OrgInvitation = {
+    id: string;
+    email: string;
+    role: "MANAGER" | "MEMBER";
+    expiresAt: string; // ISO string
+};
+
+export async function getOrgInvitations(orgSlug: string): Promise<OrgInvitation[]> {
+    const result = await db.query<OrgInvitation>(
+        `SELECT i.id, i.email, i.role, i."expiresAt"
+         FROM "OrganizationInvitation" i
+         WHERE i."organizationId" = (SELECT id FROM "Organization" WHERE slug = $1)
+           AND i."expiresAt" > NOW()
+         ORDER BY i."createdAt" DESC`,
+        [orgSlug],
+    );
+    return result.rows.map((r) => ({ ...r, expiresAt: new Date(r.expiresAt).toISOString() }));
+}
+
+export async function resendInvitation(
+    orgSlug: string,
+    invitationId: string,
+): Promise<{ error?: string }> {
+    const session = await auth.api.getSession({ headers: await headers() });
+    if (!session) return { error: "Non authentifié" };
+
+    const callerRole = await getCallerRole(orgSlug, session.user.id);
+    if (callerRole !== "FOUNDER") return { error: "Action réservée au fondateur" };
+
+    const inv = await db.query<{ email: string; role: string; orgName: string }>(
+        `SELECT i.email, i.role, o.name AS "orgName"
+         FROM "OrganizationInvitation" i
+         JOIN "Organization" o ON o.id = i."organizationId"
+         WHERE i.id = $1 AND i."organizationId" = (SELECT id FROM "Organization" WHERE slug = $2)`,
+        [invitationId, orgSlug],
+    );
+    if (!inv.rows.length) return { error: "Invitation introuvable" };
+
+    const { email, role, orgName } = inv.rows[0];
+    const newToken = crypto.randomUUID();
+    const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+
+    await db.query(
+        `UPDATE "OrganizationInvitation" SET token = $1, "expiresAt" = $2 WHERE id = $3`,
+        [newToken, expiresAt, invitationId],
+    );
+
+    const roleLabel = role === "MANAGER" ? "Manager" : "Membre";
+    const inviteUrl = `${process.env.BETTER_AUTH_URL}/join?token=${newToken}`;
+
+    await sendEmail({
+        to: email,
+        subject: `Rappel : vous êtes invité à rejoindre ${orgName} sur Batilib`,
+        html: `<!DOCTYPE html>
+<html lang="fr">
+<head><meta charset="UTF-8"></head>
+<body style="font-family: sans-serif; color: #111827; max-width: 480px; margin: 0 auto; padding: 32px 24px;">
+  <h2 style="margin: 0 0 8px; font-size: 20px; font-weight: 600;">Invitation à rejoindre ${orgName}</h2>
+  <p style="margin: 0 0 24px; color: #6b7280; font-size: 15px; line-height: 1.5;">
+    <strong style="color: #111827;">${session.user.name}</strong> vous rappelle que vous avez été invité à rejoindre
+    <strong style="color: #111827;">${orgName}</strong> en tant que <strong style="color: #111827;">${roleLabel}</strong> sur Batilib.
+  </p>
+  <a href="${inviteUrl}" style="display: inline-block; background: #111827; color: #fff; text-decoration: none; padding: 10px 22px; border-radius: 6px; font-size: 14px; font-weight: 500;">
+    Accepter l'invitation
+  </a>
+  <p style="margin: 28px 0 0; color: #9ca3af; font-size: 12px; line-height: 1.5;">
+    Ce lien expire dans 7 jours. Si vous n'êtes pas concerné par cette invitation, ignorez cet email.
+  </p>
+</body>
+</html>`,
+    });
+
+    revalidatePath(`/${orgSlug}/my-organization/members`);
+    return {};
+}
+
+export async function cancelInvitation(
+    orgSlug: string,
+    invitationId: string,
+): Promise<{ error?: string }> {
+    const session = await auth.api.getSession({ headers: await headers() });
+    if (!session) return { error: "Non authentifié" };
+
+    const callerRole = await getCallerRole(orgSlug, session.user.id);
+    if (callerRole !== "FOUNDER") return { error: "Action réservée au fondateur" };
+
+    await db.query(
+        `DELETE FROM "OrganizationInvitation"
+         WHERE id = $1 AND "organizationId" = (SELECT id FROM "Organization" WHERE slug = $2)`,
+        [invitationId, orgSlug],
+    );
 
     revalidatePath(`/${orgSlug}/my-organization/members`);
     return {};
@@ -277,12 +374,12 @@ export async function inviteMember(
     const callerRole = await getCallerRole(orgSlug, session.user.id);
     if (callerRole !== "FOUNDER") return { error: "Action réservée au fondateur" };
 
-    const orgResult = await db.query<{ id: string }>(
-        `SELECT id FROM "Organization" WHERE slug = $1 LIMIT 1`,
+    const orgResult = await db.query<{ id: string; name: string }>(
+        `SELECT id, name FROM "Organization" WHERE slug = $1 LIMIT 1`,
         [orgSlug],
     );
     if (!orgResult.rows.length) return { error: "Organisation introuvable" };
-    const orgId = orgResult.rows[0].id;
+    const { id: orgId, name: orgName } = orgResult.rows[0];
 
     const existing = await db.query(
         `SELECT m.id FROM "OrganizationMembership" m
@@ -308,7 +405,30 @@ export async function inviteMember(
         [orgId, email.toLowerCase().trim(), role, token, expiresAt, session.user.id],
     );
 
-    // TODO: envoyer l'email d'invitation avec le token
+    const roleLabel = role === "MANAGER" ? "Manager" : "Membre";
+    const inviteUrl = `${process.env.BETTER_AUTH_URL}/join?token=${token}`;
+
+    await sendEmail({
+        to: email.toLowerCase().trim(),
+        subject: `Vous êtes invité à rejoindre ${orgName} sur Batilib`,
+        html: `<!DOCTYPE html>
+<html lang="fr">
+<head><meta charset="UTF-8"></head>
+<body style="font-family: sans-serif; color: #111827; max-width: 480px; margin: 0 auto; padding: 32px 24px;">
+  <h2 style="margin: 0 0 8px; font-size: 20px; font-weight: 600;">Invitation à rejoindre ${orgName}</h2>
+  <p style="margin: 0 0 24px; color: #6b7280; font-size: 15px; line-height: 1.5;">
+    <strong style="color: #111827;">${session.user.name}</strong> vous invite à rejoindre
+    <strong style="color: #111827;">${orgName}</strong> en tant que <strong style="color: #111827;">${roleLabel}</strong> sur Batilib.
+  </p>
+  <a href="${inviteUrl}" style="display: inline-block; background: #111827; color: #fff; text-decoration: none; padding: 10px 22px; border-radius: 6px; font-size: 14px; font-weight: 500;">
+    Accepter l'invitation
+  </a>
+  <p style="margin: 28px 0 0; color: #9ca3af; font-size: 12px; line-height: 1.5;">
+    Ce lien expire dans 7 jours. Si vous n'êtes pas concerné par cette invitation, ignorez cet email.
+  </p>
+</body>
+</html>`,
+    });
 
     revalidatePath(`/${orgSlug}/my-organization/members`);
     return {};

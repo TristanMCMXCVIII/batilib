@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Loader2, Pencil, UserPlus } from "lucide-react";
+import { Loader2, Pencil, RefreshCw, UserPlus, X } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -27,8 +27,11 @@ import {
     removeMember,
     transferFounder,
     inviteMember,
+    resendInvitation,
+    cancelInvitation,
     type OrgMember,
     type OrgRole,
+    type OrgInvitation,
 } from "@/lib/actions/organization-settings";
 import { useRouter } from "next/navigation";
 
@@ -46,12 +49,21 @@ const ROLE_DESCRIPTIONS: Record<OrgRole, string> = {
 
 type Props = {
     members: OrgMember[];
+    invitations: OrgInvitation[];
     orgSlug: string;
     isFounder: boolean;
     currentUserId: string;
 };
 
-export default function OrgMembersClient({ members, orgSlug, isFounder, currentUserId }: Props) {
+function formatExpiry(isoDate: string): string {
+    const diff = new Date(isoDate).getTime() - Date.now();
+    const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
+    if (days <= 0) return "Expire aujourd'hui";
+    if (days === 1) return "Expire demain";
+    return `Expire dans ${days}j`;
+}
+
+export default function OrgMembersClient({ members, invitations, orgSlug, isFounder, currentUserId }: Props) {
     const router = useRouter();
 
     // Sheet: modifier un membre
@@ -69,6 +81,24 @@ export default function OrgMembersClient({ members, orgSlug, isFounder, currentU
     const [transferTarget, setTransferTarget] = useState<OrgMember | null>(null);
     const [transferring, setTransferring] = useState(false);
     const [transferError, setTransferError] = useState<string | null>(null);
+
+    // Invitations en attente
+    const [resendingId, setResendingId] = useState<string | null>(null);
+    const [cancellingId, setCancellingId] = useState<string | null>(null);
+
+    async function handleResend(invitationId: string) {
+        setResendingId(invitationId);
+        await resendInvitation(orgSlug, invitationId);
+        setResendingId(null);
+        router.refresh();
+    }
+
+    async function handleCancel(invitationId: string) {
+        setCancellingId(invitationId);
+        await cancelInvitation(orgSlug, invitationId);
+        setCancellingId(null);
+        router.refresh();
+    }
 
     // Sheet: inviter
     const [inviteOpen, setInviteOpen] = useState(false);
@@ -190,6 +220,57 @@ export default function OrgMembersClient({ members, orgSlug, isFounder, currentU
                     })}
                 </div>
             </section>
+
+            {/* ── Invitations en attente ── */}
+            {invitations.length > 0 && (
+                <section>
+                    <h2 className="section-title">Invitations en attente ({invitations.length})</h2>
+                    <div className="mt-5 space-y-3">
+                        {invitations.map((inv) => (
+                            <div key={inv.id} className="flex items-center justify-between">
+                                <div className="flex items-center gap-3">
+                                    <div className="h-9 w-9 shrink-0 rounded-full bg-subtle border border-border flex items-center justify-center">
+                                        <span className="text-sm text-muted-foreground">?</span>
+                                    </div>
+                                    <div>
+                                        <p className="body-sm font-medium">{inv.email}</p>
+                                        <p className="caption">{formatExpiry(inv.expiresAt)}</p>
+                                    </div>
+                                </div>
+                                <div className="flex items-center gap-3">
+                                    <Badge variant="neutral">{ROLE_LABELS[inv.role]}</Badge>
+                                    {isFounder && (
+                                        <div className="flex items-center gap-1.5">
+                                            <Button
+                                                variant="outline"
+                                                size="sm"
+                                                onClick={() => handleResend(inv.id)}
+                                                disabled={resendingId === inv.id || cancellingId === inv.id}
+                                            >
+                                                {resendingId === inv.id
+                                                    ? <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                                                    : <RefreshCw className="h-3.5 w-3.5" />}
+                                                Renvoyer
+                                            </Button>
+                                            <Button
+                                                variant="outline"
+                                                size="sm"
+                                                className="border-destructive/40 text-destructive hover:bg-destructive/5 hover:text-destructive"
+                                                onClick={() => handleCancel(inv.id)}
+                                                disabled={resendingId === inv.id || cancellingId === inv.id}
+                                            >
+                                                {cancellingId === inv.id
+                                                    ? <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                                                    : <X className="h-3.5 w-3.5" />}
+                                            </Button>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </section>
+            )}
 
             {/* ── Sheet : modifier le rôle d'un membre ── */}
             <Sheet open={!!editMember} onOpenChange={(o) => { if (!savingRole && !o) setEditMember(null); }}>

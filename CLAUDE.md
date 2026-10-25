@@ -287,9 +287,9 @@ Template OTP : HTML inline simple (no-framework). Clé `BREVO_API_KEY` côté se
 | Organisation : présentation + édition (FOUNDER) | ✅ Fait |
 | Organisation : membres + rôles + retrait | ✅ Fait |
 | Organisation : transfert fondateur | ✅ Fait |
-| Organisation : invitations (création token) | ✅ Fait (email non encore envoyé) |
-| Email d'invitation | ⚠️ À faire |
-| Acceptation d'invitation par token | ⚠️ À faire |
+| Organisation : invitations (création token + email Brevo) | ✅ Fait |
+| Organisation : invitations en attente (liste, renvoyer, annuler) | ✅ Fait |
+| Acceptation d'invitation par token (`/join`) | ✅ Fait |
 | Nest : endpoints métier authentifiés | ❌ Non fait |
 | Projets / chantiers | ❌ Non fait |
 
@@ -297,14 +297,46 @@ Template OTP : HTML inline simple (no-framework). Clé `BREVO_API_KEY` côté se
 
 ## 14. Prochaines priorités
 
-1. **Email d'invitation** : envoyer le lien d'invitation (`/join?token=...`) via Brevo dans `inviteMember`.
-2. **Acceptation d'invitation** : page `/join` → vérifie token → crée membership ACTIVE → redirect `/app/:orgId`.
-3. **API Nest** : mettre en place un guard d'auth (valider le cookie de session Better Auth) avant tout endpoint métier.
-4. **Modèle métier** : `Project`, `WorkItem` en parcours artisan simple (voir `docs/PROJECT_CONTEXT.md` section 4).
+1. **API Nest** : mettre en place un guard d'auth (valider le cookie de session Better Auth) avant tout endpoint métier.
+2. **Modèle métier** : `Project`, `WorkItem` en parcours artisan simple (voir `docs/PROJECT_CONTEXT.md` section 4).
 
 ---
 
-## 15. Décisions architecturales à ne pas changer silencieusement
+## 15. Pattern invitation par token — à réutiliser
+
+Implémenté pour les organisations. À réutiliser (avec adaptation) pour les invitations sur les projets.
+
+### Table `OrganizationInvitation`
+`id`, `organizationId`, `email`, `role`, `token` (UUID unique), `expiresAt` (+7 jours), `invitedById`, `createdAt`.
+Pas de `userId` — l'invité peut ne pas avoir de compte au moment de l'invitation.
+
+### Flux complet
+1. FOUNDER invite → token UUID créé en DB → email Brevo avec lien `/join?token=xxx`
+2. Destinataire clique → page `/join` (hors `(app)` et `(auth)`, accessible sans session)
+   - Non connecté → CTAs "Se connecter" / "Créer un compte" avec `?redirectTo=/join?token=xxx`
+   - Connecté, email correspond → "Accepter" / "Ignorer"
+   - Connecté, email différent → avertissement, bouton désactivé
+3. `acceptInvitation(token)` : vérifie email match, crée `OrganizationMembership` ACTIVE en transaction, supprime l'invitation
+4. `declineInvitation(token)` : supprime l'invitation (session requise, bouton visible uniquement si connecté)
+
+### Support `redirectTo` dans les pages auth
+`/login`, `/register`, `/verify-email` lisent tous `?redirectTo=` (validé : doit commencer par `/`).
+Propagé de register → verify-email → destination finale. Google OAuth utilise `callbackURL: redirectTo`.
+
+### Gestion côté membres
+`getOrgInvitations` : liste les invitations non expirées.
+`resendInvitation` : régénère le token + `expiresAt`, renvoie l'email (ancien lien invalidé).
+`cancelInvitation` : supprime l'invitation.
+Section "Invitations en attente" affichée dans la page membres **seulement si** `invitations.length > 0`.
+
+### Points d'attention pour l'invitation projet
+- La cible d'une invitation projet sera une **organisation** (pas un user individuel), donc logique différente.
+- Il faudra une table `ProjectInvitation` distincte avec `targetOrganizationId` ou `email` selon le cas.
+- Le token-flow `/join` pourrait être étendu ou dupliqué avec un paramètre `type=project`.
+
+---
+
+## 16. Décisions architecturales à ne pas changer silencieusement
 
 - Auth **côté Next.js uniquement** (Better Auth). Ne pas migrer vers Nest sans discussion.
 - **Un seul `name`** (pas `firstName`/`lastName`) pour les utilisateurs.
