@@ -1,7 +1,7 @@
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { getUserPrimaryOrgId } from "@/lib/actions/organization";
+import { getUserPrimaryOrgSlug } from "@/lib/actions/organization";
 import OnboardingForm from "./_components/onboarding-form";
 
 type Props = {
@@ -16,8 +16,8 @@ export default async function OnboardingPage({ searchParams }: Props) {
     }
 
     // If the user already has an active org, send them to the app
-    const orgId = await getUserPrimaryOrgId();
-    if (orgId) redirect(`/${orgId}`);
+    const orgSlug = await getUserPrimaryOrgSlug();
+    if (orgSlug) redirect(`/${orgSlug}`);
 
     const { context } = await searchParams;
 

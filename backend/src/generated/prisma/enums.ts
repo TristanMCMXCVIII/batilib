@@ -42,3 +42,22 @@ export const OrganizationMemberRole = {
 } as const
 
 export type OrganizationMemberRole = (typeof OrganizationMemberRole)[keyof typeof OrganizationMemberRole]
+
+
+export const ProjectParticipantRole = {
+  LEAD: 'LEAD',
+  CLIENT: 'CLIENT',
+  SUBCONTRACTOR: 'SUBCONTRACTOR'
+} as const
+
+export type ProjectParticipantRole = (typeof ProjectParticipantRole)[keyof typeof ProjectParticipantRole]
+
+
+export const WorkItemStatus = {
+  DRAFT: 'DRAFT',
+  IN_PROGRESS: 'IN_PROGRESS',
+  DONE: 'DONE',
+  CANCELLED: 'CANCELLED'
+} as const
+
+export type WorkItemStatus = (typeof WorkItemStatus)[keyof typeof WorkItemStatus]

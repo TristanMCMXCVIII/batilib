@@ -183,6 +183,9 @@ export type TradeCategoryWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"TradeCategory"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"TradeCategory"> | Date | string
   organizations?: Prisma.OrganizationTradeCategoryListRelationFilter
+  workPackages?: Prisma.WorkPackageTradeCategoryListRelationFilter
+  workItems?: Prisma.WorkItemListRelationFilter
+  workTemplates?: Prisma.WorkTemplateListRelationFilter
 }
 
 export type TradeCategoryOrderByWithRelationInput = {
@@ -192,6 +195,9 @@ export type TradeCategoryOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   organizations?: Prisma.OrganizationTradeCategoryOrderByRelationAggregateInput
+  workPackages?: Prisma.WorkPackageTradeCategoryOrderByRelationAggregateInput
+  workItems?: Prisma.WorkItemOrderByRelationAggregateInput
+  workTemplates?: Prisma.WorkTemplateOrderByRelationAggregateInput
 }
 
 export type TradeCategoryWhereUniqueInput = Prisma.AtLeast<{
@@ -204,6 +210,9 @@ export type TradeCategoryWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"TradeCategory"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"TradeCategory"> | Date | string
   organizations?: Prisma.OrganizationTradeCategoryListRelationFilter
+  workPackages?: Prisma.WorkPackageTradeCategoryListRelationFilter
+  workItems?: Prisma.WorkItemListRelationFilter
+  workTemplates?: Prisma.WorkTemplateListRelationFilter
 }, "id" | "code">
 
 export type TradeCategoryOrderByWithAggregationInput = {
@@ -235,6 +244,9 @@ export type TradeCategoryCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   organizations?: Prisma.OrganizationTradeCategoryCreateNestedManyWithoutTradeCategoryInput
+  workPackages?: Prisma.WorkPackageTradeCategoryCreateNestedManyWithoutTradeCategoryInput
+  workItems?: Prisma.WorkItemCreateNestedManyWithoutTradeCategoryInput
+  workTemplates?: Prisma.WorkTemplateCreateNestedManyWithoutTradeCategoryInput
 }
 
 export type TradeCategoryUncheckedCreateInput = {
@@ -244,6 +256,9 @@ export type TradeCategoryUncheckedCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   organizations?: Prisma.OrganizationTradeCategoryUncheckedCreateNestedManyWithoutTradeCategoryInput
+  workPackages?: Prisma.WorkPackageTradeCategoryUncheckedCreateNestedManyWithoutTradeCategoryInput
+  workItems?: Prisma.WorkItemUncheckedCreateNestedManyWithoutTradeCategoryInput
+  workTemplates?: Prisma.WorkTemplateUncheckedCreateNestedManyWithoutTradeCategoryInput
 }
 
 export type TradeCategoryUpdateInput = {
@@ -253,6 +268,9 @@ export type TradeCategoryUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   organizations?: Prisma.OrganizationTradeCategoryUpdateManyWithoutTradeCategoryNestedInput
+  workPackages?: Prisma.WorkPackageTradeCategoryUpdateManyWithoutTradeCategoryNestedInput
+  workItems?: Prisma.WorkItemUpdateManyWithoutTradeCategoryNestedInput
+  workTemplates?: Prisma.WorkTemplateUpdateManyWithoutTradeCategoryNestedInput
 }
 
 export type TradeCategoryUncheckedUpdateInput = {
@@ -262,6 +280,9 @@ export type TradeCategoryUncheckedUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   organizations?: Prisma.OrganizationTradeCategoryUncheckedUpdateManyWithoutTradeCategoryNestedInput
+  workPackages?: Prisma.WorkPackageTradeCategoryUncheckedUpdateManyWithoutTradeCategoryNestedInput
+  workItems?: Prisma.WorkItemUncheckedUpdateManyWithoutTradeCategoryNestedInput
+  workTemplates?: Prisma.WorkTemplateUncheckedUpdateManyWithoutTradeCategoryNestedInput
 }
 
 export type TradeCategoryCreateManyInput = {
@@ -317,6 +338,11 @@ export type TradeCategoryScalarRelationFilter = {
   isNot?: Prisma.TradeCategoryWhereInput
 }
 
+export type TradeCategoryNullableScalarRelationFilter = {
+  is?: Prisma.TradeCategoryWhereInput | null
+  isNot?: Prisma.TradeCategoryWhereInput | null
+}
+
 export type TradeCategoryCreateNestedOneWithoutOrganizationsInput = {
   create?: Prisma.XOR<Prisma.TradeCategoryCreateWithoutOrganizationsInput, Prisma.TradeCategoryUncheckedCreateWithoutOrganizationsInput>
   connectOrCreate?: Prisma.TradeCategoryCreateOrConnectWithoutOrganizationsInput
@@ -331,12 +357,61 @@ export type TradeCategoryUpdateOneRequiredWithoutOrganizationsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.TradeCategoryUpdateToOneWithWhereWithoutOrganizationsInput, Prisma.TradeCategoryUpdateWithoutOrganizationsInput>, Prisma.TradeCategoryUncheckedUpdateWithoutOrganizationsInput>
 }
 
+export type TradeCategoryCreateNestedOneWithoutWorkPackagesInput = {
+  create?: Prisma.XOR<Prisma.TradeCategoryCreateWithoutWorkPackagesInput, Prisma.TradeCategoryUncheckedCreateWithoutWorkPackagesInput>
+  connectOrCreate?: Prisma.TradeCategoryCreateOrConnectWithoutWorkPackagesInput
+  connect?: Prisma.TradeCategoryWhereUniqueInput
+}
+
+export type TradeCategoryUpdateOneRequiredWithoutWorkPackagesNestedInput = {
+  create?: Prisma.XOR<Prisma.TradeCategoryCreateWithoutWorkPackagesInput, Prisma.TradeCategoryUncheckedCreateWithoutWorkPackagesInput>
+  connectOrCreate?: Prisma.TradeCategoryCreateOrConnectWithoutWorkPackagesInput
+  upsert?: Prisma.TradeCategoryUpsertWithoutWorkPackagesInput
+  connect?: Prisma.TradeCategoryWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.TradeCategoryUpdateToOneWithWhereWithoutWorkPackagesInput, Prisma.TradeCategoryUpdateWithoutWorkPackagesInput>, Prisma.TradeCategoryUncheckedUpdateWithoutWorkPackagesInput>
+}
+
+export type TradeCategoryCreateNestedOneWithoutWorkItemsInput = {
+  create?: Prisma.XOR<Prisma.TradeCategoryCreateWithoutWorkItemsInput, Prisma.TradeCategoryUncheckedCreateWithoutWorkItemsInput>
+  connectOrCreate?: Prisma.TradeCategoryCreateOrConnectWithoutWorkItemsInput
+  connect?: Prisma.TradeCategoryWhereUniqueInput
+}
+
+export type TradeCategoryUpdateOneWithoutWorkItemsNestedInput = {
+  create?: Prisma.XOR<Prisma.TradeCategoryCreateWithoutWorkItemsInput, Prisma.TradeCategoryUncheckedCreateWithoutWorkItemsInput>
+  connectOrCreate?: Prisma.TradeCategoryCreateOrConnectWithoutWorkItemsInput
+  upsert?: Prisma.TradeCategoryUpsertWithoutWorkItemsInput
+  disconnect?: Prisma.TradeCategoryWhereInput | boolean
+  delete?: Prisma.TradeCategoryWhereInput | boolean
+  connect?: Prisma.TradeCategoryWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.TradeCategoryUpdateToOneWithWhereWithoutWorkItemsInput, Prisma.TradeCategoryUpdateWithoutWorkItemsInput>, Prisma.TradeCategoryUncheckedUpdateWithoutWorkItemsInput>
+}
+
+export type TradeCategoryCreateNestedOneWithoutWorkTemplatesInput = {
+  create?: Prisma.XOR<Prisma.TradeCategoryCreateWithoutWorkTemplatesInput, Prisma.TradeCategoryUncheckedCreateWithoutWorkTemplatesInput>
+  connectOrCreate?: Prisma.TradeCategoryCreateOrConnectWithoutWorkTemplatesInput
+  connect?: Prisma.TradeCategoryWhereUniqueInput
+}
+
+export type TradeCategoryUpdateOneWithoutWorkTemplatesNestedInput = {
+  create?: Prisma.XOR<Prisma.TradeCategoryCreateWithoutWorkTemplatesInput, Prisma.TradeCategoryUncheckedCreateWithoutWorkTemplatesInput>
+  connectOrCreate?: Prisma.TradeCategoryCreateOrConnectWithoutWorkTemplatesInput
+  upsert?: Prisma.TradeCategoryUpsertWithoutWorkTemplatesInput
+  disconnect?: Prisma.TradeCategoryWhereInput | boolean
+  delete?: Prisma.TradeCategoryWhereInput | boolean
+  connect?: Prisma.TradeCategoryWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.TradeCategoryUpdateToOneWithWhereWithoutWorkTemplatesInput, Prisma.TradeCategoryUpdateWithoutWorkTemplatesInput>, Prisma.TradeCategoryUncheckedUpdateWithoutWorkTemplatesInput>
+}
+
 export type TradeCategoryCreateWithoutOrganizationsInput = {
   id?: string
   code: string
   label: string
   createdAt?: Date | string
   updatedAt?: Date | string
+  workPackages?: Prisma.WorkPackageTradeCategoryCreateNestedManyWithoutTradeCategoryInput
+  workItems?: Prisma.WorkItemCreateNestedManyWithoutTradeCategoryInput
+  workTemplates?: Prisma.WorkTemplateCreateNestedManyWithoutTradeCategoryInput
 }
 
 export type TradeCategoryUncheckedCreateWithoutOrganizationsInput = {
@@ -345,6 +420,9 @@ export type TradeCategoryUncheckedCreateWithoutOrganizationsInput = {
   label: string
   createdAt?: Date | string
   updatedAt?: Date | string
+  workPackages?: Prisma.WorkPackageTradeCategoryUncheckedCreateNestedManyWithoutTradeCategoryInput
+  workItems?: Prisma.WorkItemUncheckedCreateNestedManyWithoutTradeCategoryInput
+  workTemplates?: Prisma.WorkTemplateUncheckedCreateNestedManyWithoutTradeCategoryInput
 }
 
 export type TradeCategoryCreateOrConnectWithoutOrganizationsInput = {
@@ -369,6 +447,9 @@ export type TradeCategoryUpdateWithoutOrganizationsInput = {
   label?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  workPackages?: Prisma.WorkPackageTradeCategoryUpdateManyWithoutTradeCategoryNestedInput
+  workItems?: Prisma.WorkItemUpdateManyWithoutTradeCategoryNestedInput
+  workTemplates?: Prisma.WorkTemplateUpdateManyWithoutTradeCategoryNestedInput
 }
 
 export type TradeCategoryUncheckedUpdateWithoutOrganizationsInput = {
@@ -377,6 +458,189 @@ export type TradeCategoryUncheckedUpdateWithoutOrganizationsInput = {
   label?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  workPackages?: Prisma.WorkPackageTradeCategoryUncheckedUpdateManyWithoutTradeCategoryNestedInput
+  workItems?: Prisma.WorkItemUncheckedUpdateManyWithoutTradeCategoryNestedInput
+  workTemplates?: Prisma.WorkTemplateUncheckedUpdateManyWithoutTradeCategoryNestedInput
+}
+
+export type TradeCategoryCreateWithoutWorkPackagesInput = {
+  id?: string
+  code: string
+  label: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  organizations?: Prisma.OrganizationTradeCategoryCreateNestedManyWithoutTradeCategoryInput
+  workItems?: Prisma.WorkItemCreateNestedManyWithoutTradeCategoryInput
+  workTemplates?: Prisma.WorkTemplateCreateNestedManyWithoutTradeCategoryInput
+}
+
+export type TradeCategoryUncheckedCreateWithoutWorkPackagesInput = {
+  id?: string
+  code: string
+  label: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  organizations?: Prisma.OrganizationTradeCategoryUncheckedCreateNestedManyWithoutTradeCategoryInput
+  workItems?: Prisma.WorkItemUncheckedCreateNestedManyWithoutTradeCategoryInput
+  workTemplates?: Prisma.WorkTemplateUncheckedCreateNestedManyWithoutTradeCategoryInput
+}
+
+export type TradeCategoryCreateOrConnectWithoutWorkPackagesInput = {
+  where: Prisma.TradeCategoryWhereUniqueInput
+  create: Prisma.XOR<Prisma.TradeCategoryCreateWithoutWorkPackagesInput, Prisma.TradeCategoryUncheckedCreateWithoutWorkPackagesInput>
+}
+
+export type TradeCategoryUpsertWithoutWorkPackagesInput = {
+  update: Prisma.XOR<Prisma.TradeCategoryUpdateWithoutWorkPackagesInput, Prisma.TradeCategoryUncheckedUpdateWithoutWorkPackagesInput>
+  create: Prisma.XOR<Prisma.TradeCategoryCreateWithoutWorkPackagesInput, Prisma.TradeCategoryUncheckedCreateWithoutWorkPackagesInput>
+  where?: Prisma.TradeCategoryWhereInput
+}
+
+export type TradeCategoryUpdateToOneWithWhereWithoutWorkPackagesInput = {
+  where?: Prisma.TradeCategoryWhereInput
+  data: Prisma.XOR<Prisma.TradeCategoryUpdateWithoutWorkPackagesInput, Prisma.TradeCategoryUncheckedUpdateWithoutWorkPackagesInput>
+}
+
+export type TradeCategoryUpdateWithoutWorkPackagesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  label?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  organizations?: Prisma.OrganizationTradeCategoryUpdateManyWithoutTradeCategoryNestedInput
+  workItems?: Prisma.WorkItemUpdateManyWithoutTradeCategoryNestedInput
+  workTemplates?: Prisma.WorkTemplateUpdateManyWithoutTradeCategoryNestedInput
+}
+
+export type TradeCategoryUncheckedUpdateWithoutWorkPackagesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  label?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  organizations?: Prisma.OrganizationTradeCategoryUncheckedUpdateManyWithoutTradeCategoryNestedInput
+  workItems?: Prisma.WorkItemUncheckedUpdateManyWithoutTradeCategoryNestedInput
+  workTemplates?: Prisma.WorkTemplateUncheckedUpdateManyWithoutTradeCategoryNestedInput
+}
+
+export type TradeCategoryCreateWithoutWorkItemsInput = {
+  id?: string
+  code: string
+  label: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  organizations?: Prisma.OrganizationTradeCategoryCreateNestedManyWithoutTradeCategoryInput
+  workPackages?: Prisma.WorkPackageTradeCategoryCreateNestedManyWithoutTradeCategoryInput
+  workTemplates?: Prisma.WorkTemplateCreateNestedManyWithoutTradeCategoryInput
+}
+
+export type TradeCategoryUncheckedCreateWithoutWorkItemsInput = {
+  id?: string
+  code: string
+  label: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  organizations?: Prisma.OrganizationTradeCategoryUncheckedCreateNestedManyWithoutTradeCategoryInput
+  workPackages?: Prisma.WorkPackageTradeCategoryUncheckedCreateNestedManyWithoutTradeCategoryInput
+  workTemplates?: Prisma.WorkTemplateUncheckedCreateNestedManyWithoutTradeCategoryInput
+}
+
+export type TradeCategoryCreateOrConnectWithoutWorkItemsInput = {
+  where: Prisma.TradeCategoryWhereUniqueInput
+  create: Prisma.XOR<Prisma.TradeCategoryCreateWithoutWorkItemsInput, Prisma.TradeCategoryUncheckedCreateWithoutWorkItemsInput>
+}
+
+export type TradeCategoryUpsertWithoutWorkItemsInput = {
+  update: Prisma.XOR<Prisma.TradeCategoryUpdateWithoutWorkItemsInput, Prisma.TradeCategoryUncheckedUpdateWithoutWorkItemsInput>
+  create: Prisma.XOR<Prisma.TradeCategoryCreateWithoutWorkItemsInput, Prisma.TradeCategoryUncheckedCreateWithoutWorkItemsInput>
+  where?: Prisma.TradeCategoryWhereInput
+}
+
+export type TradeCategoryUpdateToOneWithWhereWithoutWorkItemsInput = {
+  where?: Prisma.TradeCategoryWhereInput
+  data: Prisma.XOR<Prisma.TradeCategoryUpdateWithoutWorkItemsInput, Prisma.TradeCategoryUncheckedUpdateWithoutWorkItemsInput>
+}
+
+export type TradeCategoryUpdateWithoutWorkItemsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  label?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  organizations?: Prisma.OrganizationTradeCategoryUpdateManyWithoutTradeCategoryNestedInput
+  workPackages?: Prisma.WorkPackageTradeCategoryUpdateManyWithoutTradeCategoryNestedInput
+  workTemplates?: Prisma.WorkTemplateUpdateManyWithoutTradeCategoryNestedInput
+}
+
+export type TradeCategoryUncheckedUpdateWithoutWorkItemsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  label?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  organizations?: Prisma.OrganizationTradeCategoryUncheckedUpdateManyWithoutTradeCategoryNestedInput
+  workPackages?: Prisma.WorkPackageTradeCategoryUncheckedUpdateManyWithoutTradeCategoryNestedInput
+  workTemplates?: Prisma.WorkTemplateUncheckedUpdateManyWithoutTradeCategoryNestedInput
+}
+
+export type TradeCategoryCreateWithoutWorkTemplatesInput = {
+  id?: string
+  code: string
+  label: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  organizations?: Prisma.OrganizationTradeCategoryCreateNestedManyWithoutTradeCategoryInput
+  workPackages?: Prisma.WorkPackageTradeCategoryCreateNestedManyWithoutTradeCategoryInput
+  workItems?: Prisma.WorkItemCreateNestedManyWithoutTradeCategoryInput
+}
+
+export type TradeCategoryUncheckedCreateWithoutWorkTemplatesInput = {
+  id?: string
+  code: string
+  label: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  organizations?: Prisma.OrganizationTradeCategoryUncheckedCreateNestedManyWithoutTradeCategoryInput
+  workPackages?: Prisma.WorkPackageTradeCategoryUncheckedCreateNestedManyWithoutTradeCategoryInput
+  workItems?: Prisma.WorkItemUncheckedCreateNestedManyWithoutTradeCategoryInput
+}
+
+export type TradeCategoryCreateOrConnectWithoutWorkTemplatesInput = {
+  where: Prisma.TradeCategoryWhereUniqueInput
+  create: Prisma.XOR<Prisma.TradeCategoryCreateWithoutWorkTemplatesInput, Prisma.TradeCategoryUncheckedCreateWithoutWorkTemplatesInput>
+}
+
+export type TradeCategoryUpsertWithoutWorkTemplatesInput = {
+  update: Prisma.XOR<Prisma.TradeCategoryUpdateWithoutWorkTemplatesInput, Prisma.TradeCategoryUncheckedUpdateWithoutWorkTemplatesInput>
+  create: Prisma.XOR<Prisma.TradeCategoryCreateWithoutWorkTemplatesInput, Prisma.TradeCategoryUncheckedCreateWithoutWorkTemplatesInput>
+  where?: Prisma.TradeCategoryWhereInput
+}
+
+export type TradeCategoryUpdateToOneWithWhereWithoutWorkTemplatesInput = {
+  where?: Prisma.TradeCategoryWhereInput
+  data: Prisma.XOR<Prisma.TradeCategoryUpdateWithoutWorkTemplatesInput, Prisma.TradeCategoryUncheckedUpdateWithoutWorkTemplatesInput>
+}
+
+export type TradeCategoryUpdateWithoutWorkTemplatesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  label?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  organizations?: Prisma.OrganizationTradeCategoryUpdateManyWithoutTradeCategoryNestedInput
+  workPackages?: Prisma.WorkPackageTradeCategoryUpdateManyWithoutTradeCategoryNestedInput
+  workItems?: Prisma.WorkItemUpdateManyWithoutTradeCategoryNestedInput
+}
+
+export type TradeCategoryUncheckedUpdateWithoutWorkTemplatesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  label?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  organizations?: Prisma.OrganizationTradeCategoryUncheckedUpdateManyWithoutTradeCategoryNestedInput
+  workPackages?: Prisma.WorkPackageTradeCategoryUncheckedUpdateManyWithoutTradeCategoryNestedInput
+  workItems?: Prisma.WorkItemUncheckedUpdateManyWithoutTradeCategoryNestedInput
 }
 
 
@@ -386,10 +650,16 @@ export type TradeCategoryUncheckedUpdateWithoutOrganizationsInput = {
 
 export type TradeCategoryCountOutputType = {
   organizations: number
+  workPackages: number
+  workItems: number
+  workTemplates: number
 }
 
 export type TradeCategoryCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   organizations?: boolean | TradeCategoryCountOutputTypeCountOrganizationsArgs
+  workPackages?: boolean | TradeCategoryCountOutputTypeCountWorkPackagesArgs
+  workItems?: boolean | TradeCategoryCountOutputTypeCountWorkItemsArgs
+  workTemplates?: boolean | TradeCategoryCountOutputTypeCountWorkTemplatesArgs
 }
 
 /**
@@ -409,6 +679,27 @@ export type TradeCategoryCountOutputTypeCountOrganizationsArgs<ExtArgs extends r
   where?: Prisma.OrganizationTradeCategoryWhereInput
 }
 
+/**
+ * TradeCategoryCountOutputType without action
+ */
+export type TradeCategoryCountOutputTypeCountWorkPackagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.WorkPackageTradeCategoryWhereInput
+}
+
+/**
+ * TradeCategoryCountOutputType without action
+ */
+export type TradeCategoryCountOutputTypeCountWorkItemsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.WorkItemWhereInput
+}
+
+/**
+ * TradeCategoryCountOutputType without action
+ */
+export type TradeCategoryCountOutputTypeCountWorkTemplatesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.WorkTemplateWhereInput
+}
+
 
 export type TradeCategorySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -417,6 +708,9 @@ export type TradeCategorySelect<ExtArgs extends runtime.Types.Extensions.Interna
   createdAt?: boolean
   updatedAt?: boolean
   organizations?: boolean | Prisma.TradeCategory$organizationsArgs<ExtArgs>
+  workPackages?: boolean | Prisma.TradeCategory$workPackagesArgs<ExtArgs>
+  workItems?: boolean | Prisma.TradeCategory$workItemsArgs<ExtArgs>
+  workTemplates?: boolean | Prisma.TradeCategory$workTemplatesArgs<ExtArgs>
   _count?: boolean | Prisma.TradeCategoryCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["tradeCategory"]>
 
@@ -447,6 +741,9 @@ export type TradeCategorySelectScalar = {
 export type TradeCategoryOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "code" | "label" | "createdAt" | "updatedAt", ExtArgs["result"]["tradeCategory"]>
 export type TradeCategoryInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   organizations?: boolean | Prisma.TradeCategory$organizationsArgs<ExtArgs>
+  workPackages?: boolean | Prisma.TradeCategory$workPackagesArgs<ExtArgs>
+  workItems?: boolean | Prisma.TradeCategory$workItemsArgs<ExtArgs>
+  workTemplates?: boolean | Prisma.TradeCategory$workTemplatesArgs<ExtArgs>
   _count?: boolean | Prisma.TradeCategoryCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type TradeCategoryIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -456,6 +753,9 @@ export type $TradeCategoryPayload<ExtArgs extends runtime.Types.Extensions.Inter
   name: "TradeCategory"
   objects: {
     organizations: Prisma.$OrganizationTradeCategoryPayload<ExtArgs>[]
+    workPackages: Prisma.$WorkPackageTradeCategoryPayload<ExtArgs>[]
+    workItems: Prisma.$WorkItemPayload<ExtArgs>[]
+    workTemplates: Prisma.$WorkTemplatePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -858,6 +1158,9 @@ readonly fields: TradeCategoryFieldRefs;
 export interface Prisma__TradeCategoryClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   organizations<T extends Prisma.TradeCategory$organizationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.TradeCategory$organizationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OrganizationTradeCategoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  workPackages<T extends Prisma.TradeCategory$workPackagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.TradeCategory$workPackagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WorkPackageTradeCategoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  workItems<T extends Prisma.TradeCategory$workItemsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.TradeCategory$workItemsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WorkItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  workTemplates<T extends Prisma.TradeCategory$workTemplatesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.TradeCategory$workTemplatesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WorkTemplatePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1306,6 +1609,78 @@ export type TradeCategory$organizationsArgs<ExtArgs extends runtime.Types.Extens
   take?: number
   skip?: number
   distinct?: Prisma.OrganizationTradeCategoryScalarFieldEnum | Prisma.OrganizationTradeCategoryScalarFieldEnum[]
+}
+
+/**
+ * TradeCategory.workPackages
+ */
+export type TradeCategory$workPackagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the WorkPackageTradeCategory
+   */
+  select?: Prisma.WorkPackageTradeCategorySelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the WorkPackageTradeCategory
+   */
+  omit?: Prisma.WorkPackageTradeCategoryOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.WorkPackageTradeCategoryInclude<ExtArgs> | null
+  where?: Prisma.WorkPackageTradeCategoryWhereInput
+  orderBy?: Prisma.WorkPackageTradeCategoryOrderByWithRelationInput | Prisma.WorkPackageTradeCategoryOrderByWithRelationInput[]
+  cursor?: Prisma.WorkPackageTradeCategoryWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.WorkPackageTradeCategoryScalarFieldEnum | Prisma.WorkPackageTradeCategoryScalarFieldEnum[]
+}
+
+/**
+ * TradeCategory.workItems
+ */
+export type TradeCategory$workItemsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the WorkItem
+   */
+  select?: Prisma.WorkItemSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the WorkItem
+   */
+  omit?: Prisma.WorkItemOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.WorkItemInclude<ExtArgs> | null
+  where?: Prisma.WorkItemWhereInput
+  orderBy?: Prisma.WorkItemOrderByWithRelationInput | Prisma.WorkItemOrderByWithRelationInput[]
+  cursor?: Prisma.WorkItemWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.WorkItemScalarFieldEnum | Prisma.WorkItemScalarFieldEnum[]
+}
+
+/**
+ * TradeCategory.workTemplates
+ */
+export type TradeCategory$workTemplatesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the WorkTemplate
+   */
+  select?: Prisma.WorkTemplateSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the WorkTemplate
+   */
+  omit?: Prisma.WorkTemplateOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.WorkTemplateInclude<ExtArgs> | null
+  where?: Prisma.WorkTemplateWhereInput
+  orderBy?: Prisma.WorkTemplateOrderByWithRelationInput | Prisma.WorkTemplateOrderByWithRelationInput[]
+  cursor?: Prisma.WorkTemplateWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.WorkTemplateScalarFieldEnum | Prisma.WorkTemplateScalarFieldEnum[]
 }
 
 /**

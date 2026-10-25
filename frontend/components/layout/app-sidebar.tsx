@@ -31,6 +31,7 @@ import {
 } from "@/components/ui/sidebar";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import {
+    ArrowLeft,
     BookOpen,
     Building2,
     ChevronRight,
@@ -41,12 +42,14 @@ import {
     Home,
     LogOut,
     Megaphone,
+    Pencil,
     Plus,
     TrendingUp,
     User,
     Users,
 } from "lucide-react";
 import type { OrgInfo } from "@/lib/actions/organization";
+import { useActiveProject } from "@/lib/context/active-project";
 
 type UserInfo = {
     id: string;
@@ -61,18 +64,30 @@ const ORG_KIND_LABELS: Record<string, string> = {
     INDIVIDUAL_CLIENT: "Particulier",
 };
 
+function getProjectNavItems(orgSlug: string, projectSlug: string) {
+    const base = `/${orgSlug}/projects/${projectSlug}`;
+    return [
+        { label: "Accueil", href: base, icon: Home, exact: true },
+        { label: "Éditeurs", href: `${base}/editors`, icon: Pencil, exact: false },
+        { label: "Membres", href: `${base}/members`, icon: Users, exact: false },
+        { label: "Documents", href: `${base}/documents`, icon: FileText, exact: false },
+        { label: "Économie", href: `${base}/economics`, icon: TrendingUp, exact: false },
+    ];
+}
+
 export default function AppSidebar({ user, orgs }: { user: UserInfo; orgs: OrgInfo[] }) {
     const pathname = usePathname();
     const params = useParams();
     const router = useRouter();
     const { setOpenMobile } = useSidebar();
+    const { activeProject } = useActiveProject();
 
     useEffect(() => {
         setOpenMobile(false);
     }, [pathname, setOpenMobile]);
 
-    const currentOrgId = typeof params.orgId === "string" ? params.orgId : null;
-    const currentOrg = orgs.find((o) => o.orgId === currentOrgId) ?? orgs[0] ?? null;
+    const currentOrgSlug = typeof params.orgSlug === "string" ? params.orgSlug : null;
+    const currentOrg = orgs.find((o) => o.orgSlug === currentOrgSlug) ?? orgs[0] ?? null;
 
     async function handleSignOut() {
         await authClient.signOut();
@@ -94,8 +109,18 @@ export default function AppSidebar({ user, orgs }: { user: UserInfo; orgs: OrgIn
                                     size="lg"
                                     className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
                                 >
-                                    <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground shrink-0">
-                                        <Building2 className="size-4" />
+                                    <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-subtle border border-border shrink-0 overflow-hidden">
+                                        {currentOrg?.orgLogoUrl ? (
+                                            <img
+                                                src={currentOrg.orgLogoUrl}
+                                                alt={currentOrg.orgName}
+                                                className="h-full w-full object-cover"
+                                            />
+                                        ) : (
+                                            <span className="text-sm font-semibold text-foreground select-none">
+                                                {(currentOrg?.orgName ?? "B").charAt(0).toUpperCase()}
+                                            </span>
+                                        )}
                                     </div>
                                     <div className="grid flex-1 text-left text-sm leading-tight">
                                         <span className="truncate font-semibold">
@@ -122,13 +147,23 @@ export default function AppSidebar({ user, orgs }: { user: UserInfo; orgs: OrgIn
                                 </DropdownMenuLabel>
                                 {orgs.map((org) => (
                                     <DropdownMenuItem
-                                        key={org.orgId}
+                                        key={org.orgSlug}
                                         asChild
                                         className="cursor-pointer"
                                     >
-                                        <Link href={`/${org.orgId}`}>
-                                            <div className="flex size-6 items-center justify-center rounded-md border bg-subtle shrink-0">
-                                                <Building2 className="size-3.5 text-muted-foreground" />
+                                        <Link href={`/${org.orgSlug}`}>
+                                            <div className="flex size-6 items-center justify-center rounded-md border bg-subtle shrink-0 overflow-hidden">
+                                                {org.orgLogoUrl ? (
+                                                    <img
+                                                        src={org.orgLogoUrl}
+                                                        alt={org.orgName}
+                                                        className="h-full w-full object-cover"
+                                                    />
+                                                ) : (
+                                                    <span className="text-xs font-semibold text-muted-foreground select-none">
+                                                        {org.orgName.charAt(0).toUpperCase()}
+                                                    </span>
+                                                )}
                                             </div>
                                             <div className="grid flex-1 text-sm leading-tight">
                                                 <span className="truncate font-medium">{org.orgName}</span>
@@ -136,7 +171,7 @@ export default function AppSidebar({ user, orgs }: { user: UserInfo; orgs: OrgIn
                                                     {ORG_KIND_LABELS[org.orgKind] ?? org.orgKind}
                                                 </span>
                                             </div>
-                                            {org.orgId === currentOrg?.orgId && (
+                                            {org.orgSlug === currentOrg?.orgSlug && (
                                                 <span className="ml-auto text-xs text-muted-foreground">●</span>
                                             )}
                                         </Link>
@@ -144,7 +179,7 @@ export default function AppSidebar({ user, orgs }: { user: UserInfo; orgs: OrgIn
                                 ))}
                                 <DropdownMenuSeparator />
                                 <DropdownMenuItem asChild className="cursor-pointer">
-                                    <Link href={currentOrg ? `/${currentOrg.orgId}/new-organization` : "/onboarding"}>
+                                    <Link href={currentOrg ? `/${currentOrg.orgSlug}/new-organization` : "/onboarding"}>
                                         <Plus className="size-4 mr-2" />
                                         Nouvelle organisation
                                     </Link>
@@ -159,175 +194,221 @@ export default function AppSidebar({ user, orgs }: { user: UserInfo; orgs: OrgIn
             <SidebarContent>
                 {currentOrg && (
                     <>
-                        {/* Section Navigation */}
-                        <SidebarGroup>
-                            <SidebarGroupLabel>Navigation</SidebarGroupLabel>
-                            <SidebarGroupContent>
-                                <SidebarMenu>
-                                    <SidebarMenuItem>
-                                        <SidebarMenuButton
-                                            asChild
-                                            isActive={pathname === `/${currentOrg.orgId}`}
-                                        >
-                                            <Link href={`/${currentOrg.orgId}`}>
-                                                <Home />
-                                                <span>Accueil</span>
-                                            </Link>
-                                        </SidebarMenuButton>
-                                    </SidebarMenuItem>
-
-                                    <SidebarMenuItem>
-                                        <SidebarMenuButton
-                                            asChild
-                                            isActive={pathname.startsWith(`/${currentOrg.orgId}/projects`)}
-                                        >
-                                            <Link href={`/${currentOrg.orgId}/projects`}>
-                                                <FolderOpen />
-                                                <span>Projets</span>
-                                            </Link>
-                                        </SidebarMenuButton>
-                                    </SidebarMenuItem>
-
-                                    <SidebarMenuItem>
-                                        <SidebarMenuButton
-                                            asChild
-                                            isActive={pathname.startsWith(`/${currentOrg.orgId}/economy`)}
-                                        >
-                                            <Link href={`/${currentOrg.orgId}/economy`}>
-                                                <TrendingUp />
-                                                <span>Économie</span>
-                                            </Link>
-                                        </SidebarMenuButton>
-                                    </SidebarMenuItem>
-
-                                    <SidebarMenuItem>
-                                        <SidebarMenuButton
-                                            asChild
-                                            isActive={pathname.startsWith(`/${currentOrg.orgId}/documents`)}
-                                        >
-                                            <Link href={`/${currentOrg.orgId}/documents`}>
-                                                <FileText />
-                                                <span>Documents</span>
-                                            </Link>
-                                        </SidebarMenuButton>
-                                    </SidebarMenuItem>
-
-                                    <SidebarMenuItem>
-                                        <SidebarMenuButton
-                                            asChild
-                                            isActive={pathname.startsWith(`/${currentOrg.orgId}/library`)}
-                                        >
-                                            <Link href={`/${currentOrg.orgId}/library`}>
-                                                <BookOpen />
-                                                <span>Bibliothèque</span>
-                                            </Link>
-                                        </SidebarMenuButton>
-                                    </SidebarMenuItem>
-
-                                    {currentOrg.orgKind === "BUILDING_COMPANY" && (
-                                        <SidebarMenuItem>
-                                            <SidebarMenuButton
-                                                asChild
-                                                isActive={pathname.startsWith(`/${currentOrg.orgId}/tenders`)}
-                                            >
-                                                <Link href={`/${currentOrg.orgId}/tenders`}>
-                                                    <Megaphone />
-                                                    <span>Appels à projet</span>
-                                                </Link>
-                                            </SidebarMenuButton>
-                                        </SidebarMenuItem>
-                                    )}
-                                </SidebarMenu>
-                            </SidebarGroupContent>
-                        </SidebarGroup>
-
-                        {/* Section Mon espace */}
-                        <SidebarGroup>
-                            <SidebarGroupLabel>Mon espace</SidebarGroupLabel>
-                            <SidebarGroupContent>
-                                <SidebarMenu>
-                                    <SidebarMenuItem>
-                                        <SidebarMenuButton
-                                            asChild
-                                            isActive={pathname === `/${currentOrg?.orgId}/my-account`}
-                                        >
-                                            <Link href={`/${currentOrg?.orgId}/my-account`}>
-                                                <User />
-                                                <span>Mon profil</span>
-                                            </Link>
-                                        </SidebarMenuButton>
-                                    </SidebarMenuItem>
-
-                                    <Collapsible
-                                        asChild
-                                        defaultOpen={isMyOrgActive}
-                                        className="group/collapsible"
-                                    >
-                                        <SidebarMenuItem>
-                                            <CollapsibleTrigger asChild>
-                                                <SidebarMenuButton
-                                                    isActive={isMyOrgActive}
-                                                    onClick={() =>
-                                                        router.push(
-                                                            `/${currentOrg.orgId}/my-organization/presentation`
-                                                        )
-                                                    }
-                                                >
-                                                    <Building2 />
-                                                    <span>Mon entreprise</span>
-                                                    <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                        {activeProject ? (
+                            /* ── Mode projet ──────────────────── */
+                            <>
+                                <SidebarGroup>
+                                    <SidebarGroupContent>
+                                        <SidebarMenu>
+                                            <SidebarMenuItem>
+                                                <SidebarMenuButton asChild>
+                                                    <Link href={`/${currentOrg.orgSlug}/projects`}>
+                                                        <ArrowLeft />
+                                                        <span>Projets</span>
+                                                    </Link>
                                                 </SidebarMenuButton>
-                                            </CollapsibleTrigger>
-                                            <CollapsibleContent>
-                                                <SidebarMenuSub>
-                                                    <SidebarMenuSubItem>
-                                                        <SidebarMenuSubButton
-                                                            asChild
-                                                            isActive={pathname.startsWith(
-                                                                `/${currentOrg.orgId}/my-organization/presentation`
-                                                            )}
-                                                        >
-                                                            <Link href={`/${currentOrg.orgId}/my-organization/presentation`}>
-                                                                <FileText className="size-3.5" />
-                                                                Présentation
+                                            </SidebarMenuItem>
+                                        </SidebarMenu>
+                                    </SidebarGroupContent>
+                                </SidebarGroup>
+
+                                <SidebarGroup>
+                                    <SidebarGroupLabel className="truncate">
+                                        {activeProject.name}
+                                    </SidebarGroupLabel>
+                                    <SidebarGroupContent>
+                                        <SidebarMenu>
+                                            {getProjectNavItems(currentOrg.orgSlug, activeProject.slug).map((item) => {
+                                                const isActive = item.exact
+                                                    ? pathname === item.href
+                                                    : pathname === item.href || pathname.startsWith(item.href + "/");
+                                                return (
+                                                    <SidebarMenuItem key={item.href}>
+                                                        <SidebarMenuButton asChild isActive={isActive}>
+                                                            <Link href={item.href}>
+                                                                <item.icon />
+                                                                <span>{item.label}</span>
                                                             </Link>
-                                                        </SidebarMenuSubButton>
-                                                    </SidebarMenuSubItem>
-                                                    <SidebarMenuSubItem>
-                                                        <SidebarMenuSubButton
-                                                            asChild
-                                                            isActive={pathname.startsWith(
-                                                                `/${currentOrg.orgId}/my-organization/members`
-                                                            )}
+                                                        </SidebarMenuButton>
+                                                    </SidebarMenuItem>
+                                                );
+                                            })}
+                                        </SidebarMenu>
+                                    </SidebarGroupContent>
+                                </SidebarGroup>
+                            </>
+                        ) : (
+                            /* ── Mode global ──────────────────── */
+                            <>
+                                <SidebarGroup>
+                                    <SidebarGroupLabel>Navigation</SidebarGroupLabel>
+                                    <SidebarGroupContent>
+                                        <SidebarMenu>
+                                            <SidebarMenuItem>
+                                                <SidebarMenuButton
+                                                    asChild
+                                                    isActive={pathname === `/${currentOrg.orgSlug}`}
+                                                >
+                                                    <Link href={`/${currentOrg.orgSlug}`}>
+                                                        <Home />
+                                                        <span>Accueil</span>
+                                                    </Link>
+                                                </SidebarMenuButton>
+                                            </SidebarMenuItem>
+
+                                            <SidebarMenuItem>
+                                                <SidebarMenuButton
+                                                    asChild
+                                                    isActive={pathname.startsWith(`/${currentOrg.orgSlug}/projects`)}
+                                                >
+                                                    <Link href={`/${currentOrg.orgSlug}/projects`}>
+                                                        <FolderOpen />
+                                                        <span>Projets</span>
+                                                    </Link>
+                                                </SidebarMenuButton>
+                                            </SidebarMenuItem>
+
+                                            <SidebarMenuItem>
+                                                <SidebarMenuButton
+                                                    asChild
+                                                    isActive={pathname.startsWith(`/${currentOrg.orgSlug}/economy`)}
+                                                >
+                                                    <Link href={`/${currentOrg.orgSlug}/economy`}>
+                                                        <TrendingUp />
+                                                        <span>Économie</span>
+                                                    </Link>
+                                                </SidebarMenuButton>
+                                            </SidebarMenuItem>
+
+                                            <SidebarMenuItem>
+                                                <SidebarMenuButton
+                                                    asChild
+                                                    isActive={pathname.startsWith(`/${currentOrg.orgSlug}/documents`)}
+                                                >
+                                                    <Link href={`/${currentOrg.orgSlug}/documents`}>
+                                                        <FileText />
+                                                        <span>Documents</span>
+                                                    </Link>
+                                                </SidebarMenuButton>
+                                            </SidebarMenuItem>
+
+                                            <SidebarMenuItem>
+                                                <SidebarMenuButton
+                                                    asChild
+                                                    isActive={pathname.startsWith(`/${currentOrg.orgSlug}/library`)}
+                                                >
+                                                    <Link href={`/${currentOrg.orgSlug}/library`}>
+                                                        <BookOpen />
+                                                        <span>Bibliothèque</span>
+                                                    </Link>
+                                                </SidebarMenuButton>
+                                            </SidebarMenuItem>
+
+                                            {currentOrg.orgKind === "BUILDING_COMPANY" && (
+                                                <SidebarMenuItem>
+                                                    <SidebarMenuButton
+                                                        asChild
+                                                        isActive={pathname.startsWith(`/${currentOrg.orgSlug}/tenders`)}
+                                                    >
+                                                        <Link href={`/${currentOrg.orgSlug}/tenders`}>
+                                                            <Megaphone />
+                                                            <span>Appels à projet</span>
+                                                        </Link>
+                                                    </SidebarMenuButton>
+                                                </SidebarMenuItem>
+                                            )}
+                                        </SidebarMenu>
+                                    </SidebarGroupContent>
+                                </SidebarGroup>
+
+                                <SidebarGroup>
+                                    <SidebarGroupLabel>Mon espace</SidebarGroupLabel>
+                                    <SidebarGroupContent>
+                                        <SidebarMenu>
+                                            <SidebarMenuItem>
+                                                <SidebarMenuButton
+                                                    asChild
+                                                    isActive={pathname === `/${currentOrg?.orgSlug}/my-account`}
+                                                >
+                                                    <Link href={`/${currentOrg?.orgSlug}/my-account`}>
+                                                        <User />
+                                                        <span>Mon profil</span>
+                                                    </Link>
+                                                </SidebarMenuButton>
+                                            </SidebarMenuItem>
+
+                                            <Collapsible
+                                                asChild
+                                                defaultOpen={isMyOrgActive}
+                                                className="group/collapsible"
+                                            >
+                                                <SidebarMenuItem>
+                                                    <CollapsibleTrigger asChild>
+                                                        <SidebarMenuButton
+                                                            isActive={isMyOrgActive}
+                                                            onClick={() =>
+                                                                router.push(
+                                                                    `/${currentOrg.orgSlug}/my-organization/presentation`
+                                                                )
+                                                            }
                                                         >
-                                                            <Link href={`/${currentOrg.orgId}/my-organization/members`}>
-                                                                <Users className="size-3.5" />
-                                                                Membres
-                                                            </Link>
-                                                        </SidebarMenuSubButton>
-                                                    </SidebarMenuSubItem>
-                                                    {currentOrg.orgKind === "BUILDING_COMPANY" && (
-                                                        <SidebarMenuSubItem>
-                                                            <SidebarMenuSubButton
-                                                                asChild
-                                                                isActive={pathname.startsWith(
-                                                                    `/${currentOrg.orgId}/my-organization/billing`
-                                                                )}
-                                                            >
-                                                                <Link href={`/${currentOrg.orgId}/my-organization/billing`}>
-                                                                    <CreditCard className="size-3.5" />
-                                                                    Facturation
-                                                                </Link>
-                                                            </SidebarMenuSubButton>
-                                                        </SidebarMenuSubItem>
-                                                    )}
-                                                </SidebarMenuSub>
-                                            </CollapsibleContent>
-                                        </SidebarMenuItem>
-                                    </Collapsible>
-                                </SidebarMenu>
-                            </SidebarGroupContent>
-                        </SidebarGroup>
+                                                            <Building2 />
+                                                            <span>Mon entreprise</span>
+                                                            <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                                                        </SidebarMenuButton>
+                                                    </CollapsibleTrigger>
+                                                    <CollapsibleContent>
+                                                        <SidebarMenuSub>
+                                                            <SidebarMenuSubItem>
+                                                                <SidebarMenuSubButton
+                                                                    asChild
+                                                                    isActive={pathname.startsWith(
+                                                                        `/${currentOrg.orgSlug}/my-organization/presentation`
+                                                                    )}
+                                                                >
+                                                                    <Link href={`/${currentOrg.orgSlug}/my-organization/presentation`}>
+                                                                        <FileText className="size-3.5" />
+                                                                        Présentation
+                                                                    </Link>
+                                                                </SidebarMenuSubButton>
+                                                            </SidebarMenuSubItem>
+                                                            <SidebarMenuSubItem>
+                                                                <SidebarMenuSubButton
+                                                                    asChild
+                                                                    isActive={pathname.startsWith(
+                                                                        `/${currentOrg.orgSlug}/my-organization/members`
+                                                                    )}
+                                                                >
+                                                                    <Link href={`/${currentOrg.orgSlug}/my-organization/members`}>
+                                                                        <Users className="size-3.5" />
+                                                                        Membres
+                                                                    </Link>
+                                                                </SidebarMenuSubButton>
+                                                            </SidebarMenuSubItem>
+                                                            {currentOrg.orgKind === "BUILDING_COMPANY" && (
+                                                                <SidebarMenuSubItem>
+                                                                    <SidebarMenuSubButton
+                                                                        asChild
+                                                                        isActive={pathname.startsWith(
+                                                                            `/${currentOrg.orgSlug}/my-organization/billing`
+                                                                        )}
+                                                                    >
+                                                                        <Link href={`/${currentOrg.orgSlug}/my-organization/billing`}>
+                                                                            <CreditCard className="size-3.5" />
+                                                                            Facturation
+                                                                        </Link>
+                                                                    </SidebarMenuSubButton>
+                                                                </SidebarMenuSubItem>
+                                                            )}
+                                                        </SidebarMenuSub>
+                                                    </CollapsibleContent>
+                                                </SidebarMenuItem>
+                                            </Collapsible>
+                                        </SidebarMenu>
+                                    </SidebarGroupContent>
+                                </SidebarGroup>
+                            </>
+                        )}
                     </>
                 )}
             </SidebarContent>
@@ -342,9 +423,9 @@ export default function AppSidebar({ user, orgs }: { user: UserInfo; orgs: OrgIn
                                     size="lg"
                                     className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
                                 >
-                                    <Avatar className="h-8 w-8 rounded-lg shrink-0">
+                                    <Avatar className="h-8 w-8 rounded-full shrink-0">
                                         <AvatarImage src={user.image ?? undefined} alt={user.name} />
-                                        <AvatarFallback className="rounded-lg bg-muted">
+                                        <AvatarFallback className="rounded-full bg-muted">
                                             <User className="h-4 w-4 text-muted-foreground" />
                                         </AvatarFallback>
                                     </Avatar>
@@ -362,7 +443,7 @@ export default function AppSidebar({ user, orgs }: { user: UserInfo; orgs: OrgIn
                                 sideOffset={4}
                             >
                                 <DropdownMenuItem asChild>
-                                    <Link href={`/${currentOrg?.orgId}/my-account`} className="cursor-pointer">
+                                    <Link href={`/${currentOrg?.orgSlug}/my-account`} className="cursor-pointer">
                                         <User className="mr-2 h-4 w-4" />
                                         Mon profil
                                     </Link>

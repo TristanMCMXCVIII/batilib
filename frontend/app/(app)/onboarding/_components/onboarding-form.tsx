@@ -72,8 +72,8 @@ export default function OnboardingForm({
         setLoading(true);
         setError(null);
         try {
-            const { orgId } = await createOrganization({ kind, name, siret: siretValue });
-            router.push(`/${orgId}`);
+            const { orgSlug } = await createOrganization({ kind, name, siret: siretValue });
+            router.push(`/${orgSlug}`);
         } catch {
             setError("Une erreur est survenue. Veuillez réessayer.");
             setLoading(false);

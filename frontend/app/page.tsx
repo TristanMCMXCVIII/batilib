@@ -1,7 +1,7 @@
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { getUserPrimaryOrgId } from "@/lib/actions/organization";
+import { getUserPrimaryOrgSlug } from "@/lib/actions/organization";
 
 export default async function RootPage() {
     const session = await auth.api.getSession({ headers: await headers() });
@@ -11,7 +11,7 @@ export default async function RootPage() {
         redirect(`/verify-email?email=${encodeURIComponent(session.user.email)}`);
     }
 
-    const orgId = await getUserPrimaryOrgId();
-    if (!orgId) redirect("/onboarding");
-    redirect(`/${orgId}`);
+    const orgSlug = await getUserPrimaryOrgSlug();
+    if (!orgSlug) redirect("/onboarding");
+    redirect(`/${orgSlug}`);
 }

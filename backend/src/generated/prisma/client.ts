@@ -82,6 +82,51 @@ export type TradeCategory = Prisma.TradeCategoryModel
  */
 export type OrganizationTradeCategory = Prisma.OrganizationTradeCategoryModel
 /**
+ * Model Project
+ * 
+ */
+export type Project = Prisma.ProjectModel
+/**
+ * Model ProjectParticipant
+ * 
+ */
+export type ProjectParticipant = Prisma.ProjectParticipantModel
+/**
+ * Model ProjectParticipantMember
+ * 
+ */
+export type ProjectParticipantMember = Prisma.ProjectParticipantMemberModel
+/**
+ * Model ProjectSpace
+ * 
+ */
+export type ProjectSpace = Prisma.ProjectSpaceModel
+/**
+ * Model WorkPackage
+ * 
+ */
+export type WorkPackage = Prisma.WorkPackageModel
+/**
+ * Model WorkPackageTradeCategory
+ * 
+ */
+export type WorkPackageTradeCategory = Prisma.WorkPackageTradeCategoryModel
+/**
+ * Model WorkItem
+ * 
+ */
+export type WorkItem = Prisma.WorkItemModel
+/**
+ * Model LibraryFolder
+ * 
+ */
+export type LibraryFolder = Prisma.LibraryFolderModel
+/**
+ * Model WorkTemplate
+ * 
+ */
+export type WorkTemplate = Prisma.WorkTemplateModel
+/**
  * Model Verification
  * 
  */

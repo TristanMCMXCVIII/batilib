@@ -24,7 +24,7 @@ export default function SiteHeader() {
     const pathname = usePathname();
     const params = useParams();
     const { toggleSidebar } = useSidebar();
-    const orgId = typeof params.orgId === "string" ? params.orgId : null;
+    const orgSlug = typeof params.orgSlug === "string" ? params.orgSlug : null;
     const match = ROUTE_LABELS.find((r) => r.pattern.test(pathname));
 
     return (
@@ -39,9 +39,9 @@ export default function SiteHeader() {
             </button>
 
             {/* Desktop : icône maison */}
-            {orgId && (
+            {orgSlug && (
                 <Link
-                    href={`/${orgId}`}
+                    href={`/${orgSlug}`}
                     className="hidden md:flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground hover:bg-hover hover:text-foreground transition-colors -ml-1"
                     aria-label="Accueil"
                 >

@@ -2,9 +2,12 @@
 
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { r2, R2_BUCKET } from "@/lib/r2";
+import { DeleteObjectCommand } from "@aws-sdk/client-s3";
 import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
 import type { OrgKind } from "./organization";
+import { slugify } from "@/lib/slug";
 export type { OrgKind };
 
 // ─── Types ────────────────────────────────────────────────
@@ -32,12 +35,27 @@ export type OrgMember = {
 
 // ─── Helpers ──────────────────────────────────────────────
 
-async function getCallerRole(orgId: string, userId: string): Promise<OrgRole | null> {
+async function generateUniqueOrgSlug(name: string, excludeSlug: string): Promise<string> {
+    const base = slugify(name) || "organisation";
+    let slug = base;
+    let counter = 2;
+    while (true) {
+        const existing = await db.query<{ id: string }>(
+            `SELECT id FROM "Organization" WHERE slug = $1 AND slug != $2 LIMIT 1`,
+            [slug, excludeSlug],
+        );
+        if (!existing.rows.length) return slug;
+        slug = `${base}-${counter++}`;
+    }
+}
+
+async function getCallerRole(orgSlug: string, userId: string): Promise<OrgRole | null> {
     const result = await db.query<{ role: OrgRole }>(
-        `SELECT role FROM "OrganizationMembership"
-         WHERE "organizationId" = $1 AND "userId" = $2 AND status = 'ACTIVE'
+        `SELECT om.role FROM "OrganizationMembership" om
+         JOIN "Organization" o ON o.id = om."organizationId"
+         WHERE o.slug = $1 AND om."userId" = $2 AND om.status = 'ACTIVE'
          LIMIT 1`,
-        [orgId, userId],
+        [orgSlug, userId],
     );
     return result.rows[0]?.role ?? null;
 }
@@ -45,7 +63,7 @@ async function getCallerRole(orgId: string, userId: string): Promise<OrgRole | n
 // ─── Queries ──────────────────────────────────────────────
 
 export async function getOrgWithRole(
-    orgId: string,
+    orgSlug: string,
 ): Promise<{ org: OrgData; role: OrgRole } | null> {
     const session = await auth.api.getSession({ headers: await headers() });
     if (!session) return null;
@@ -54,9 +72,9 @@ export async function getOrgWithRole(
         `SELECT o.id, o.kind, o.name, o.description, o.siret, o."logoUrl", m.role
          FROM "Organization" o
          JOIN "OrganizationMembership" m ON m."organizationId" = o.id
-         WHERE o.id = $1 AND m."userId" = $2 AND m.status = 'ACTIVE'
+         WHERE o.slug = $1 AND m."userId" = $2 AND m.status = 'ACTIVE'
          LIMIT 1`,
-        [orgId, session.user.id],
+        [orgSlug, session.user.id],
     );
 
     if (!result.rows.length) return null;
@@ -64,7 +82,7 @@ export async function getOrgWithRole(
     return { org, role };
 }
 
-export async function getOrgMembers(orgId: string): Promise<OrgMember[]> {
+export async function getOrgMembers(orgSlug: string): Promise<OrgMember[]> {
     const result = await db.query<OrgMember>(
         `SELECT
            m.id        AS "membershipId",
@@ -75,11 +93,12 @@ export async function getOrgMembers(orgId: string): Promise<OrgMember[]> {
            u.image
          FROM "OrganizationMembership" m
          JOIN "User" u ON u.id = m."userId"
-         WHERE m."organizationId" = $1 AND m.status = 'ACTIVE'
+         WHERE m."organizationId" = (SELECT id FROM "Organization" WHERE slug = $1)
+           AND m.status = 'ACTIVE'
          ORDER BY
            CASE m.role WHEN 'FOUNDER' THEN 0 WHEN 'MANAGER' THEN 1 ELSE 2 END,
            u.name ASC`,
-        [orgId],
+        [orgSlug],
     );
     return result.rows;
 }
@@ -87,53 +106,78 @@ export async function getOrgMembers(orgId: string): Promise<OrgMember[]> {
 // ─── Mutations ────────────────────────────────────────────
 
 export async function updateOrganization(
-    orgId: string,
-    data: Partial<Pick<OrgData, "name" | "description" | "kind" | "siret">>,
-): Promise<{ error?: string }> {
+    orgSlug: string,
+    data: Partial<Pick<OrgData, "name" | "description" | "kind" | "siret" | "logoUrl">>,
+): Promise<{ error?: string; newSlug?: string }> {
     const session = await auth.api.getSession({ headers: await headers() });
     if (!session) return { error: "Non authentifié" };
 
-    const role = await getCallerRole(orgId, session.user.id);
+    const role = await getCallerRole(orgSlug, session.user.id);
     if (role !== "FOUNDER") return { error: "Action réservée au fondateur" };
 
     const fields: string[] = [];
     const values: unknown[] = [];
     let i = 1;
+    let newSlug: string | undefined;
 
-    if (data.name !== undefined) { fields.push(`name = $${i++}`); values.push(data.name.trim()); }
+    if (data.name !== undefined) {
+        const trimmedName = data.name.trim();
+        fields.push(`name = $${i++}`);
+        values.push(trimmedName);
+        newSlug = await generateUniqueOrgSlug(trimmedName, orgSlug);
+        fields.push(`slug = $${i++}`);
+        values.push(newSlug);
+    }
     if (data.description !== undefined) { fields.push(`description = $${i++}`); values.push(data.description || null); }
     if (data.kind !== undefined) { fields.push(`kind = $${i++}`); values.push(data.kind); }
     if (data.siret !== undefined) { fields.push(`siret = $${i++}`); values.push(data.siret?.trim() || null); }
+    if (data.logoUrl !== undefined) {
+        // Supprimer l'ancien logo R2 si existant
+        const oldResult = await db.query<{ logoUrl: string | null }>(
+            `SELECT "logoUrl" FROM "Organization" WHERE slug = $1 LIMIT 1`,
+            [orgSlug],
+        );
+        const oldLogoUrl = oldResult.rows[0]?.logoUrl;
+        if (oldLogoUrl?.startsWith("/api/files/")) {
+            const oldKey = oldLogoUrl.slice("/api/files/".length);
+            await r2
+                .send(new DeleteObjectCommand({ Bucket: R2_BUCKET, Key: oldKey }))
+                .catch(() => {});
+        }
+        fields.push(`"logoUrl" = $${i++}`);
+        values.push(data.logoUrl || null);
+    }
 
     if (!fields.length) return {};
 
     fields.push(`"updatedAt" = NOW()`);
-    values.push(orgId);
+    values.push(orgSlug);
 
     await db.query(
-        `UPDATE "Organization" SET ${fields.join(", ")} WHERE id = $${i}`,
+        `UPDATE "Organization" SET ${fields.join(", ")} WHERE slug = $${i}`,
         values,
     );
 
-    revalidatePath(`/app/${orgId}/organization/presentation`);
-    return {};
+    revalidatePath(`/${newSlug ?? orgSlug}/my-organization/presentation`);
+    return { newSlug };
 }
 
 export async function updateMemberRole(
-    orgId: string,
+    orgSlug: string,
     membershipId: string,
     newRole: "MANAGER" | "MEMBER",
 ): Promise<{ error?: string }> {
     const session = await auth.api.getSession({ headers: await headers() });
     if (!session) return { error: "Non authentifié" };
 
-    const role = await getCallerRole(orgId, session.user.id);
+    const role = await getCallerRole(orgSlug, session.user.id);
     if (role !== "FOUNDER") return { error: "Action réservée au fondateur" };
 
-    // Cannot downgrade the FOUNDER's own membership via this action
     const target = await db.query<{ role: OrgRole; userId: string }>(
-        `SELECT role, "userId" FROM "OrganizationMembership" WHERE id = $1 AND "organizationId" = $2`,
-        [membershipId, orgId],
+        `SELECT om.role, om."userId" FROM "OrganizationMembership" om
+         WHERE om.id = $1
+           AND om."organizationId" = (SELECT id FROM "Organization" WHERE slug = $2)`,
+        [membershipId, orgSlug],
     );
     if (!target.rows.length) return { error: "Membre introuvable" };
     if (target.rows[0].role === "FOUNDER") return { error: "Utilisez le transfert de rôle fondateur" };
@@ -143,23 +187,25 @@ export async function updateMemberRole(
         [newRole, membershipId],
     );
 
-    revalidatePath(`/app/${orgId}/organization/members`);
+    revalidatePath(`/${orgSlug}/my-organization/members`);
     return {};
 }
 
 export async function removeMember(
-    orgId: string,
+    orgSlug: string,
     membershipId: string,
 ): Promise<{ error?: string }> {
     const session = await auth.api.getSession({ headers: await headers() });
     if (!session) return { error: "Non authentifié" };
 
-    const role = await getCallerRole(orgId, session.user.id);
+    const role = await getCallerRole(orgSlug, session.user.id);
     if (role !== "FOUNDER") return { error: "Action réservée au fondateur" };
 
     const target = await db.query<{ role: OrgRole }>(
-        `SELECT role FROM "OrganizationMembership" WHERE id = $1 AND "organizationId" = $2`,
-        [membershipId, orgId],
+        `SELECT om.role FROM "OrganizationMembership" om
+         WHERE om.id = $1
+           AND om."organizationId" = (SELECT id FROM "Organization" WHERE slug = $2)`,
+        [membershipId, orgSlug],
     );
     if (!target.rows.length) return { error: "Membre introuvable" };
     if (target.rows[0].role === "FOUNDER") return { error: "Le fondateur ne peut pas être retiré" };
@@ -169,28 +215,31 @@ export async function removeMember(
         [membershipId],
     );
 
-    revalidatePath(`/app/${orgId}/organization/members`);
+    revalidatePath(`/${orgSlug}/my-organization/members`);
     return {};
 }
 
 export async function transferFounder(
-    orgId: string,
+    orgSlug: string,
     targetMembershipId: string,
 ): Promise<{ error?: string }> {
     const session = await auth.api.getSession({ headers: await headers() });
     if (!session) return { error: "Non authentifié" };
 
     const callerMembership = await db.query<{ id: string; role: OrgRole }>(
-        `SELECT id, role FROM "OrganizationMembership"
-         WHERE "organizationId" = $1 AND "userId" = $2 AND status = 'ACTIVE'
+        `SELECT om.id, om.role FROM "OrganizationMembership" om
+         JOIN "Organization" o ON o.id = om."organizationId"
+         WHERE o.slug = $1 AND om."userId" = $2 AND om.status = 'ACTIVE'
          LIMIT 1`,
-        [orgId, session.user.id],
+        [orgSlug, session.user.id],
     );
     if (callerMembership.rows[0]?.role !== "FOUNDER") return { error: "Action réservée au fondateur" };
 
     const target = await db.query<{ role: OrgRole }>(
-        `SELECT role FROM "OrganizationMembership" WHERE id = $1 AND "organizationId" = $2`,
-        [targetMembershipId, orgId],
+        `SELECT om.role FROM "OrganizationMembership" om
+         WHERE om.id = $1
+           AND om."organizationId" = (SELECT id FROM "Organization" WHERE slug = $2)`,
+        [targetMembershipId, orgSlug],
     );
     if (!target.rows.length) return { error: "Membre introuvable" };
 
@@ -213,22 +262,28 @@ export async function transferFounder(
         client.release();
     }
 
-    revalidatePath(`/app/${orgId}/organization/members`);
+    revalidatePath(`/${orgSlug}/my-organization/members`);
     return {};
 }
 
 export async function inviteMember(
-    orgId: string,
+    orgSlug: string,
     email: string,
     role: "MANAGER" | "MEMBER",
 ): Promise<{ error?: string }> {
     const session = await auth.api.getSession({ headers: await headers() });
     if (!session) return { error: "Non authentifié" };
 
-    const callerRole = await getCallerRole(orgId, session.user.id);
+    const callerRole = await getCallerRole(orgSlug, session.user.id);
     if (callerRole !== "FOUNDER") return { error: "Action réservée au fondateur" };
 
-    // Check not already a member
+    const orgResult = await db.query<{ id: string }>(
+        `SELECT id FROM "Organization" WHERE slug = $1 LIMIT 1`,
+        [orgSlug],
+    );
+    if (!orgResult.rows.length) return { error: "Organisation introuvable" };
+    const orgId = orgResult.rows[0].id;
+
     const existing = await db.query(
         `SELECT m.id FROM "OrganizationMembership" m
          JOIN "User" u ON u.id = m."userId"
@@ -237,7 +292,6 @@ export async function inviteMember(
     );
     if (existing.rows.length) return { error: "Cette personne est déjà membre" };
 
-    // Check no pending invitation
     const pending = await db.query(
         `SELECT id FROM "OrganizationInvitation"
          WHERE "organizationId" = $1 AND email = $2 AND "expiresAt" > NOW()`,
@@ -245,7 +299,7 @@ export async function inviteMember(
     );
     if (pending.rows.length) return { error: "Une invitation est déjà en attente pour cet email" };
 
-    const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
+    const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
     const token = crypto.randomUUID();
 
     await db.query(
@@ -256,6 +310,6 @@ export async function inviteMember(
 
     // TODO: envoyer l'email d'invitation avec le token
 
-    revalidatePath(`/app/${orgId}/organization/members`);
+    revalidatePath(`/${orgSlug}/my-organization/members`);
     return {};
 }

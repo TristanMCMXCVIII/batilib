@@ -82,6 +82,10 @@ Les composants enfants n'ont qu'à mettre `py-10 max-w-2xl`.
 ## Patterns UI récurrents
 
 ### Édition de formulaire → Sheet (panneau latéral)
+
+L'overlay est défini globalement dans `components/ui/sheet.tsx` : `bg-black/10 backdrop-blur-[2px]`.
+Ne jamais surcharger ces styles par composant.
+
 ```tsx
 <Sheet open={open} onOpenChange={(o) => { if (!saving) setOpen(o); }}>
     <SheetContent>
@@ -119,6 +123,28 @@ Les composants enfants n'ont qu'à mettre `py-10 max-w-2xl`.
 </Dialog>
 ```
 
+### État vide (liste ou section sans contenu)
+
+Fond subtil + bordure ultra-légère. **Jamais de `border-dashed`** (réservé aux zones de drop/upload interactives).
+
+```tsx
+<div className="flex flex-col items-center justify-center rounded-xl bg-subtle border border-border/50 py-20 text-center">
+    <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-background">
+        <IconName className="h-6 w-6 text-muted-foreground" />
+    </div>
+    <p className="body-sm font-medium">Titre de l'état vide</p>
+    <p className="mt-1 caption max-w-xs">
+        Description courte et utile.
+    </p>
+    {/* Optionnel : bouton d'action */}
+    <Button size="sm" variant="outline" className="mt-6" onClick={handleAction}>
+        Action
+    </Button>
+</div>
+```
+
+---
+
 ### Section avec bouton modifier (FOUNDER only)
 ```tsx
 <section>
@@ -147,3 +173,8 @@ Les composants enfants n'ont qu'à mettre `py-10 max-w-2xl`.
 - Espacements sections : `space-y-16` entre sections d'une page
 - Formulaires dans des Sheets, pas inline dans la page
 - Pas de design system supplémentaire à installer
+
+### Formes avatar/logo
+- **Avatar utilisateur** : toujours `rounded-full` (cercle)
+- **Logo organisation** : toujours `rounded-lg` ou `rounded-xl` (carré arrondi), jamais rond
+- Upload avatar/logo : compression via `sharp` côté serveur (256×256, WebP qualité 85), limite 20 Mo en entrée. Routes : `/api/upload/avatar` et `/api/upload/org-logo`

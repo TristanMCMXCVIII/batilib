@@ -3,8 +3,9 @@ import { r2, R2_BUCKET } from "@/lib/r2";
 import { DeleteObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3";
 import { randomUUID } from "crypto";
 import { headers } from "next/headers";
+import sharp from "sharp";
 
-const MAX_SIZE = 5 * 1024 * 1024; // 5 Mo
+const MAX_SIZE = 20 * 1024 * 1024; // 20 Mo — garde-fou avant compression
 const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp"];
 
 export async function POST(request: Request) {
@@ -27,7 +28,7 @@ export async function POST(request: Request) {
     }
     if (file.size > MAX_SIZE) {
         return Response.json(
-            { error: "Fichier trop lourd (max 5 Mo)" },
+            { error: "Fichier trop lourd (max 20 Mo)" },
             { status: 400 }
         );
     }
@@ -38,23 +39,24 @@ export async function POST(request: Request) {
         const oldKey = oldImage.slice("/api/files/".length);
         await r2
             .send(new DeleteObjectCommand({ Bucket: R2_BUCKET, Key: oldKey }))
-            .catch(() => {
-                // Pas bloquant si l'ancien fichier n'existe plus
-            });
+            .catch(() => {});
     }
 
-    const ext = file.type === "image/jpeg" ? "jpg" : file.type.split("/")[1];
-    const key = `avatars/${session.user.id}/${randomUUID()}.${ext}`;
+    const key = `avatars/${session.user.id}/${randomUUID()}.webp`;
 
-    const buffer = Buffer.from(await file.arrayBuffer());
+    const raw = Buffer.from(await file.arrayBuffer());
+    const compressed = await sharp(raw)
+        .resize(256, 256, { fit: "cover", position: "center" })
+        .webp({ quality: 85 })
+        .toBuffer();
 
     try {
         await r2.send(
             new PutObjectCommand({
                 Bucket: R2_BUCKET,
                 Key: key,
-                Body: buffer,
-                ContentType: file.type,
+                Body: compressed,
+                ContentType: "image/webp",
             })
         );
     } catch (err) {

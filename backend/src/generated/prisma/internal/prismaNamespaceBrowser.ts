@@ -59,6 +59,15 @@ export const ModelName = {
   OrganizationInvitation: 'OrganizationInvitation',
   TradeCategory: 'TradeCategory',
   OrganizationTradeCategory: 'OrganizationTradeCategory',
+  Project: 'Project',
+  ProjectParticipant: 'ProjectParticipant',
+  ProjectParticipantMember: 'ProjectParticipantMember',
+  ProjectSpace: 'ProjectSpace',
+  WorkPackage: 'WorkPackage',
+  WorkPackageTradeCategory: 'WorkPackageTradeCategory',
+  WorkItem: 'WorkItem',
+  LibraryFolder: 'LibraryFolder',
+  WorkTemplate: 'WorkTemplate',
   Verification: 'Verification'
 } as const
 
@@ -131,6 +140,7 @@ export type AccountScalarFieldEnum = (typeof AccountScalarFieldEnum)[keyof typeo
 
 export const OrganizationScalarFieldEnum = {
   id: 'id',
+  slug: 'slug',
   kind: 'kind',
   name: 'name',
   description: 'description',
@@ -192,6 +202,132 @@ export const OrganizationTradeCategoryScalarFieldEnum = {
 export type OrganizationTradeCategoryScalarFieldEnum = (typeof OrganizationTradeCategoryScalarFieldEnum)[keyof typeof OrganizationTradeCategoryScalarFieldEnum]
 
 
+export const ProjectScalarFieldEnum = {
+  id: 'id',
+  leadOrganizationId: 'leadOrganizationId',
+  slug: 'slug',
+  name: 'name',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ProjectScalarFieldEnum = (typeof ProjectScalarFieldEnum)[keyof typeof ProjectScalarFieldEnum]
+
+
+export const ProjectParticipantScalarFieldEnum = {
+  id: 'id',
+  projectId: 'projectId',
+  organizationId: 'organizationId',
+  role: 'role',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ProjectParticipantScalarFieldEnum = (typeof ProjectParticipantScalarFieldEnum)[keyof typeof ProjectParticipantScalarFieldEnum]
+
+
+export const ProjectParticipantMemberScalarFieldEnum = {
+  id: 'id',
+  projectParticipantId: 'projectParticipantId',
+  organizationMembershipId: 'organizationMembershipId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ProjectParticipantMemberScalarFieldEnum = (typeof ProjectParticipantMemberScalarFieldEnum)[keyof typeof ProjectParticipantMemberScalarFieldEnum]
+
+
+export const ProjectSpaceScalarFieldEnum = {
+  id: 'id',
+  projectId: 'projectId',
+  parentId: 'parentId',
+  name: 'name',
+  position: 'position',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ProjectSpaceScalarFieldEnum = (typeof ProjectSpaceScalarFieldEnum)[keyof typeof ProjectSpaceScalarFieldEnum]
+
+
+export const WorkPackageScalarFieldEnum = {
+  id: 'id',
+  projectId: 'projectId',
+  assignedProjectParticipantId: 'assignedProjectParticipantId',
+  name: 'name',
+  description: 'description',
+  position: 'position',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type WorkPackageScalarFieldEnum = (typeof WorkPackageScalarFieldEnum)[keyof typeof WorkPackageScalarFieldEnum]
+
+
+export const WorkPackageTradeCategoryScalarFieldEnum = {
+  workPackageId: 'workPackageId',
+  tradeCategoryId: 'tradeCategoryId'
+} as const
+
+export type WorkPackageTradeCategoryScalarFieldEnum = (typeof WorkPackageTradeCategoryScalarFieldEnum)[keyof typeof WorkPackageTradeCategoryScalarFieldEnum]
+
+
+export const WorkItemScalarFieldEnum = {
+  id: 'id',
+  projectId: 'projectId',
+  workPackageId: 'workPackageId',
+  projectSpaceId: 'projectSpaceId',
+  tradeCategoryId: 'tradeCategoryId',
+  sourceWorkTemplateId: 'sourceWorkTemplateId',
+  name: 'name',
+  description: 'description',
+  quantity: 'quantity',
+  unit: 'unit',
+  status: 'status',
+  executions: 'executions',
+  position: 'position',
+  plannedStartDate: 'plannedStartDate',
+  plannedEndDate: 'plannedEndDate',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type WorkItemScalarFieldEnum = (typeof WorkItemScalarFieldEnum)[keyof typeof WorkItemScalarFieldEnum]
+
+
+export const LibraryFolderScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  parentId: 'parentId',
+  name: 'name',
+  position: 'position',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type LibraryFolderScalarFieldEnum = (typeof LibraryFolderScalarFieldEnum)[keyof typeof LibraryFolderScalarFieldEnum]
+
+
+export const WorkTemplateScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  folderId: 'folderId',
+  tradeCategoryId: 'tradeCategoryId',
+  name: 'name',
+  description: 'description',
+  unit: 'unit',
+  defaultTaxRate: 'defaultTaxRate',
+  defaultUnitPrice: 'defaultUnitPrice',
+  estimatedUnitCost: 'estimatedUnitCost',
+  quantityExpression: 'quantityExpression',
+  defaultChecklist: 'defaultChecklist',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type WorkTemplateScalarFieldEnum = (typeof WorkTemplateScalarFieldEnum)[keyof typeof WorkTemplateScalarFieldEnum]
+
+
 export const VerificationScalarFieldEnum = {
   id: 'id',
   identifier: 'identifier',
@@ -212,6 +348,13 @@ export const SortOrder = {
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
 
 
+export const JsonNullValueInput = {
+  JsonNull: JsonNull
+} as const
+
+export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
+
+
 export const QueryMode = {
   default: 'default',
   insensitive: 'insensitive'
@@ -226,4 +369,13 @@ export const NullsOrder = {
 } as const
 
 export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
+
+
+export const JsonNullValueFilter = {
+  DbNull: DbNull,
+  JsonNull: JsonNull,
+  AnyNull: AnyNull
+} as const
+
+export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
 

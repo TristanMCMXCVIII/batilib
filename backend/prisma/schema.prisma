@@ -79,6 +79,7 @@ enum OrganizationKind {
 
 model Organization {
   id        String           @id @default(cuid())
+  slug      String           @unique
   kind      OrganizationKind
   name        String
   description String?
@@ -90,11 +91,13 @@ model Organization {
   createdAt DateTime         @default(now())
   updatedAt DateTime         @updatedAt
 
-  memberships          OrganizationMembership[]
-  invitations          OrganizationInvitation[]
-  tradeCategories      OrganizationTradeCategory[]
-  leadProjects         Project[]
+  memberships           OrganizationMembership[]
+  invitations           OrganizationInvitation[]
+  tradeCategories       OrganizationTradeCategory[]
+  leadProjects          Project[]
   projectParticipations ProjectParticipant[]
+  libraryFolders        LibraryFolder[]
+  workTemplates         WorkTemplate[]
 }
 
 enum MembershipStatus {
@@ -145,7 +148,10 @@ model TradeCategory {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  organizations OrganizationTradeCategory[]
+  organizations   OrganizationTradeCategory[]
+  workPackages    WorkPackageTradeCategory[]
+  workItems       WorkItem[]
+  workTemplates   WorkTemplate[]
 }
 
 model OrganizationTradeCategory {
@@ -161,11 +167,17 @@ model Project {
   id                   String       @id @default(cuid())
   leadOrganizationId   String
   leadOrganization     Organization @relation(fields: [leadOrganizationId], references: [id], onDelete: Cascade)
+  slug                 String
   name                 String
   createdAt            DateTime     @default(now())
   updatedAt            DateTime     @updatedAt
 
-  participants ProjectParticipant[]
+  participants  ProjectParticipant[]
+  spaces        ProjectSpace[]
+  workPackages  WorkPackage[]
+  workItems     WorkItem[]
+
+  @@unique([leadOrganizationId, slug])
 }
 
 enum ProjectParticipantRole {
@@ -184,7 +196,8 @@ model ProjectParticipant {
   createdAt      DateTime               @default(now())
   updatedAt      DateTime               @updatedAt
 
-  members ProjectParticipantMember[]
+  members              ProjectParticipantMember[]
+  assignedWorkPackages WorkPackage[]
 }
 
 model ProjectParticipantMember {
@@ -195,6 +208,115 @@ model ProjectParticipantMember {
   organizationMembership   OrganizationMembership @relation(fields: [organizationMembershipId], references: [id], onDelete: Cascade)
   createdAt                DateTime               @default(now())
   updatedAt                DateTime               @updatedAt
+}
+
+enum WorkItemStatus {
+  DRAFT
+  IN_PROGRESS
+  DONE
+  CANCELLED
+}
+
+model ProjectSpace {
+  id        String        @id @default(cuid())
+  projectId String
+  project   Project       @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  parentId  String?
+  parent    ProjectSpace?  @relation("ProjectSpaceHierarchy", fields: [parentId], references: [id])
+  children  ProjectSpace[] @relation("ProjectSpaceHierarchy")
+  name      String
+  position  Int
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  workItems WorkItem[]
+}
+
+model WorkPackage {
+  id                           String              @id @default(cuid())
+  projectId                    String
+  project                      Project             @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  assignedProjectParticipantId String?
+  assignedProjectParticipant   ProjectParticipant? @relation(fields: [assignedProjectParticipantId], references: [id])
+  name                         String
+  description                  String?
+  position                     Int
+  createdAt                    DateTime            @default(now())
+  updatedAt                    DateTime            @updatedAt
+
+  tradeCategories WorkPackageTradeCategory[]
+  workItems       WorkItem[]
+}
+
+model WorkPackageTradeCategory {
+  workPackageId   String
+  workPackage     WorkPackage   @relation(fields: [workPackageId], references: [id], onDelete: Cascade)
+  tradeCategoryId String
+  tradeCategory   TradeCategory @relation(fields: [tradeCategoryId], references: [id], onDelete: Cascade)
+
+  @@id([workPackageId, tradeCategoryId])
+}
+
+model WorkItem {
+  id                   String         @id @default(cuid())
+  projectId            String
+  project              Project        @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  workPackageId        String?
+  workPackage          WorkPackage?   @relation(fields: [workPackageId], references: [id])
+  projectSpaceId       String?
+  projectSpace         ProjectSpace?  @relation(fields: [projectSpaceId], references: [id])
+  tradeCategoryId      String?
+  tradeCategory        TradeCategory? @relation(fields: [tradeCategoryId], references: [id])
+  sourceWorkTemplateId String?
+  sourceWorkTemplate   WorkTemplate?  @relation(fields: [sourceWorkTemplateId], references: [id])
+  name                 String
+  description          String?
+  quantity             Decimal
+  unit                 String
+  status               WorkItemStatus @default(DRAFT)
+  executions           Json           @default("[]")
+  position             Int
+  plannedStartDate     DateTime?
+  plannedEndDate       DateTime?
+  createdAt            DateTime       @default(now())
+  updatedAt            DateTime       @updatedAt
+}
+
+model LibraryFolder {
+  id             String          @id @default(cuid())
+  organizationId String
+  organization   Organization    @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  parentId       String?
+  parent         LibraryFolder?  @relation("LibraryFolderHierarchy", fields: [parentId], references: [id])
+  children       LibraryFolder[] @relation("LibraryFolderHierarchy")
+  name           String
+  position       Int
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  workTemplates WorkTemplate[]
+}
+
+model WorkTemplate {
+  id                 String         @id @default(cuid())
+  organizationId     String
+  organization       Organization   @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  folderId           String?
+  folder             LibraryFolder? @relation(fields: [folderId], references: [id])
+  tradeCategoryId    String?
+  tradeCategory      TradeCategory? @relation(fields: [tradeCategoryId], references: [id])
+  name               String
+  description        String?
+  unit               String
+  defaultTaxRate     Decimal?
+  defaultUnitPrice   Decimal?
+  estimatedUnitCost  Decimal?
+  quantityExpression String?
+  defaultChecklist   Json           @default("[]")
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @updatedAt
+
+  workItems WorkItem[]
 }
 
 model Verification {
