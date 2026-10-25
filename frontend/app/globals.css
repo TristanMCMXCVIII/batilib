@@ -106,8 +106,9 @@
   --color-primary:            var(--primary);
   --color-primary-foreground: var(--primary-foreground);
 
-  --color-destructive:        var(--destructive);
-  --color-destructive-bg:     var(--destructive-bg);
+  --color-destructive:            var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-destructive-bg:         var(--destructive-bg);
 
   --color-success:            var(--success);
   --color-success-bg:         var(--success-bg);

@@ -18,7 +18,7 @@ export default async function LibraryLayout({ children, params }: Props) {
             <div className="border-b border-border page-outer pt-8 pb-0">
                 <h1 className="page-title">Bibliothèque</h1>
                 <p className="caption mt-1">
-                    La mémoire technique de votre entreprise — prix, rendements et savoir-faire accumulés au fil des chantiers.
+                    La mémoire technique de votre entreprise : prix, rendements et savoir-faire accumulés au fil des chantiers.
                 </p>
                 <div className="mt-3">
                     <LibraryTabsNav tabs={tabs} />

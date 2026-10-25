@@ -13,8 +13,8 @@ export default async function AdminUsersPage() {
     });
 
     return (
-        <div className="p-8">
-            <div className="mx-auto max-w-6xl">
+        <main className="page-outer pt-8 pb-10">
+            <div className="max-w-5xl">
                 <div className="mb-8">
                     <h1 className="page-title">Utilisateurs</h1>
                     <p className="mt-2 caption">
@@ -56,6 +56,6 @@ export default async function AdminUsersPage() {
                     </table>
                 </div>
             </div>
-        </div>
+        </main>
     );
 }
