@@ -3,7 +3,7 @@
 > Source : fichier Figma **BatiLib**, page **DB**, consultée le **24 octobre 2026**.
 > Figma : https://www.figma.com/design/LmWW3v0qlWbo6dndn7NPRi/BatiLib?node-id=0-1
 
-**Périmètre : 52 tables actives/non legacy présentes sur cette page.** Ont été entièrement exclus : `Party`, `ProjectParticipation` (ancien modèle), `ParticipationWorkPackage`. Ont également été exclus les champs explicitement marqués `[legacy]` ou `[obsolète]` et les lignes rouges (ex. anciennes FK Party). Les tables marquées « OPTIONNEL » dans Figma sont conservées et signalées : elles sont dans le modèle dessiné, mais pas forcément dans le MVP.
+**Périmètre : 53 tables actives/non legacy présentes sur cette page.** Ont été entièrement exclus : `Party`, `ProjectParticipation` (ancien modèle), `ParticipationWorkPackage`. Ont également été exclus les champs explicitement marqués `[legacy]` ou `[obsolète]` et les lignes rouges (ex. anciennes FK Party). Les tables marquées « OPTIONNEL » dans Figma sont conservées et signalées : elles sont dans le modèle dessiné, mais pas forcément dans le MVP.
 
 ## Important pour l’IA qui utilisera ce document
 
@@ -423,6 +423,27 @@
 | `technicalPageId` | `String?` | FK (relation à confirmer); nullable | Page de documentation technique associée |
 | `createdAt` | `DateTime` | requis (d’après le diagramme) | Date de création |
 | `updatedAt` | `DateTime` | requis (d’après le diagramme) | Date de dernière mise à jour |
+
+### WorkPackageTemplate
+
+**Description.** Blueprint de lot de chantier réutilisable, appartenant à la bibliothèque d'une organisation. Mémorise le nom, la description, le corps de métier et surtout le taux de marge par défaut à appliquer sur ce type de lot (ex : 15 % pour le lot électricité, 22 % pour le lot menuiserie). Lors de l'instantiation sur un projet, les valeurs sont copiées vers `WorkPackage` ; modifier le template ne modifie pas les lots existants. Le lien `sourceWorkPackageTemplateId` sur `WorkPackage` est purement informatif.
+
+> **Note d'implémentation (25 oct. 2026) :** table créée et migrée. Non présente dans le Figma d'origine — ajoutée suite à arbitrage produit.
+
+| Champ | Type Prisma | Particularités | Description du champ |
+|---|---|---|---|
+| `id` | `String` | PK, cuid | Identifiant technique unique |
+| `organizationId` | `String` | FK → Organization, CASCADE | Organisation propriétaire du template |
+| `folderId` | `String?` | FK → LibraryFolder, SET NULL | Dossier de bibliothèque (optionnel) |
+| `tradeCategoryId` | `String?` | FK → TradeCategory, SET NULL | Corps de métier principal (pour filtrage) |
+| `name` | `String` | requis | Nom du lot modèle |
+| `description` | `String?` | nullable | Description du lot |
+| `defaultMarginRate` | `Decimal?` | nullable | Taux de marge par défaut à appliquer au lot lors de l'instantiation |
+| `position` | `Int` | requis | Ordre dans la bibliothèque |
+| `createdAt` | `DateTime` | auto | Date de création |
+| `updatedAt` | `DateTime` | auto | Date de dernière mise à jour |
+
+**Relation informative :** `WorkPackage.sourceWorkPackageTemplateId?` → FK nullable vers ce template, `SET NULL` à la suppression du template (les lots projet ne sont jamais supprimés en cascade).
 
 ### TemplateMapping
 
@@ -894,7 +915,7 @@
 
 ## Inventaire des tables incluses
 
-`User`, `Account`, `Session`, `Verification`, `Organization`, `OrganizationRole`, `OrganizationMembership`, `OrganizationTradeCategory`, `BuildingProfessionalProfile`, `OrganizationInvitation`, `Subscription`, `Plan`, `PlanEntitlement`, `Project`, `ProjectParticipant`, `ProjectParticipantMember`, `ProjectInvitation`, `ProjectSpace`, `VariableDefinition`, `SpaceVariableValue`, `TradeCategory`, `WorkPackage`, `WorkPackageTradeCategory`, `WorkItem`, `Reservation`, `ProjectSnapshot`, `LibraryFolder`, `WorkTemplate`, `TemplateMapping`, `Page`, `PageBlock`, `PageAudience`, `FileAsset`, `Tender`, `TenderPackage`, `TenderCandidate`, `TenderLine`, `Bid`, `BidLine`, `Quote`, `QuoteLine`, `PaymentSchedule`, `PaymentInstallment`, `Invoice`, `InvoiceLine`, `Payment`, `Request`, `ProjectChange`, `ProjectChangeItem`, `WorkItemEconomics`, `WorkPackageEconomics`, `ProjectFinancialSummary`.
+`User`, `Account`, `Session`, `Verification`, `Organization`, `OrganizationRole`, `OrganizationMembership`, `OrganizationTradeCategory`, `BuildingProfessionalProfile`, `OrganizationInvitation`, `Subscription`, `Plan`, `PlanEntitlement`, `Project`, `ProjectParticipant`, `ProjectParticipantMember`, `ProjectInvitation`, `ProjectSpace`, `VariableDefinition`, `SpaceVariableValue`, `TradeCategory`, `WorkPackage`, `WorkPackageTradeCategory`, `WorkItem`, `Reservation`, `ProjectSnapshot`, `LibraryFolder`, `WorkTemplate`, `WorkPackageTemplate`, `TemplateMapping`, `Page`, `PageBlock`, `PageAudience`, `FileAsset`, `Tender`, `TenderPackage`, `TenderCandidate`, `TenderLine`, `Bid`, `BidLine`, `Quote`, `QuoteLine`, `PaymentSchedule`, `PaymentInstallment`, `Invoice`, `InvoiceLine`, `Payment`, `Request`, `ProjectChange`, `ProjectChangeItem`, `WorkItemEconomics`, `WorkPackageEconomics`, `ProjectFinancialSummary`.
 
 **Tables totalement exclues :** `Party`, `ProjectParticipation` (legacy), `ParticipationWorkPackage`. **Champs exclus :** `Project.clientPartyId`, `ProjectParticipantMember.projectId`, `ProjectParticipantMember.membershipId`, `PageAudience.partyId`, `Quote.issuerPartyId`, `Quote.recipientPartyId`, `Invoice.issuerPartyId`, `Invoice.recipientPartyId`, `Request.issuerPartyId`, `Request.recipientPartyId`.
 
