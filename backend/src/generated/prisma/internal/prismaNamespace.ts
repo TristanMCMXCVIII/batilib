@@ -414,6 +414,7 @@ export const ModelName = {
   WorkItem: 'WorkItem',
   LibraryFolder: 'LibraryFolder',
   WorkTemplate: 'WorkTemplate',
+  WorkPackageTemplate: 'WorkPackageTemplate',
   Verification: 'Verification'
 } as const
 
@@ -430,7 +431,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "session" | "account" | "organization" | "organizationMembership" | "organizationInvitation" | "tradeCategory" | "organizationTradeCategory" | "project" | "projectParticipant" | "projectParticipantMember" | "projectSpace" | "workPackage" | "workPackageTradeCategory" | "workItem" | "libraryFolder" | "workTemplate" | "verification"
+    modelProps: "user" | "session" | "account" | "organization" | "organizationMembership" | "organizationInvitation" | "tradeCategory" | "organizationTradeCategory" | "project" | "projectParticipant" | "projectParticipantMember" | "projectSpace" | "workPackage" | "workPackageTradeCategory" | "workItem" | "libraryFolder" | "workTemplate" | "workPackageTemplate" | "verification"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1692,6 +1693,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    WorkPackageTemplate: {
+      payload: Prisma.$WorkPackageTemplatePayload<ExtArgs>
+      fields: Prisma.WorkPackageTemplateFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.WorkPackageTemplateFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WorkPackageTemplatePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.WorkPackageTemplateFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WorkPackageTemplatePayload>
+        }
+        findFirst: {
+          args: Prisma.WorkPackageTemplateFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WorkPackageTemplatePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.WorkPackageTemplateFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WorkPackageTemplatePayload>
+        }
+        findMany: {
+          args: Prisma.WorkPackageTemplateFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WorkPackageTemplatePayload>[]
+        }
+        create: {
+          args: Prisma.WorkPackageTemplateCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WorkPackageTemplatePayload>
+        }
+        createMany: {
+          args: Prisma.WorkPackageTemplateCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.WorkPackageTemplateCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WorkPackageTemplatePayload>[]
+        }
+        delete: {
+          args: Prisma.WorkPackageTemplateDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WorkPackageTemplatePayload>
+        }
+        update: {
+          args: Prisma.WorkPackageTemplateUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WorkPackageTemplatePayload>
+        }
+        deleteMany: {
+          args: Prisma.WorkPackageTemplateDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.WorkPackageTemplateUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.WorkPackageTemplateUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WorkPackageTemplatePayload>[]
+        }
+        upsert: {
+          args: Prisma.WorkPackageTemplateUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WorkPackageTemplatePayload>
+        }
+        aggregate: {
+          args: Prisma.WorkPackageTemplateAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateWorkPackageTemplate>
+        }
+        groupBy: {
+          args: Prisma.WorkPackageTemplateGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.WorkPackageTemplateGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.WorkPackageTemplateCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.WorkPackageTemplateCountAggregateOutputType> | number
+        }
+      }
+    }
     Verification: {
       payload: Prisma.$VerificationPayload<ExtArgs>
       fields: Prisma.VerificationFieldRefs
@@ -1972,6 +2047,7 @@ export const WorkPackageScalarFieldEnum = {
   id: 'id',
   projectId: 'projectId',
   assignedProjectParticipantId: 'assignedProjectParticipantId',
+  sourceWorkPackageTemplateId: 'sourceWorkPackageTemplateId',
   name: 'name',
   description: 'description',
   position: 'position',
@@ -2044,6 +2120,22 @@ export const WorkTemplateScalarFieldEnum = {
 } as const
 
 export type WorkTemplateScalarFieldEnum = (typeof WorkTemplateScalarFieldEnum)[keyof typeof WorkTemplateScalarFieldEnum]
+
+
+export const WorkPackageTemplateScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  folderId: 'folderId',
+  tradeCategoryId: 'tradeCategoryId',
+  name: 'name',
+  description: 'description',
+  defaultMarginRate: 'defaultMarginRate',
+  position: 'position',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type WorkPackageTemplateScalarFieldEnum = (typeof WorkPackageTemplateScalarFieldEnum)[keyof typeof WorkPackageTemplateScalarFieldEnum]
 
 
 export const VerificationScalarFieldEnum = {
@@ -2446,6 +2538,7 @@ export type GlobalOmitConfig = {
   workItem?: Prisma.WorkItemOmit
   libraryFolder?: Prisma.LibraryFolderOmit
   workTemplate?: Prisma.WorkTemplateOmit
+  workPackageTemplate?: Prisma.WorkPackageTemplateOmit
   verification?: Prisma.VerificationOmit
 }
 

@@ -38,6 +38,7 @@ export type WorkPackageMinAggregateOutputType = {
   id: string | null
   projectId: string | null
   assignedProjectParticipantId: string | null
+  sourceWorkPackageTemplateId: string | null
   name: string | null
   description: string | null
   position: number | null
@@ -49,6 +50,7 @@ export type WorkPackageMaxAggregateOutputType = {
   id: string | null
   projectId: string | null
   assignedProjectParticipantId: string | null
+  sourceWorkPackageTemplateId: string | null
   name: string | null
   description: string | null
   position: number | null
@@ -60,6 +62,7 @@ export type WorkPackageCountAggregateOutputType = {
   id: number
   projectId: number
   assignedProjectParticipantId: number
+  sourceWorkPackageTemplateId: number
   name: number
   description: number
   position: number
@@ -81,6 +84,7 @@ export type WorkPackageMinAggregateInputType = {
   id?: true
   projectId?: true
   assignedProjectParticipantId?: true
+  sourceWorkPackageTemplateId?: true
   name?: true
   description?: true
   position?: true
@@ -92,6 +96,7 @@ export type WorkPackageMaxAggregateInputType = {
   id?: true
   projectId?: true
   assignedProjectParticipantId?: true
+  sourceWorkPackageTemplateId?: true
   name?: true
   description?: true
   position?: true
@@ -103,6 +108,7 @@ export type WorkPackageCountAggregateInputType = {
   id?: true
   projectId?: true
   assignedProjectParticipantId?: true
+  sourceWorkPackageTemplateId?: true
   name?: true
   description?: true
   position?: true
@@ -201,6 +207,7 @@ export type WorkPackageGroupByOutputType = {
   id: string
   projectId: string
   assignedProjectParticipantId: string | null
+  sourceWorkPackageTemplateId: string | null
   name: string
   description: string | null
   position: number
@@ -235,6 +242,7 @@ export type WorkPackageWhereInput = {
   id?: Prisma.StringFilter<"WorkPackage"> | string
   projectId?: Prisma.StringFilter<"WorkPackage"> | string
   assignedProjectParticipantId?: Prisma.StringNullableFilter<"WorkPackage"> | string | null
+  sourceWorkPackageTemplateId?: Prisma.StringNullableFilter<"WorkPackage"> | string | null
   name?: Prisma.StringFilter<"WorkPackage"> | string
   description?: Prisma.StringNullableFilter<"WorkPackage"> | string | null
   position?: Prisma.IntFilter<"WorkPackage"> | number
@@ -242,6 +250,7 @@ export type WorkPackageWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"WorkPackage"> | Date | string
   project?: Prisma.XOR<Prisma.ProjectScalarRelationFilter, Prisma.ProjectWhereInput>
   assignedProjectParticipant?: Prisma.XOR<Prisma.ProjectParticipantNullableScalarRelationFilter, Prisma.ProjectParticipantWhereInput> | null
+  sourceWorkPackageTemplate?: Prisma.XOR<Prisma.WorkPackageTemplateNullableScalarRelationFilter, Prisma.WorkPackageTemplateWhereInput> | null
   tradeCategories?: Prisma.WorkPackageTradeCategoryListRelationFilter
   workItems?: Prisma.WorkItemListRelationFilter
 }
@@ -250,6 +259,7 @@ export type WorkPackageOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   projectId?: Prisma.SortOrder
   assignedProjectParticipantId?: Prisma.SortOrderInput | Prisma.SortOrder
+  sourceWorkPackageTemplateId?: Prisma.SortOrderInput | Prisma.SortOrder
   name?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   position?: Prisma.SortOrder
@@ -257,6 +267,7 @@ export type WorkPackageOrderByWithRelationInput = {
   updatedAt?: Prisma.SortOrder
   project?: Prisma.ProjectOrderByWithRelationInput
   assignedProjectParticipant?: Prisma.ProjectParticipantOrderByWithRelationInput
+  sourceWorkPackageTemplate?: Prisma.WorkPackageTemplateOrderByWithRelationInput
   tradeCategories?: Prisma.WorkPackageTradeCategoryOrderByRelationAggregateInput
   workItems?: Prisma.WorkItemOrderByRelationAggregateInput
 }
@@ -268,6 +279,7 @@ export type WorkPackageWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.WorkPackageWhereInput | Prisma.WorkPackageWhereInput[]
   projectId?: Prisma.StringFilter<"WorkPackage"> | string
   assignedProjectParticipantId?: Prisma.StringNullableFilter<"WorkPackage"> | string | null
+  sourceWorkPackageTemplateId?: Prisma.StringNullableFilter<"WorkPackage"> | string | null
   name?: Prisma.StringFilter<"WorkPackage"> | string
   description?: Prisma.StringNullableFilter<"WorkPackage"> | string | null
   position?: Prisma.IntFilter<"WorkPackage"> | number
@@ -275,6 +287,7 @@ export type WorkPackageWhereUniqueInput = Prisma.AtLeast<{
   updatedAt?: Prisma.DateTimeFilter<"WorkPackage"> | Date | string
   project?: Prisma.XOR<Prisma.ProjectScalarRelationFilter, Prisma.ProjectWhereInput>
   assignedProjectParticipant?: Prisma.XOR<Prisma.ProjectParticipantNullableScalarRelationFilter, Prisma.ProjectParticipantWhereInput> | null
+  sourceWorkPackageTemplate?: Prisma.XOR<Prisma.WorkPackageTemplateNullableScalarRelationFilter, Prisma.WorkPackageTemplateWhereInput> | null
   tradeCategories?: Prisma.WorkPackageTradeCategoryListRelationFilter
   workItems?: Prisma.WorkItemListRelationFilter
 }, "id">
@@ -283,6 +296,7 @@ export type WorkPackageOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   projectId?: Prisma.SortOrder
   assignedProjectParticipantId?: Prisma.SortOrderInput | Prisma.SortOrder
+  sourceWorkPackageTemplateId?: Prisma.SortOrderInput | Prisma.SortOrder
   name?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   position?: Prisma.SortOrder
@@ -302,6 +316,7 @@ export type WorkPackageScalarWhereWithAggregatesInput = {
   id?: Prisma.StringWithAggregatesFilter<"WorkPackage"> | string
   projectId?: Prisma.StringWithAggregatesFilter<"WorkPackage"> | string
   assignedProjectParticipantId?: Prisma.StringNullableWithAggregatesFilter<"WorkPackage"> | string | null
+  sourceWorkPackageTemplateId?: Prisma.StringNullableWithAggregatesFilter<"WorkPackage"> | string | null
   name?: Prisma.StringWithAggregatesFilter<"WorkPackage"> | string
   description?: Prisma.StringNullableWithAggregatesFilter<"WorkPackage"> | string | null
   position?: Prisma.IntWithAggregatesFilter<"WorkPackage"> | number
@@ -318,6 +333,7 @@ export type WorkPackageCreateInput = {
   updatedAt?: Date | string
   project: Prisma.ProjectCreateNestedOneWithoutWorkPackagesInput
   assignedProjectParticipant?: Prisma.ProjectParticipantCreateNestedOneWithoutAssignedWorkPackagesInput
+  sourceWorkPackageTemplate?: Prisma.WorkPackageTemplateCreateNestedOneWithoutDerivedWorkPackagesInput
   tradeCategories?: Prisma.WorkPackageTradeCategoryCreateNestedManyWithoutWorkPackageInput
   workItems?: Prisma.WorkItemCreateNestedManyWithoutWorkPackageInput
 }
@@ -326,6 +342,7 @@ export type WorkPackageUncheckedCreateInput = {
   id?: string
   projectId: string
   assignedProjectParticipantId?: string | null
+  sourceWorkPackageTemplateId?: string | null
   name: string
   description?: string | null
   position: number
@@ -344,6 +361,7 @@ export type WorkPackageUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   project?: Prisma.ProjectUpdateOneRequiredWithoutWorkPackagesNestedInput
   assignedProjectParticipant?: Prisma.ProjectParticipantUpdateOneWithoutAssignedWorkPackagesNestedInput
+  sourceWorkPackageTemplate?: Prisma.WorkPackageTemplateUpdateOneWithoutDerivedWorkPackagesNestedInput
   tradeCategories?: Prisma.WorkPackageTradeCategoryUpdateManyWithoutWorkPackageNestedInput
   workItems?: Prisma.WorkItemUpdateManyWithoutWorkPackageNestedInput
 }
@@ -352,6 +370,7 @@ export type WorkPackageUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   projectId?: Prisma.StringFieldUpdateOperationsInput | string
   assignedProjectParticipantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sourceWorkPackageTemplateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   position?: Prisma.IntFieldUpdateOperationsInput | number
@@ -365,6 +384,7 @@ export type WorkPackageCreateManyInput = {
   id?: string
   projectId: string
   assignedProjectParticipantId?: string | null
+  sourceWorkPackageTemplateId?: string | null
   name: string
   description?: string | null
   position: number
@@ -385,6 +405,7 @@ export type WorkPackageUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   projectId?: Prisma.StringFieldUpdateOperationsInput | string
   assignedProjectParticipantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sourceWorkPackageTemplateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   position?: Prisma.IntFieldUpdateOperationsInput | number
@@ -406,6 +427,7 @@ export type WorkPackageCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   projectId?: Prisma.SortOrder
   assignedProjectParticipantId?: Prisma.SortOrder
+  sourceWorkPackageTemplateId?: Prisma.SortOrder
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
   position?: Prisma.SortOrder
@@ -421,6 +443,7 @@ export type WorkPackageMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   projectId?: Prisma.SortOrder
   assignedProjectParticipantId?: Prisma.SortOrder
+  sourceWorkPackageTemplateId?: Prisma.SortOrder
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
   position?: Prisma.SortOrder
@@ -432,6 +455,7 @@ export type WorkPackageMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   projectId?: Prisma.SortOrder
   assignedProjectParticipantId?: Prisma.SortOrder
+  sourceWorkPackageTemplateId?: Prisma.SortOrder
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
   position?: Prisma.SortOrder
@@ -567,6 +591,48 @@ export type WorkPackageUpdateOneWithoutWorkItemsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.WorkPackageUpdateToOneWithWhereWithoutWorkItemsInput, Prisma.WorkPackageUpdateWithoutWorkItemsInput>, Prisma.WorkPackageUncheckedUpdateWithoutWorkItemsInput>
 }
 
+export type WorkPackageCreateNestedManyWithoutSourceWorkPackageTemplateInput = {
+  create?: Prisma.XOR<Prisma.WorkPackageCreateWithoutSourceWorkPackageTemplateInput, Prisma.WorkPackageUncheckedCreateWithoutSourceWorkPackageTemplateInput> | Prisma.WorkPackageCreateWithoutSourceWorkPackageTemplateInput[] | Prisma.WorkPackageUncheckedCreateWithoutSourceWorkPackageTemplateInput[]
+  connectOrCreate?: Prisma.WorkPackageCreateOrConnectWithoutSourceWorkPackageTemplateInput | Prisma.WorkPackageCreateOrConnectWithoutSourceWorkPackageTemplateInput[]
+  createMany?: Prisma.WorkPackageCreateManySourceWorkPackageTemplateInputEnvelope
+  connect?: Prisma.WorkPackageWhereUniqueInput | Prisma.WorkPackageWhereUniqueInput[]
+}
+
+export type WorkPackageUncheckedCreateNestedManyWithoutSourceWorkPackageTemplateInput = {
+  create?: Prisma.XOR<Prisma.WorkPackageCreateWithoutSourceWorkPackageTemplateInput, Prisma.WorkPackageUncheckedCreateWithoutSourceWorkPackageTemplateInput> | Prisma.WorkPackageCreateWithoutSourceWorkPackageTemplateInput[] | Prisma.WorkPackageUncheckedCreateWithoutSourceWorkPackageTemplateInput[]
+  connectOrCreate?: Prisma.WorkPackageCreateOrConnectWithoutSourceWorkPackageTemplateInput | Prisma.WorkPackageCreateOrConnectWithoutSourceWorkPackageTemplateInput[]
+  createMany?: Prisma.WorkPackageCreateManySourceWorkPackageTemplateInputEnvelope
+  connect?: Prisma.WorkPackageWhereUniqueInput | Prisma.WorkPackageWhereUniqueInput[]
+}
+
+export type WorkPackageUpdateManyWithoutSourceWorkPackageTemplateNestedInput = {
+  create?: Prisma.XOR<Prisma.WorkPackageCreateWithoutSourceWorkPackageTemplateInput, Prisma.WorkPackageUncheckedCreateWithoutSourceWorkPackageTemplateInput> | Prisma.WorkPackageCreateWithoutSourceWorkPackageTemplateInput[] | Prisma.WorkPackageUncheckedCreateWithoutSourceWorkPackageTemplateInput[]
+  connectOrCreate?: Prisma.WorkPackageCreateOrConnectWithoutSourceWorkPackageTemplateInput | Prisma.WorkPackageCreateOrConnectWithoutSourceWorkPackageTemplateInput[]
+  upsert?: Prisma.WorkPackageUpsertWithWhereUniqueWithoutSourceWorkPackageTemplateInput | Prisma.WorkPackageUpsertWithWhereUniqueWithoutSourceWorkPackageTemplateInput[]
+  createMany?: Prisma.WorkPackageCreateManySourceWorkPackageTemplateInputEnvelope
+  set?: Prisma.WorkPackageWhereUniqueInput | Prisma.WorkPackageWhereUniqueInput[]
+  disconnect?: Prisma.WorkPackageWhereUniqueInput | Prisma.WorkPackageWhereUniqueInput[]
+  delete?: Prisma.WorkPackageWhereUniqueInput | Prisma.WorkPackageWhereUniqueInput[]
+  connect?: Prisma.WorkPackageWhereUniqueInput | Prisma.WorkPackageWhereUniqueInput[]
+  update?: Prisma.WorkPackageUpdateWithWhereUniqueWithoutSourceWorkPackageTemplateInput | Prisma.WorkPackageUpdateWithWhereUniqueWithoutSourceWorkPackageTemplateInput[]
+  updateMany?: Prisma.WorkPackageUpdateManyWithWhereWithoutSourceWorkPackageTemplateInput | Prisma.WorkPackageUpdateManyWithWhereWithoutSourceWorkPackageTemplateInput[]
+  deleteMany?: Prisma.WorkPackageScalarWhereInput | Prisma.WorkPackageScalarWhereInput[]
+}
+
+export type WorkPackageUncheckedUpdateManyWithoutSourceWorkPackageTemplateNestedInput = {
+  create?: Prisma.XOR<Prisma.WorkPackageCreateWithoutSourceWorkPackageTemplateInput, Prisma.WorkPackageUncheckedCreateWithoutSourceWorkPackageTemplateInput> | Prisma.WorkPackageCreateWithoutSourceWorkPackageTemplateInput[] | Prisma.WorkPackageUncheckedCreateWithoutSourceWorkPackageTemplateInput[]
+  connectOrCreate?: Prisma.WorkPackageCreateOrConnectWithoutSourceWorkPackageTemplateInput | Prisma.WorkPackageCreateOrConnectWithoutSourceWorkPackageTemplateInput[]
+  upsert?: Prisma.WorkPackageUpsertWithWhereUniqueWithoutSourceWorkPackageTemplateInput | Prisma.WorkPackageUpsertWithWhereUniqueWithoutSourceWorkPackageTemplateInput[]
+  createMany?: Prisma.WorkPackageCreateManySourceWorkPackageTemplateInputEnvelope
+  set?: Prisma.WorkPackageWhereUniqueInput | Prisma.WorkPackageWhereUniqueInput[]
+  disconnect?: Prisma.WorkPackageWhereUniqueInput | Prisma.WorkPackageWhereUniqueInput[]
+  delete?: Prisma.WorkPackageWhereUniqueInput | Prisma.WorkPackageWhereUniqueInput[]
+  connect?: Prisma.WorkPackageWhereUniqueInput | Prisma.WorkPackageWhereUniqueInput[]
+  update?: Prisma.WorkPackageUpdateWithWhereUniqueWithoutSourceWorkPackageTemplateInput | Prisma.WorkPackageUpdateWithWhereUniqueWithoutSourceWorkPackageTemplateInput[]
+  updateMany?: Prisma.WorkPackageUpdateManyWithWhereWithoutSourceWorkPackageTemplateInput | Prisma.WorkPackageUpdateManyWithWhereWithoutSourceWorkPackageTemplateInput[]
+  deleteMany?: Prisma.WorkPackageScalarWhereInput | Prisma.WorkPackageScalarWhereInput[]
+}
+
 export type WorkPackageCreateWithoutProjectInput = {
   id?: string
   name: string
@@ -575,6 +641,7 @@ export type WorkPackageCreateWithoutProjectInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   assignedProjectParticipant?: Prisma.ProjectParticipantCreateNestedOneWithoutAssignedWorkPackagesInput
+  sourceWorkPackageTemplate?: Prisma.WorkPackageTemplateCreateNestedOneWithoutDerivedWorkPackagesInput
   tradeCategories?: Prisma.WorkPackageTradeCategoryCreateNestedManyWithoutWorkPackageInput
   workItems?: Prisma.WorkItemCreateNestedManyWithoutWorkPackageInput
 }
@@ -582,6 +649,7 @@ export type WorkPackageCreateWithoutProjectInput = {
 export type WorkPackageUncheckedCreateWithoutProjectInput = {
   id?: string
   assignedProjectParticipantId?: string | null
+  sourceWorkPackageTemplateId?: string | null
   name: string
   description?: string | null
   position: number
@@ -624,6 +692,7 @@ export type WorkPackageScalarWhereInput = {
   id?: Prisma.StringFilter<"WorkPackage"> | string
   projectId?: Prisma.StringFilter<"WorkPackage"> | string
   assignedProjectParticipantId?: Prisma.StringNullableFilter<"WorkPackage"> | string | null
+  sourceWorkPackageTemplateId?: Prisma.StringNullableFilter<"WorkPackage"> | string | null
   name?: Prisma.StringFilter<"WorkPackage"> | string
   description?: Prisma.StringNullableFilter<"WorkPackage"> | string | null
   position?: Prisma.IntFilter<"WorkPackage"> | number
@@ -639,6 +708,7 @@ export type WorkPackageCreateWithoutAssignedProjectParticipantInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   project: Prisma.ProjectCreateNestedOneWithoutWorkPackagesInput
+  sourceWorkPackageTemplate?: Prisma.WorkPackageTemplateCreateNestedOneWithoutDerivedWorkPackagesInput
   tradeCategories?: Prisma.WorkPackageTradeCategoryCreateNestedManyWithoutWorkPackageInput
   workItems?: Prisma.WorkItemCreateNestedManyWithoutWorkPackageInput
 }
@@ -646,6 +716,7 @@ export type WorkPackageCreateWithoutAssignedProjectParticipantInput = {
 export type WorkPackageUncheckedCreateWithoutAssignedProjectParticipantInput = {
   id?: string
   projectId: string
+  sourceWorkPackageTemplateId?: string | null
   name: string
   description?: string | null
   position: number
@@ -690,6 +761,7 @@ export type WorkPackageCreateWithoutTradeCategoriesInput = {
   updatedAt?: Date | string
   project: Prisma.ProjectCreateNestedOneWithoutWorkPackagesInput
   assignedProjectParticipant?: Prisma.ProjectParticipantCreateNestedOneWithoutAssignedWorkPackagesInput
+  sourceWorkPackageTemplate?: Prisma.WorkPackageTemplateCreateNestedOneWithoutDerivedWorkPackagesInput
   workItems?: Prisma.WorkItemCreateNestedManyWithoutWorkPackageInput
 }
 
@@ -697,6 +769,7 @@ export type WorkPackageUncheckedCreateWithoutTradeCategoriesInput = {
   id?: string
   projectId: string
   assignedProjectParticipantId?: string | null
+  sourceWorkPackageTemplateId?: string | null
   name: string
   description?: string | null
   position: number
@@ -730,6 +803,7 @@ export type WorkPackageUpdateWithoutTradeCategoriesInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   project?: Prisma.ProjectUpdateOneRequiredWithoutWorkPackagesNestedInput
   assignedProjectParticipant?: Prisma.ProjectParticipantUpdateOneWithoutAssignedWorkPackagesNestedInput
+  sourceWorkPackageTemplate?: Prisma.WorkPackageTemplateUpdateOneWithoutDerivedWorkPackagesNestedInput
   workItems?: Prisma.WorkItemUpdateManyWithoutWorkPackageNestedInput
 }
 
@@ -737,6 +811,7 @@ export type WorkPackageUncheckedUpdateWithoutTradeCategoriesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   projectId?: Prisma.StringFieldUpdateOperationsInput | string
   assignedProjectParticipantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sourceWorkPackageTemplateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   position?: Prisma.IntFieldUpdateOperationsInput | number
@@ -754,6 +829,7 @@ export type WorkPackageCreateWithoutWorkItemsInput = {
   updatedAt?: Date | string
   project: Prisma.ProjectCreateNestedOneWithoutWorkPackagesInput
   assignedProjectParticipant?: Prisma.ProjectParticipantCreateNestedOneWithoutAssignedWorkPackagesInput
+  sourceWorkPackageTemplate?: Prisma.WorkPackageTemplateCreateNestedOneWithoutDerivedWorkPackagesInput
   tradeCategories?: Prisma.WorkPackageTradeCategoryCreateNestedManyWithoutWorkPackageInput
 }
 
@@ -761,6 +837,7 @@ export type WorkPackageUncheckedCreateWithoutWorkItemsInput = {
   id?: string
   projectId: string
   assignedProjectParticipantId?: string | null
+  sourceWorkPackageTemplateId?: string | null
   name: string
   description?: string | null
   position: number
@@ -794,6 +871,7 @@ export type WorkPackageUpdateWithoutWorkItemsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   project?: Prisma.ProjectUpdateOneRequiredWithoutWorkPackagesNestedInput
   assignedProjectParticipant?: Prisma.ProjectParticipantUpdateOneWithoutAssignedWorkPackagesNestedInput
+  sourceWorkPackageTemplate?: Prisma.WorkPackageTemplateUpdateOneWithoutDerivedWorkPackagesNestedInput
   tradeCategories?: Prisma.WorkPackageTradeCategoryUpdateManyWithoutWorkPackageNestedInput
 }
 
@@ -801,6 +879,7 @@ export type WorkPackageUncheckedUpdateWithoutWorkItemsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   projectId?: Prisma.StringFieldUpdateOperationsInput | string
   assignedProjectParticipantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sourceWorkPackageTemplateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   position?: Prisma.IntFieldUpdateOperationsInput | number
@@ -809,9 +888,62 @@ export type WorkPackageUncheckedUpdateWithoutWorkItemsInput = {
   tradeCategories?: Prisma.WorkPackageTradeCategoryUncheckedUpdateManyWithoutWorkPackageNestedInput
 }
 
+export type WorkPackageCreateWithoutSourceWorkPackageTemplateInput = {
+  id?: string
+  name: string
+  description?: string | null
+  position: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  project: Prisma.ProjectCreateNestedOneWithoutWorkPackagesInput
+  assignedProjectParticipant?: Prisma.ProjectParticipantCreateNestedOneWithoutAssignedWorkPackagesInput
+  tradeCategories?: Prisma.WorkPackageTradeCategoryCreateNestedManyWithoutWorkPackageInput
+  workItems?: Prisma.WorkItemCreateNestedManyWithoutWorkPackageInput
+}
+
+export type WorkPackageUncheckedCreateWithoutSourceWorkPackageTemplateInput = {
+  id?: string
+  projectId: string
+  assignedProjectParticipantId?: string | null
+  name: string
+  description?: string | null
+  position: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  tradeCategories?: Prisma.WorkPackageTradeCategoryUncheckedCreateNestedManyWithoutWorkPackageInput
+  workItems?: Prisma.WorkItemUncheckedCreateNestedManyWithoutWorkPackageInput
+}
+
+export type WorkPackageCreateOrConnectWithoutSourceWorkPackageTemplateInput = {
+  where: Prisma.WorkPackageWhereUniqueInput
+  create: Prisma.XOR<Prisma.WorkPackageCreateWithoutSourceWorkPackageTemplateInput, Prisma.WorkPackageUncheckedCreateWithoutSourceWorkPackageTemplateInput>
+}
+
+export type WorkPackageCreateManySourceWorkPackageTemplateInputEnvelope = {
+  data: Prisma.WorkPackageCreateManySourceWorkPackageTemplateInput | Prisma.WorkPackageCreateManySourceWorkPackageTemplateInput[]
+  skipDuplicates?: boolean
+}
+
+export type WorkPackageUpsertWithWhereUniqueWithoutSourceWorkPackageTemplateInput = {
+  where: Prisma.WorkPackageWhereUniqueInput
+  update: Prisma.XOR<Prisma.WorkPackageUpdateWithoutSourceWorkPackageTemplateInput, Prisma.WorkPackageUncheckedUpdateWithoutSourceWorkPackageTemplateInput>
+  create: Prisma.XOR<Prisma.WorkPackageCreateWithoutSourceWorkPackageTemplateInput, Prisma.WorkPackageUncheckedCreateWithoutSourceWorkPackageTemplateInput>
+}
+
+export type WorkPackageUpdateWithWhereUniqueWithoutSourceWorkPackageTemplateInput = {
+  where: Prisma.WorkPackageWhereUniqueInput
+  data: Prisma.XOR<Prisma.WorkPackageUpdateWithoutSourceWorkPackageTemplateInput, Prisma.WorkPackageUncheckedUpdateWithoutSourceWorkPackageTemplateInput>
+}
+
+export type WorkPackageUpdateManyWithWhereWithoutSourceWorkPackageTemplateInput = {
+  where: Prisma.WorkPackageScalarWhereInput
+  data: Prisma.XOR<Prisma.WorkPackageUpdateManyMutationInput, Prisma.WorkPackageUncheckedUpdateManyWithoutSourceWorkPackageTemplateInput>
+}
+
 export type WorkPackageCreateManyProjectInput = {
   id?: string
   assignedProjectParticipantId?: string | null
+  sourceWorkPackageTemplateId?: string | null
   name: string
   description?: string | null
   position: number
@@ -827,6 +959,7 @@ export type WorkPackageUpdateWithoutProjectInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   assignedProjectParticipant?: Prisma.ProjectParticipantUpdateOneWithoutAssignedWorkPackagesNestedInput
+  sourceWorkPackageTemplate?: Prisma.WorkPackageTemplateUpdateOneWithoutDerivedWorkPackagesNestedInput
   tradeCategories?: Prisma.WorkPackageTradeCategoryUpdateManyWithoutWorkPackageNestedInput
   workItems?: Prisma.WorkItemUpdateManyWithoutWorkPackageNestedInput
 }
@@ -834,6 +967,7 @@ export type WorkPackageUpdateWithoutProjectInput = {
 export type WorkPackageUncheckedUpdateWithoutProjectInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   assignedProjectParticipantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sourceWorkPackageTemplateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   position?: Prisma.IntFieldUpdateOperationsInput | number
@@ -846,6 +980,7 @@ export type WorkPackageUncheckedUpdateWithoutProjectInput = {
 export type WorkPackageUncheckedUpdateManyWithoutProjectInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   assignedProjectParticipantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sourceWorkPackageTemplateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   position?: Prisma.IntFieldUpdateOperationsInput | number
@@ -856,6 +991,7 @@ export type WorkPackageUncheckedUpdateManyWithoutProjectInput = {
 export type WorkPackageCreateManyAssignedProjectParticipantInput = {
   id?: string
   projectId: string
+  sourceWorkPackageTemplateId?: string | null
   name: string
   description?: string | null
   position: number
@@ -871,6 +1007,7 @@ export type WorkPackageUpdateWithoutAssignedProjectParticipantInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   project?: Prisma.ProjectUpdateOneRequiredWithoutWorkPackagesNestedInput
+  sourceWorkPackageTemplate?: Prisma.WorkPackageTemplateUpdateOneWithoutDerivedWorkPackagesNestedInput
   tradeCategories?: Prisma.WorkPackageTradeCategoryUpdateManyWithoutWorkPackageNestedInput
   workItems?: Prisma.WorkItemUpdateManyWithoutWorkPackageNestedInput
 }
@@ -878,6 +1015,7 @@ export type WorkPackageUpdateWithoutAssignedProjectParticipantInput = {
 export type WorkPackageUncheckedUpdateWithoutAssignedProjectParticipantInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   projectId?: Prisma.StringFieldUpdateOperationsInput | string
+  sourceWorkPackageTemplateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   position?: Prisma.IntFieldUpdateOperationsInput | number
@@ -890,6 +1028,55 @@ export type WorkPackageUncheckedUpdateWithoutAssignedProjectParticipantInput = {
 export type WorkPackageUncheckedUpdateManyWithoutAssignedProjectParticipantInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   projectId?: Prisma.StringFieldUpdateOperationsInput | string
+  sourceWorkPackageTemplateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  position?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type WorkPackageCreateManySourceWorkPackageTemplateInput = {
+  id?: string
+  projectId: string
+  assignedProjectParticipantId?: string | null
+  name: string
+  description?: string | null
+  position: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type WorkPackageUpdateWithoutSourceWorkPackageTemplateInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  position?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  project?: Prisma.ProjectUpdateOneRequiredWithoutWorkPackagesNestedInput
+  assignedProjectParticipant?: Prisma.ProjectParticipantUpdateOneWithoutAssignedWorkPackagesNestedInput
+  tradeCategories?: Prisma.WorkPackageTradeCategoryUpdateManyWithoutWorkPackageNestedInput
+  workItems?: Prisma.WorkItemUpdateManyWithoutWorkPackageNestedInput
+}
+
+export type WorkPackageUncheckedUpdateWithoutSourceWorkPackageTemplateInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  projectId?: Prisma.StringFieldUpdateOperationsInput | string
+  assignedProjectParticipantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  position?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  tradeCategories?: Prisma.WorkPackageTradeCategoryUncheckedUpdateManyWithoutWorkPackageNestedInput
+  workItems?: Prisma.WorkItemUncheckedUpdateManyWithoutWorkPackageNestedInput
+}
+
+export type WorkPackageUncheckedUpdateManyWithoutSourceWorkPackageTemplateInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  projectId?: Prisma.StringFieldUpdateOperationsInput | string
+  assignedProjectParticipantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   position?: Prisma.IntFieldUpdateOperationsInput | number
@@ -941,6 +1128,7 @@ export type WorkPackageSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   id?: boolean
   projectId?: boolean
   assignedProjectParticipantId?: boolean
+  sourceWorkPackageTemplateId?: boolean
   name?: boolean
   description?: boolean
   position?: boolean
@@ -948,6 +1136,7 @@ export type WorkPackageSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   updatedAt?: boolean
   project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
   assignedProjectParticipant?: boolean | Prisma.WorkPackage$assignedProjectParticipantArgs<ExtArgs>
+  sourceWorkPackageTemplate?: boolean | Prisma.WorkPackage$sourceWorkPackageTemplateArgs<ExtArgs>
   tradeCategories?: boolean | Prisma.WorkPackage$tradeCategoriesArgs<ExtArgs>
   workItems?: boolean | Prisma.WorkPackage$workItemsArgs<ExtArgs>
   _count?: boolean | Prisma.WorkPackageCountOutputTypeDefaultArgs<ExtArgs>
@@ -957,6 +1146,7 @@ export type WorkPackageSelectCreateManyAndReturn<ExtArgs extends runtime.Types.E
   id?: boolean
   projectId?: boolean
   assignedProjectParticipantId?: boolean
+  sourceWorkPackageTemplateId?: boolean
   name?: boolean
   description?: boolean
   position?: boolean
@@ -964,12 +1154,14 @@ export type WorkPackageSelectCreateManyAndReturn<ExtArgs extends runtime.Types.E
   updatedAt?: boolean
   project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
   assignedProjectParticipant?: boolean | Prisma.WorkPackage$assignedProjectParticipantArgs<ExtArgs>
+  sourceWorkPackageTemplate?: boolean | Prisma.WorkPackage$sourceWorkPackageTemplateArgs<ExtArgs>
 }, ExtArgs["result"]["workPackage"]>
 
 export type WorkPackageSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   projectId?: boolean
   assignedProjectParticipantId?: boolean
+  sourceWorkPackageTemplateId?: boolean
   name?: boolean
   description?: boolean
   position?: boolean
@@ -977,12 +1169,14 @@ export type WorkPackageSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.E
   updatedAt?: boolean
   project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
   assignedProjectParticipant?: boolean | Prisma.WorkPackage$assignedProjectParticipantArgs<ExtArgs>
+  sourceWorkPackageTemplate?: boolean | Prisma.WorkPackage$sourceWorkPackageTemplateArgs<ExtArgs>
 }, ExtArgs["result"]["workPackage"]>
 
 export type WorkPackageSelectScalar = {
   id?: boolean
   projectId?: boolean
   assignedProjectParticipantId?: boolean
+  sourceWorkPackageTemplateId?: boolean
   name?: boolean
   description?: boolean
   position?: boolean
@@ -990,10 +1184,11 @@ export type WorkPackageSelectScalar = {
   updatedAt?: boolean
 }
 
-export type WorkPackageOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "projectId" | "assignedProjectParticipantId" | "name" | "description" | "position" | "createdAt" | "updatedAt", ExtArgs["result"]["workPackage"]>
+export type WorkPackageOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "projectId" | "assignedProjectParticipantId" | "sourceWorkPackageTemplateId" | "name" | "description" | "position" | "createdAt" | "updatedAt", ExtArgs["result"]["workPackage"]>
 export type WorkPackageInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
   assignedProjectParticipant?: boolean | Prisma.WorkPackage$assignedProjectParticipantArgs<ExtArgs>
+  sourceWorkPackageTemplate?: boolean | Prisma.WorkPackage$sourceWorkPackageTemplateArgs<ExtArgs>
   tradeCategories?: boolean | Prisma.WorkPackage$tradeCategoriesArgs<ExtArgs>
   workItems?: boolean | Prisma.WorkPackage$workItemsArgs<ExtArgs>
   _count?: boolean | Prisma.WorkPackageCountOutputTypeDefaultArgs<ExtArgs>
@@ -1001,10 +1196,12 @@ export type WorkPackageInclude<ExtArgs extends runtime.Types.Extensions.Internal
 export type WorkPackageIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
   assignedProjectParticipant?: boolean | Prisma.WorkPackage$assignedProjectParticipantArgs<ExtArgs>
+  sourceWorkPackageTemplate?: boolean | Prisma.WorkPackage$sourceWorkPackageTemplateArgs<ExtArgs>
 }
 export type WorkPackageIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
   assignedProjectParticipant?: boolean | Prisma.WorkPackage$assignedProjectParticipantArgs<ExtArgs>
+  sourceWorkPackageTemplate?: boolean | Prisma.WorkPackage$sourceWorkPackageTemplateArgs<ExtArgs>
 }
 
 export type $WorkPackagePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1012,6 +1209,7 @@ export type $WorkPackagePayload<ExtArgs extends runtime.Types.Extensions.Interna
   objects: {
     project: Prisma.$ProjectPayload<ExtArgs>
     assignedProjectParticipant: Prisma.$ProjectParticipantPayload<ExtArgs> | null
+    sourceWorkPackageTemplate: Prisma.$WorkPackageTemplatePayload<ExtArgs> | null
     tradeCategories: Prisma.$WorkPackageTradeCategoryPayload<ExtArgs>[]
     workItems: Prisma.$WorkItemPayload<ExtArgs>[]
   }
@@ -1019,6 +1217,7 @@ export type $WorkPackagePayload<ExtArgs extends runtime.Types.Extensions.Interna
     id: string
     projectId: string
     assignedProjectParticipantId: string | null
+    sourceWorkPackageTemplateId: string | null
     name: string
     description: string | null
     position: number
@@ -1420,6 +1619,7 @@ export interface Prisma__WorkPackageClient<T, Null = never, ExtArgs extends runt
   readonly [Symbol.toStringTag]: "PrismaPromise"
   project<T extends Prisma.ProjectDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProjectDefaultArgs<ExtArgs>>): Prisma.Prisma__ProjectClient<runtime.Types.Result.GetResult<Prisma.$ProjectPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   assignedProjectParticipant<T extends Prisma.WorkPackage$assignedProjectParticipantArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.WorkPackage$assignedProjectParticipantArgs<ExtArgs>>): Prisma.Prisma__ProjectParticipantClient<runtime.Types.Result.GetResult<Prisma.$ProjectParticipantPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  sourceWorkPackageTemplate<T extends Prisma.WorkPackage$sourceWorkPackageTemplateArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.WorkPackage$sourceWorkPackageTemplateArgs<ExtArgs>>): Prisma.Prisma__WorkPackageTemplateClient<runtime.Types.Result.GetResult<Prisma.$WorkPackageTemplatePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   tradeCategories<T extends Prisma.WorkPackage$tradeCategoriesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.WorkPackage$tradeCategoriesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WorkPackageTradeCategoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   workItems<T extends Prisma.WorkPackage$workItemsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.WorkPackage$workItemsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WorkItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
@@ -1454,6 +1654,7 @@ export interface WorkPackageFieldRefs {
   readonly id: Prisma.FieldRef<"WorkPackage", 'String'>
   readonly projectId: Prisma.FieldRef<"WorkPackage", 'String'>
   readonly assignedProjectParticipantId: Prisma.FieldRef<"WorkPackage", 'String'>
+  readonly sourceWorkPackageTemplateId: Prisma.FieldRef<"WorkPackage", 'String'>
   readonly name: Prisma.FieldRef<"WorkPackage", 'String'>
   readonly description: Prisma.FieldRef<"WorkPackage", 'String'>
   readonly position: Prisma.FieldRef<"WorkPackage", 'Int'>
@@ -1876,6 +2077,25 @@ export type WorkPackage$assignedProjectParticipantArgs<ExtArgs extends runtime.T
    */
   include?: Prisma.ProjectParticipantInclude<ExtArgs> | null
   where?: Prisma.ProjectParticipantWhereInput
+}
+
+/**
+ * WorkPackage.sourceWorkPackageTemplate
+ */
+export type WorkPackage$sourceWorkPackageTemplateArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the WorkPackageTemplate
+   */
+  select?: Prisma.WorkPackageTemplateSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the WorkPackageTemplate
+   */
+  omit?: Prisma.WorkPackageTemplateOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.WorkPackageTemplateInclude<ExtArgs> | null
+  where?: Prisma.WorkPackageTemplateWhereInput
 }
 
 /**

@@ -96,8 +96,9 @@ model Organization {
   tradeCategories       OrganizationTradeCategory[]
   leadProjects          Project[]
   projectParticipations ProjectParticipant[]
-  libraryFolders        LibraryFolder[]
-  workTemplates         WorkTemplate[]
+  libraryFolders          LibraryFolder[]
+  workTemplates           WorkTemplate[]
+  workPackageTemplates    WorkPackageTemplate[]
 }
 
 enum MembershipStatus {
@@ -148,10 +149,11 @@ model TradeCategory {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  organizations   OrganizationTradeCategory[]
-  workPackages    WorkPackageTradeCategory[]
-  workItems       WorkItem[]
-  workTemplates   WorkTemplate[]
+  organizations        OrganizationTradeCategory[]
+  workPackages         WorkPackageTradeCategory[]
+  workItems            WorkItem[]
+  workTemplates        WorkTemplate[]
+  workPackageTemplates WorkPackageTemplate[]
 }
 
 model OrganizationTradeCategory {
@@ -233,16 +235,18 @@ model ProjectSpace {
 }
 
 model WorkPackage {
-  id                           String              @id @default(cuid())
-  projectId                    String
-  project                      Project             @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  assignedProjectParticipantId String?
-  assignedProjectParticipant   ProjectParticipant? @relation(fields: [assignedProjectParticipantId], references: [id])
-  name                         String
-  description                  String?
-  position                     Int
-  createdAt                    DateTime            @default(now())
-  updatedAt                    DateTime            @updatedAt
+  id                             String               @id @default(cuid())
+  projectId                      String
+  project                        Project              @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  assignedProjectParticipantId   String?
+  assignedProjectParticipant     ProjectParticipant?  @relation(fields: [assignedProjectParticipantId], references: [id])
+  sourceWorkPackageTemplateId    String?
+  sourceWorkPackageTemplate      WorkPackageTemplate? @relation(fields: [sourceWorkPackageTemplateId], references: [id], onDelete: SetNull)
+  name                           String
+  description                    String?
+  position                       Int
+  createdAt                      DateTime             @default(now())
+  updatedAt                      DateTime             @updatedAt
 
   tradeCategories WorkPackageTradeCategory[]
   workItems       WorkItem[]
@@ -294,7 +298,8 @@ model LibraryFolder {
   createdAt      DateTime        @default(now())
   updatedAt      DateTime        @updatedAt
 
-  workTemplates WorkTemplate[]
+  workTemplates        WorkTemplate[]
+  workPackageTemplates WorkPackageTemplate[]
 }
 
 model WorkTemplate {
@@ -317,6 +322,24 @@ model WorkTemplate {
   updatedAt          DateTime       @updatedAt
 
   workItems WorkItem[]
+}
+
+model WorkPackageTemplate {
+  id                 String         @id @default(cuid())
+  organizationId     String
+  organization       Organization   @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  folderId           String?
+  folder             LibraryFolder? @relation(fields: [folderId], references: [id])
+  tradeCategoryId    String?
+  tradeCategory      TradeCategory? @relation(fields: [tradeCategoryId], references: [id])
+  name               String
+  description        String?
+  defaultMarginRate  Decimal?
+  position           Int
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @updatedAt
+
+  derivedWorkPackages WorkPackage[]
 }
 
 model Verification {

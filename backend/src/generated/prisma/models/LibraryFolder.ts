@@ -236,6 +236,7 @@ export type LibraryFolderWhereInput = {
   parent?: Prisma.XOR<Prisma.LibraryFolderNullableScalarRelationFilter, Prisma.LibraryFolderWhereInput> | null
   children?: Prisma.LibraryFolderListRelationFilter
   workTemplates?: Prisma.WorkTemplateListRelationFilter
+  workPackageTemplates?: Prisma.WorkPackageTemplateListRelationFilter
 }
 
 export type LibraryFolderOrderByWithRelationInput = {
@@ -250,6 +251,7 @@ export type LibraryFolderOrderByWithRelationInput = {
   parent?: Prisma.LibraryFolderOrderByWithRelationInput
   children?: Prisma.LibraryFolderOrderByRelationAggregateInput
   workTemplates?: Prisma.WorkTemplateOrderByRelationAggregateInput
+  workPackageTemplates?: Prisma.WorkPackageTemplateOrderByRelationAggregateInput
 }
 
 export type LibraryFolderWhereUniqueInput = Prisma.AtLeast<{
@@ -267,6 +269,7 @@ export type LibraryFolderWhereUniqueInput = Prisma.AtLeast<{
   parent?: Prisma.XOR<Prisma.LibraryFolderNullableScalarRelationFilter, Prisma.LibraryFolderWhereInput> | null
   children?: Prisma.LibraryFolderListRelationFilter
   workTemplates?: Prisma.WorkTemplateListRelationFilter
+  workPackageTemplates?: Prisma.WorkPackageTemplateListRelationFilter
 }, "id">
 
 export type LibraryFolderOrderByWithAggregationInput = {
@@ -307,6 +310,7 @@ export type LibraryFolderCreateInput = {
   parent?: Prisma.LibraryFolderCreateNestedOneWithoutChildrenInput
   children?: Prisma.LibraryFolderCreateNestedManyWithoutParentInput
   workTemplates?: Prisma.WorkTemplateCreateNestedManyWithoutFolderInput
+  workPackageTemplates?: Prisma.WorkPackageTemplateCreateNestedManyWithoutFolderInput
 }
 
 export type LibraryFolderUncheckedCreateInput = {
@@ -319,6 +323,7 @@ export type LibraryFolderUncheckedCreateInput = {
   updatedAt?: Date | string
   children?: Prisma.LibraryFolderUncheckedCreateNestedManyWithoutParentInput
   workTemplates?: Prisma.WorkTemplateUncheckedCreateNestedManyWithoutFolderInput
+  workPackageTemplates?: Prisma.WorkPackageTemplateUncheckedCreateNestedManyWithoutFolderInput
 }
 
 export type LibraryFolderUpdateInput = {
@@ -331,6 +336,7 @@ export type LibraryFolderUpdateInput = {
   parent?: Prisma.LibraryFolderUpdateOneWithoutChildrenNestedInput
   children?: Prisma.LibraryFolderUpdateManyWithoutParentNestedInput
   workTemplates?: Prisma.WorkTemplateUpdateManyWithoutFolderNestedInput
+  workPackageTemplates?: Prisma.WorkPackageTemplateUpdateManyWithoutFolderNestedInput
 }
 
 export type LibraryFolderUncheckedUpdateInput = {
@@ -343,6 +349,7 @@ export type LibraryFolderUncheckedUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   children?: Prisma.LibraryFolderUncheckedUpdateManyWithoutParentNestedInput
   workTemplates?: Prisma.WorkTemplateUncheckedUpdateManyWithoutFolderNestedInput
+  workPackageTemplates?: Prisma.WorkPackageTemplateUncheckedUpdateManyWithoutFolderNestedInput
 }
 
 export type LibraryFolderCreateManyInput = {
@@ -542,6 +549,22 @@ export type LibraryFolderUpdateOneWithoutWorkTemplatesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.LibraryFolderUpdateToOneWithWhereWithoutWorkTemplatesInput, Prisma.LibraryFolderUpdateWithoutWorkTemplatesInput>, Prisma.LibraryFolderUncheckedUpdateWithoutWorkTemplatesInput>
 }
 
+export type LibraryFolderCreateNestedOneWithoutWorkPackageTemplatesInput = {
+  create?: Prisma.XOR<Prisma.LibraryFolderCreateWithoutWorkPackageTemplatesInput, Prisma.LibraryFolderUncheckedCreateWithoutWorkPackageTemplatesInput>
+  connectOrCreate?: Prisma.LibraryFolderCreateOrConnectWithoutWorkPackageTemplatesInput
+  connect?: Prisma.LibraryFolderWhereUniqueInput
+}
+
+export type LibraryFolderUpdateOneWithoutWorkPackageTemplatesNestedInput = {
+  create?: Prisma.XOR<Prisma.LibraryFolderCreateWithoutWorkPackageTemplatesInput, Prisma.LibraryFolderUncheckedCreateWithoutWorkPackageTemplatesInput>
+  connectOrCreate?: Prisma.LibraryFolderCreateOrConnectWithoutWorkPackageTemplatesInput
+  upsert?: Prisma.LibraryFolderUpsertWithoutWorkPackageTemplatesInput
+  disconnect?: Prisma.LibraryFolderWhereInput | boolean
+  delete?: Prisma.LibraryFolderWhereInput | boolean
+  connect?: Prisma.LibraryFolderWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.LibraryFolderUpdateToOneWithWhereWithoutWorkPackageTemplatesInput, Prisma.LibraryFolderUpdateWithoutWorkPackageTemplatesInput>, Prisma.LibraryFolderUncheckedUpdateWithoutWorkPackageTemplatesInput>
+}
+
 export type LibraryFolderCreateWithoutOrganizationInput = {
   id?: string
   name: string
@@ -551,6 +574,7 @@ export type LibraryFolderCreateWithoutOrganizationInput = {
   parent?: Prisma.LibraryFolderCreateNestedOneWithoutChildrenInput
   children?: Prisma.LibraryFolderCreateNestedManyWithoutParentInput
   workTemplates?: Prisma.WorkTemplateCreateNestedManyWithoutFolderInput
+  workPackageTemplates?: Prisma.WorkPackageTemplateCreateNestedManyWithoutFolderInput
 }
 
 export type LibraryFolderUncheckedCreateWithoutOrganizationInput = {
@@ -562,6 +586,7 @@ export type LibraryFolderUncheckedCreateWithoutOrganizationInput = {
   updatedAt?: Date | string
   children?: Prisma.LibraryFolderUncheckedCreateNestedManyWithoutParentInput
   workTemplates?: Prisma.WorkTemplateUncheckedCreateNestedManyWithoutFolderInput
+  workPackageTemplates?: Prisma.WorkPackageTemplateUncheckedCreateNestedManyWithoutFolderInput
 }
 
 export type LibraryFolderCreateOrConnectWithoutOrganizationInput = {
@@ -612,6 +637,7 @@ export type LibraryFolderCreateWithoutChildrenInput = {
   organization: Prisma.OrganizationCreateNestedOneWithoutLibraryFoldersInput
   parent?: Prisma.LibraryFolderCreateNestedOneWithoutChildrenInput
   workTemplates?: Prisma.WorkTemplateCreateNestedManyWithoutFolderInput
+  workPackageTemplates?: Prisma.WorkPackageTemplateCreateNestedManyWithoutFolderInput
 }
 
 export type LibraryFolderUncheckedCreateWithoutChildrenInput = {
@@ -623,6 +649,7 @@ export type LibraryFolderUncheckedCreateWithoutChildrenInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   workTemplates?: Prisma.WorkTemplateUncheckedCreateNestedManyWithoutFolderInput
+  workPackageTemplates?: Prisma.WorkPackageTemplateUncheckedCreateNestedManyWithoutFolderInput
 }
 
 export type LibraryFolderCreateOrConnectWithoutChildrenInput = {
@@ -639,6 +666,7 @@ export type LibraryFolderCreateWithoutParentInput = {
   organization: Prisma.OrganizationCreateNestedOneWithoutLibraryFoldersInput
   children?: Prisma.LibraryFolderCreateNestedManyWithoutParentInput
   workTemplates?: Prisma.WorkTemplateCreateNestedManyWithoutFolderInput
+  workPackageTemplates?: Prisma.WorkPackageTemplateCreateNestedManyWithoutFolderInput
 }
 
 export type LibraryFolderUncheckedCreateWithoutParentInput = {
@@ -650,6 +678,7 @@ export type LibraryFolderUncheckedCreateWithoutParentInput = {
   updatedAt?: Date | string
   children?: Prisma.LibraryFolderUncheckedCreateNestedManyWithoutParentInput
   workTemplates?: Prisma.WorkTemplateUncheckedCreateNestedManyWithoutFolderInput
+  workPackageTemplates?: Prisma.WorkPackageTemplateUncheckedCreateNestedManyWithoutFolderInput
 }
 
 export type LibraryFolderCreateOrConnectWithoutParentInput = {
@@ -682,6 +711,7 @@ export type LibraryFolderUpdateWithoutChildrenInput = {
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutLibraryFoldersNestedInput
   parent?: Prisma.LibraryFolderUpdateOneWithoutChildrenNestedInput
   workTemplates?: Prisma.WorkTemplateUpdateManyWithoutFolderNestedInput
+  workPackageTemplates?: Prisma.WorkPackageTemplateUpdateManyWithoutFolderNestedInput
 }
 
 export type LibraryFolderUncheckedUpdateWithoutChildrenInput = {
@@ -693,6 +723,7 @@ export type LibraryFolderUncheckedUpdateWithoutChildrenInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   workTemplates?: Prisma.WorkTemplateUncheckedUpdateManyWithoutFolderNestedInput
+  workPackageTemplates?: Prisma.WorkPackageTemplateUncheckedUpdateManyWithoutFolderNestedInput
 }
 
 export type LibraryFolderUpsertWithWhereUniqueWithoutParentInput = {
@@ -720,6 +751,7 @@ export type LibraryFolderCreateWithoutWorkTemplatesInput = {
   organization: Prisma.OrganizationCreateNestedOneWithoutLibraryFoldersInput
   parent?: Prisma.LibraryFolderCreateNestedOneWithoutChildrenInput
   children?: Prisma.LibraryFolderCreateNestedManyWithoutParentInput
+  workPackageTemplates?: Prisma.WorkPackageTemplateCreateNestedManyWithoutFolderInput
 }
 
 export type LibraryFolderUncheckedCreateWithoutWorkTemplatesInput = {
@@ -731,6 +763,7 @@ export type LibraryFolderUncheckedCreateWithoutWorkTemplatesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   children?: Prisma.LibraryFolderUncheckedCreateNestedManyWithoutParentInput
+  workPackageTemplates?: Prisma.WorkPackageTemplateUncheckedCreateNestedManyWithoutFolderInput
 }
 
 export type LibraryFolderCreateOrConnectWithoutWorkTemplatesInput = {
@@ -758,6 +791,7 @@ export type LibraryFolderUpdateWithoutWorkTemplatesInput = {
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutLibraryFoldersNestedInput
   parent?: Prisma.LibraryFolderUpdateOneWithoutChildrenNestedInput
   children?: Prisma.LibraryFolderUpdateManyWithoutParentNestedInput
+  workPackageTemplates?: Prisma.WorkPackageTemplateUpdateManyWithoutFolderNestedInput
 }
 
 export type LibraryFolderUncheckedUpdateWithoutWorkTemplatesInput = {
@@ -769,6 +803,71 @@ export type LibraryFolderUncheckedUpdateWithoutWorkTemplatesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   children?: Prisma.LibraryFolderUncheckedUpdateManyWithoutParentNestedInput
+  workPackageTemplates?: Prisma.WorkPackageTemplateUncheckedUpdateManyWithoutFolderNestedInput
+}
+
+export type LibraryFolderCreateWithoutWorkPackageTemplatesInput = {
+  id?: string
+  name: string
+  position: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  organization: Prisma.OrganizationCreateNestedOneWithoutLibraryFoldersInput
+  parent?: Prisma.LibraryFolderCreateNestedOneWithoutChildrenInput
+  children?: Prisma.LibraryFolderCreateNestedManyWithoutParentInput
+  workTemplates?: Prisma.WorkTemplateCreateNestedManyWithoutFolderInput
+}
+
+export type LibraryFolderUncheckedCreateWithoutWorkPackageTemplatesInput = {
+  id?: string
+  organizationId: string
+  parentId?: string | null
+  name: string
+  position: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  children?: Prisma.LibraryFolderUncheckedCreateNestedManyWithoutParentInput
+  workTemplates?: Prisma.WorkTemplateUncheckedCreateNestedManyWithoutFolderInput
+}
+
+export type LibraryFolderCreateOrConnectWithoutWorkPackageTemplatesInput = {
+  where: Prisma.LibraryFolderWhereUniqueInput
+  create: Prisma.XOR<Prisma.LibraryFolderCreateWithoutWorkPackageTemplatesInput, Prisma.LibraryFolderUncheckedCreateWithoutWorkPackageTemplatesInput>
+}
+
+export type LibraryFolderUpsertWithoutWorkPackageTemplatesInput = {
+  update: Prisma.XOR<Prisma.LibraryFolderUpdateWithoutWorkPackageTemplatesInput, Prisma.LibraryFolderUncheckedUpdateWithoutWorkPackageTemplatesInput>
+  create: Prisma.XOR<Prisma.LibraryFolderCreateWithoutWorkPackageTemplatesInput, Prisma.LibraryFolderUncheckedCreateWithoutWorkPackageTemplatesInput>
+  where?: Prisma.LibraryFolderWhereInput
+}
+
+export type LibraryFolderUpdateToOneWithWhereWithoutWorkPackageTemplatesInput = {
+  where?: Prisma.LibraryFolderWhereInput
+  data: Prisma.XOR<Prisma.LibraryFolderUpdateWithoutWorkPackageTemplatesInput, Prisma.LibraryFolderUncheckedUpdateWithoutWorkPackageTemplatesInput>
+}
+
+export type LibraryFolderUpdateWithoutWorkPackageTemplatesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  position?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutLibraryFoldersNestedInput
+  parent?: Prisma.LibraryFolderUpdateOneWithoutChildrenNestedInput
+  children?: Prisma.LibraryFolderUpdateManyWithoutParentNestedInput
+  workTemplates?: Prisma.WorkTemplateUpdateManyWithoutFolderNestedInput
+}
+
+export type LibraryFolderUncheckedUpdateWithoutWorkPackageTemplatesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  parentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  position?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  children?: Prisma.LibraryFolderUncheckedUpdateManyWithoutParentNestedInput
+  workTemplates?: Prisma.WorkTemplateUncheckedUpdateManyWithoutFolderNestedInput
 }
 
 export type LibraryFolderCreateManyOrganizationInput = {
@@ -789,6 +888,7 @@ export type LibraryFolderUpdateWithoutOrganizationInput = {
   parent?: Prisma.LibraryFolderUpdateOneWithoutChildrenNestedInput
   children?: Prisma.LibraryFolderUpdateManyWithoutParentNestedInput
   workTemplates?: Prisma.WorkTemplateUpdateManyWithoutFolderNestedInput
+  workPackageTemplates?: Prisma.WorkPackageTemplateUpdateManyWithoutFolderNestedInput
 }
 
 export type LibraryFolderUncheckedUpdateWithoutOrganizationInput = {
@@ -800,6 +900,7 @@ export type LibraryFolderUncheckedUpdateWithoutOrganizationInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   children?: Prisma.LibraryFolderUncheckedUpdateManyWithoutParentNestedInput
   workTemplates?: Prisma.WorkTemplateUncheckedUpdateManyWithoutFolderNestedInput
+  workPackageTemplates?: Prisma.WorkPackageTemplateUncheckedUpdateManyWithoutFolderNestedInput
 }
 
 export type LibraryFolderUncheckedUpdateManyWithoutOrganizationInput = {
@@ -829,6 +930,7 @@ export type LibraryFolderUpdateWithoutParentInput = {
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutLibraryFoldersNestedInput
   children?: Prisma.LibraryFolderUpdateManyWithoutParentNestedInput
   workTemplates?: Prisma.WorkTemplateUpdateManyWithoutFolderNestedInput
+  workPackageTemplates?: Prisma.WorkPackageTemplateUpdateManyWithoutFolderNestedInput
 }
 
 export type LibraryFolderUncheckedUpdateWithoutParentInput = {
@@ -840,6 +942,7 @@ export type LibraryFolderUncheckedUpdateWithoutParentInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   children?: Prisma.LibraryFolderUncheckedUpdateManyWithoutParentNestedInput
   workTemplates?: Prisma.WorkTemplateUncheckedUpdateManyWithoutFolderNestedInput
+  workPackageTemplates?: Prisma.WorkPackageTemplateUncheckedUpdateManyWithoutFolderNestedInput
 }
 
 export type LibraryFolderUncheckedUpdateManyWithoutParentInput = {
@@ -859,11 +962,13 @@ export type LibraryFolderUncheckedUpdateManyWithoutParentInput = {
 export type LibraryFolderCountOutputType = {
   children: number
   workTemplates: number
+  workPackageTemplates: number
 }
 
 export type LibraryFolderCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   children?: boolean | LibraryFolderCountOutputTypeCountChildrenArgs
   workTemplates?: boolean | LibraryFolderCountOutputTypeCountWorkTemplatesArgs
+  workPackageTemplates?: boolean | LibraryFolderCountOutputTypeCountWorkPackageTemplatesArgs
 }
 
 /**
@@ -890,6 +995,13 @@ export type LibraryFolderCountOutputTypeCountWorkTemplatesArgs<ExtArgs extends r
   where?: Prisma.WorkTemplateWhereInput
 }
 
+/**
+ * LibraryFolderCountOutputType without action
+ */
+export type LibraryFolderCountOutputTypeCountWorkPackageTemplatesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.WorkPackageTemplateWhereInput
+}
+
 
 export type LibraryFolderSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -903,6 +1015,7 @@ export type LibraryFolderSelect<ExtArgs extends runtime.Types.Extensions.Interna
   parent?: boolean | Prisma.LibraryFolder$parentArgs<ExtArgs>
   children?: boolean | Prisma.LibraryFolder$childrenArgs<ExtArgs>
   workTemplates?: boolean | Prisma.LibraryFolder$workTemplatesArgs<ExtArgs>
+  workPackageTemplates?: boolean | Prisma.LibraryFolder$workPackageTemplatesArgs<ExtArgs>
   _count?: boolean | Prisma.LibraryFolderCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["libraryFolder"]>
 
@@ -946,6 +1059,7 @@ export type LibraryFolderInclude<ExtArgs extends runtime.Types.Extensions.Intern
   parent?: boolean | Prisma.LibraryFolder$parentArgs<ExtArgs>
   children?: boolean | Prisma.LibraryFolder$childrenArgs<ExtArgs>
   workTemplates?: boolean | Prisma.LibraryFolder$workTemplatesArgs<ExtArgs>
+  workPackageTemplates?: boolean | Prisma.LibraryFolder$workPackageTemplatesArgs<ExtArgs>
   _count?: boolean | Prisma.LibraryFolderCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type LibraryFolderIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -964,6 +1078,7 @@ export type $LibraryFolderPayload<ExtArgs extends runtime.Types.Extensions.Inter
     parent: Prisma.$LibraryFolderPayload<ExtArgs> | null
     children: Prisma.$LibraryFolderPayload<ExtArgs>[]
     workTemplates: Prisma.$WorkTemplatePayload<ExtArgs>[]
+    workPackageTemplates: Prisma.$WorkPackageTemplatePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1371,6 +1486,7 @@ export interface Prisma__LibraryFolderClient<T, Null = never, ExtArgs extends ru
   parent<T extends Prisma.LibraryFolder$parentArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.LibraryFolder$parentArgs<ExtArgs>>): Prisma.Prisma__LibraryFolderClient<runtime.Types.Result.GetResult<Prisma.$LibraryFolderPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   children<T extends Prisma.LibraryFolder$childrenArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.LibraryFolder$childrenArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LibraryFolderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   workTemplates<T extends Prisma.LibraryFolder$workTemplatesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.LibraryFolder$workTemplatesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WorkTemplatePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  workPackageTemplates<T extends Prisma.LibraryFolder$workPackageTemplatesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.LibraryFolder$workPackageTemplatesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WorkPackageTemplatePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1872,6 +1988,30 @@ export type LibraryFolder$workTemplatesArgs<ExtArgs extends runtime.Types.Extens
   take?: number
   skip?: number
   distinct?: Prisma.WorkTemplateScalarFieldEnum | Prisma.WorkTemplateScalarFieldEnum[]
+}
+
+/**
+ * LibraryFolder.workPackageTemplates
+ */
+export type LibraryFolder$workPackageTemplatesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the WorkPackageTemplate
+   */
+  select?: Prisma.WorkPackageTemplateSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the WorkPackageTemplate
+   */
+  omit?: Prisma.WorkPackageTemplateOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.WorkPackageTemplateInclude<ExtArgs> | null
+  where?: Prisma.WorkPackageTemplateWhereInput
+  orderBy?: Prisma.WorkPackageTemplateOrderByWithRelationInput | Prisma.WorkPackageTemplateOrderByWithRelationInput[]
+  cursor?: Prisma.WorkPackageTemplateWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.WorkPackageTemplateScalarFieldEnum | Prisma.WorkPackageTemplateScalarFieldEnum[]
 }
 
 /**

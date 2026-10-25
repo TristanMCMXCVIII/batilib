@@ -127,6 +127,11 @@ export type LibraryFolder = Prisma.LibraryFolderModel
  */
 export type WorkTemplate = Prisma.WorkTemplateModel
 /**
+ * Model WorkPackageTemplate
+ * 
+ */
+export type WorkPackageTemplate = Prisma.WorkPackageTemplateModel
+/**
  * Model Verification
  * 
  */

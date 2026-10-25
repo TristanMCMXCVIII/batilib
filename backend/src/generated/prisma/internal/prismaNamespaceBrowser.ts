@@ -68,6 +68,7 @@ export const ModelName = {
   WorkItem: 'WorkItem',
   LibraryFolder: 'LibraryFolder',
   WorkTemplate: 'WorkTemplate',
+  WorkPackageTemplate: 'WorkPackageTemplate',
   Verification: 'Verification'
 } as const
 
@@ -254,6 +255,7 @@ export const WorkPackageScalarFieldEnum = {
   id: 'id',
   projectId: 'projectId',
   assignedProjectParticipantId: 'assignedProjectParticipantId',
+  sourceWorkPackageTemplateId: 'sourceWorkPackageTemplateId',
   name: 'name',
   description: 'description',
   position: 'position',
@@ -326,6 +328,22 @@ export const WorkTemplateScalarFieldEnum = {
 } as const
 
 export type WorkTemplateScalarFieldEnum = (typeof WorkTemplateScalarFieldEnum)[keyof typeof WorkTemplateScalarFieldEnum]
+
+
+export const WorkPackageTemplateScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  folderId: 'folderId',
+  tradeCategoryId: 'tradeCategoryId',
+  name: 'name',
+  description: 'description',
+  defaultMarginRate: 'defaultMarginRate',
+  position: 'position',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type WorkPackageTemplateScalarFieldEnum = (typeof WorkPackageTemplateScalarFieldEnum)[keyof typeof WorkPackageTemplateScalarFieldEnum]
 
 
 export const VerificationScalarFieldEnum = {

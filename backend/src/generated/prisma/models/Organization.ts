@@ -245,6 +245,7 @@ export type OrganizationWhereInput = {
   projectParticipations?: Prisma.ProjectParticipantListRelationFilter
   libraryFolders?: Prisma.LibraryFolderListRelationFilter
   workTemplates?: Prisma.WorkTemplateListRelationFilter
+  workPackageTemplates?: Prisma.WorkPackageTemplateListRelationFilter
 }
 
 export type OrganizationOrderByWithRelationInput = {
@@ -267,6 +268,7 @@ export type OrganizationOrderByWithRelationInput = {
   projectParticipations?: Prisma.ProjectParticipantOrderByRelationAggregateInput
   libraryFolders?: Prisma.LibraryFolderOrderByRelationAggregateInput
   workTemplates?: Prisma.WorkTemplateOrderByRelationAggregateInput
+  workPackageTemplates?: Prisma.WorkPackageTemplateOrderByRelationAggregateInput
 }
 
 export type OrganizationWhereUniqueInput = Prisma.AtLeast<{
@@ -292,6 +294,7 @@ export type OrganizationWhereUniqueInput = Prisma.AtLeast<{
   projectParticipations?: Prisma.ProjectParticipantListRelationFilter
   libraryFolders?: Prisma.LibraryFolderListRelationFilter
   workTemplates?: Prisma.WorkTemplateListRelationFilter
+  workPackageTemplates?: Prisma.WorkPackageTemplateListRelationFilter
 }, "id" | "slug">
 
 export type OrganizationOrderByWithAggregationInput = {
@@ -350,6 +353,7 @@ export type OrganizationCreateInput = {
   projectParticipations?: Prisma.ProjectParticipantCreateNestedManyWithoutOrganizationInput
   libraryFolders?: Prisma.LibraryFolderCreateNestedManyWithoutOrganizationInput
   workTemplates?: Prisma.WorkTemplateCreateNestedManyWithoutOrganizationInput
+  workPackageTemplates?: Prisma.WorkPackageTemplateCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationUncheckedCreateInput = {
@@ -372,6 +376,7 @@ export type OrganizationUncheckedCreateInput = {
   projectParticipations?: Prisma.ProjectParticipantUncheckedCreateNestedManyWithoutOrganizationInput
   libraryFolders?: Prisma.LibraryFolderUncheckedCreateNestedManyWithoutOrganizationInput
   workTemplates?: Prisma.WorkTemplateUncheckedCreateNestedManyWithoutOrganizationInput
+  workPackageTemplates?: Prisma.WorkPackageTemplateUncheckedCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationUpdateInput = {
@@ -394,6 +399,7 @@ export type OrganizationUpdateInput = {
   projectParticipations?: Prisma.ProjectParticipantUpdateManyWithoutOrganizationNestedInput
   libraryFolders?: Prisma.LibraryFolderUpdateManyWithoutOrganizationNestedInput
   workTemplates?: Prisma.WorkTemplateUpdateManyWithoutOrganizationNestedInput
+  workPackageTemplates?: Prisma.WorkPackageTemplateUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationUncheckedUpdateInput = {
@@ -416,6 +422,7 @@ export type OrganizationUncheckedUpdateInput = {
   projectParticipations?: Prisma.ProjectParticipantUncheckedUpdateManyWithoutOrganizationNestedInput
   libraryFolders?: Prisma.LibraryFolderUncheckedUpdateManyWithoutOrganizationNestedInput
   workTemplates?: Prisma.WorkTemplateUncheckedUpdateManyWithoutOrganizationNestedInput
+  workPackageTemplates?: Prisma.WorkPackageTemplateUncheckedUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationCreateManyInput = {
@@ -615,6 +622,20 @@ export type OrganizationUpdateOneRequiredWithoutWorkTemplatesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.OrganizationUpdateToOneWithWhereWithoutWorkTemplatesInput, Prisma.OrganizationUpdateWithoutWorkTemplatesInput>, Prisma.OrganizationUncheckedUpdateWithoutWorkTemplatesInput>
 }
 
+export type OrganizationCreateNestedOneWithoutWorkPackageTemplatesInput = {
+  create?: Prisma.XOR<Prisma.OrganizationCreateWithoutWorkPackageTemplatesInput, Prisma.OrganizationUncheckedCreateWithoutWorkPackageTemplatesInput>
+  connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutWorkPackageTemplatesInput
+  connect?: Prisma.OrganizationWhereUniqueInput
+}
+
+export type OrganizationUpdateOneRequiredWithoutWorkPackageTemplatesNestedInput = {
+  create?: Prisma.XOR<Prisma.OrganizationCreateWithoutWorkPackageTemplatesInput, Prisma.OrganizationUncheckedCreateWithoutWorkPackageTemplatesInput>
+  connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutWorkPackageTemplatesInput
+  upsert?: Prisma.OrganizationUpsertWithoutWorkPackageTemplatesInput
+  connect?: Prisma.OrganizationWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.OrganizationUpdateToOneWithWhereWithoutWorkPackageTemplatesInput, Prisma.OrganizationUpdateWithoutWorkPackageTemplatesInput>, Prisma.OrganizationUncheckedUpdateWithoutWorkPackageTemplatesInput>
+}
+
 export type OrganizationCreateWithoutMembershipsInput = {
   id?: string
   slug: string
@@ -634,6 +655,7 @@ export type OrganizationCreateWithoutMembershipsInput = {
   projectParticipations?: Prisma.ProjectParticipantCreateNestedManyWithoutOrganizationInput
   libraryFolders?: Prisma.LibraryFolderCreateNestedManyWithoutOrganizationInput
   workTemplates?: Prisma.WorkTemplateCreateNestedManyWithoutOrganizationInput
+  workPackageTemplates?: Prisma.WorkPackageTemplateCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationUncheckedCreateWithoutMembershipsInput = {
@@ -655,6 +677,7 @@ export type OrganizationUncheckedCreateWithoutMembershipsInput = {
   projectParticipations?: Prisma.ProjectParticipantUncheckedCreateNestedManyWithoutOrganizationInput
   libraryFolders?: Prisma.LibraryFolderUncheckedCreateNestedManyWithoutOrganizationInput
   workTemplates?: Prisma.WorkTemplateUncheckedCreateNestedManyWithoutOrganizationInput
+  workPackageTemplates?: Prisma.WorkPackageTemplateUncheckedCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationCreateOrConnectWithoutMembershipsInput = {
@@ -692,6 +715,7 @@ export type OrganizationUpdateWithoutMembershipsInput = {
   projectParticipations?: Prisma.ProjectParticipantUpdateManyWithoutOrganizationNestedInput
   libraryFolders?: Prisma.LibraryFolderUpdateManyWithoutOrganizationNestedInput
   workTemplates?: Prisma.WorkTemplateUpdateManyWithoutOrganizationNestedInput
+  workPackageTemplates?: Prisma.WorkPackageTemplateUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationUncheckedUpdateWithoutMembershipsInput = {
@@ -713,6 +737,7 @@ export type OrganizationUncheckedUpdateWithoutMembershipsInput = {
   projectParticipations?: Prisma.ProjectParticipantUncheckedUpdateManyWithoutOrganizationNestedInput
   libraryFolders?: Prisma.LibraryFolderUncheckedUpdateManyWithoutOrganizationNestedInput
   workTemplates?: Prisma.WorkTemplateUncheckedUpdateManyWithoutOrganizationNestedInput
+  workPackageTemplates?: Prisma.WorkPackageTemplateUncheckedUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationCreateWithoutInvitationsInput = {
@@ -734,6 +759,7 @@ export type OrganizationCreateWithoutInvitationsInput = {
   projectParticipations?: Prisma.ProjectParticipantCreateNestedManyWithoutOrganizationInput
   libraryFolders?: Prisma.LibraryFolderCreateNestedManyWithoutOrganizationInput
   workTemplates?: Prisma.WorkTemplateCreateNestedManyWithoutOrganizationInput
+  workPackageTemplates?: Prisma.WorkPackageTemplateCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationUncheckedCreateWithoutInvitationsInput = {
@@ -755,6 +781,7 @@ export type OrganizationUncheckedCreateWithoutInvitationsInput = {
   projectParticipations?: Prisma.ProjectParticipantUncheckedCreateNestedManyWithoutOrganizationInput
   libraryFolders?: Prisma.LibraryFolderUncheckedCreateNestedManyWithoutOrganizationInput
   workTemplates?: Prisma.WorkTemplateUncheckedCreateNestedManyWithoutOrganizationInput
+  workPackageTemplates?: Prisma.WorkPackageTemplateUncheckedCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationCreateOrConnectWithoutInvitationsInput = {
@@ -792,6 +819,7 @@ export type OrganizationUpdateWithoutInvitationsInput = {
   projectParticipations?: Prisma.ProjectParticipantUpdateManyWithoutOrganizationNestedInput
   libraryFolders?: Prisma.LibraryFolderUpdateManyWithoutOrganizationNestedInput
   workTemplates?: Prisma.WorkTemplateUpdateManyWithoutOrganizationNestedInput
+  workPackageTemplates?: Prisma.WorkPackageTemplateUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationUncheckedUpdateWithoutInvitationsInput = {
@@ -813,6 +841,7 @@ export type OrganizationUncheckedUpdateWithoutInvitationsInput = {
   projectParticipations?: Prisma.ProjectParticipantUncheckedUpdateManyWithoutOrganizationNestedInput
   libraryFolders?: Prisma.LibraryFolderUncheckedUpdateManyWithoutOrganizationNestedInput
   workTemplates?: Prisma.WorkTemplateUncheckedUpdateManyWithoutOrganizationNestedInput
+  workPackageTemplates?: Prisma.WorkPackageTemplateUncheckedUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationCreateWithoutTradeCategoriesInput = {
@@ -834,6 +863,7 @@ export type OrganizationCreateWithoutTradeCategoriesInput = {
   projectParticipations?: Prisma.ProjectParticipantCreateNestedManyWithoutOrganizationInput
   libraryFolders?: Prisma.LibraryFolderCreateNestedManyWithoutOrganizationInput
   workTemplates?: Prisma.WorkTemplateCreateNestedManyWithoutOrganizationInput
+  workPackageTemplates?: Prisma.WorkPackageTemplateCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationUncheckedCreateWithoutTradeCategoriesInput = {
@@ -855,6 +885,7 @@ export type OrganizationUncheckedCreateWithoutTradeCategoriesInput = {
   projectParticipations?: Prisma.ProjectParticipantUncheckedCreateNestedManyWithoutOrganizationInput
   libraryFolders?: Prisma.LibraryFolderUncheckedCreateNestedManyWithoutOrganizationInput
   workTemplates?: Prisma.WorkTemplateUncheckedCreateNestedManyWithoutOrganizationInput
+  workPackageTemplates?: Prisma.WorkPackageTemplateUncheckedCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationCreateOrConnectWithoutTradeCategoriesInput = {
@@ -892,6 +923,7 @@ export type OrganizationUpdateWithoutTradeCategoriesInput = {
   projectParticipations?: Prisma.ProjectParticipantUpdateManyWithoutOrganizationNestedInput
   libraryFolders?: Prisma.LibraryFolderUpdateManyWithoutOrganizationNestedInput
   workTemplates?: Prisma.WorkTemplateUpdateManyWithoutOrganizationNestedInput
+  workPackageTemplates?: Prisma.WorkPackageTemplateUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationUncheckedUpdateWithoutTradeCategoriesInput = {
@@ -913,6 +945,7 @@ export type OrganizationUncheckedUpdateWithoutTradeCategoriesInput = {
   projectParticipations?: Prisma.ProjectParticipantUncheckedUpdateManyWithoutOrganizationNestedInput
   libraryFolders?: Prisma.LibraryFolderUncheckedUpdateManyWithoutOrganizationNestedInput
   workTemplates?: Prisma.WorkTemplateUncheckedUpdateManyWithoutOrganizationNestedInput
+  workPackageTemplates?: Prisma.WorkPackageTemplateUncheckedUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationCreateWithoutLeadProjectsInput = {
@@ -934,6 +967,7 @@ export type OrganizationCreateWithoutLeadProjectsInput = {
   projectParticipations?: Prisma.ProjectParticipantCreateNestedManyWithoutOrganizationInput
   libraryFolders?: Prisma.LibraryFolderCreateNestedManyWithoutOrganizationInput
   workTemplates?: Prisma.WorkTemplateCreateNestedManyWithoutOrganizationInput
+  workPackageTemplates?: Prisma.WorkPackageTemplateCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationUncheckedCreateWithoutLeadProjectsInput = {
@@ -955,6 +989,7 @@ export type OrganizationUncheckedCreateWithoutLeadProjectsInput = {
   projectParticipations?: Prisma.ProjectParticipantUncheckedCreateNestedManyWithoutOrganizationInput
   libraryFolders?: Prisma.LibraryFolderUncheckedCreateNestedManyWithoutOrganizationInput
   workTemplates?: Prisma.WorkTemplateUncheckedCreateNestedManyWithoutOrganizationInput
+  workPackageTemplates?: Prisma.WorkPackageTemplateUncheckedCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationCreateOrConnectWithoutLeadProjectsInput = {
@@ -992,6 +1027,7 @@ export type OrganizationUpdateWithoutLeadProjectsInput = {
   projectParticipations?: Prisma.ProjectParticipantUpdateManyWithoutOrganizationNestedInput
   libraryFolders?: Prisma.LibraryFolderUpdateManyWithoutOrganizationNestedInput
   workTemplates?: Prisma.WorkTemplateUpdateManyWithoutOrganizationNestedInput
+  workPackageTemplates?: Prisma.WorkPackageTemplateUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationUncheckedUpdateWithoutLeadProjectsInput = {
@@ -1013,6 +1049,7 @@ export type OrganizationUncheckedUpdateWithoutLeadProjectsInput = {
   projectParticipations?: Prisma.ProjectParticipantUncheckedUpdateManyWithoutOrganizationNestedInput
   libraryFolders?: Prisma.LibraryFolderUncheckedUpdateManyWithoutOrganizationNestedInput
   workTemplates?: Prisma.WorkTemplateUncheckedUpdateManyWithoutOrganizationNestedInput
+  workPackageTemplates?: Prisma.WorkPackageTemplateUncheckedUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationCreateWithoutProjectParticipationsInput = {
@@ -1034,6 +1071,7 @@ export type OrganizationCreateWithoutProjectParticipationsInput = {
   leadProjects?: Prisma.ProjectCreateNestedManyWithoutLeadOrganizationInput
   libraryFolders?: Prisma.LibraryFolderCreateNestedManyWithoutOrganizationInput
   workTemplates?: Prisma.WorkTemplateCreateNestedManyWithoutOrganizationInput
+  workPackageTemplates?: Prisma.WorkPackageTemplateCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationUncheckedCreateWithoutProjectParticipationsInput = {
@@ -1055,6 +1093,7 @@ export type OrganizationUncheckedCreateWithoutProjectParticipationsInput = {
   leadProjects?: Prisma.ProjectUncheckedCreateNestedManyWithoutLeadOrganizationInput
   libraryFolders?: Prisma.LibraryFolderUncheckedCreateNestedManyWithoutOrganizationInput
   workTemplates?: Prisma.WorkTemplateUncheckedCreateNestedManyWithoutOrganizationInput
+  workPackageTemplates?: Prisma.WorkPackageTemplateUncheckedCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationCreateOrConnectWithoutProjectParticipationsInput = {
@@ -1092,6 +1131,7 @@ export type OrganizationUpdateWithoutProjectParticipationsInput = {
   leadProjects?: Prisma.ProjectUpdateManyWithoutLeadOrganizationNestedInput
   libraryFolders?: Prisma.LibraryFolderUpdateManyWithoutOrganizationNestedInput
   workTemplates?: Prisma.WorkTemplateUpdateManyWithoutOrganizationNestedInput
+  workPackageTemplates?: Prisma.WorkPackageTemplateUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationUncheckedUpdateWithoutProjectParticipationsInput = {
@@ -1113,6 +1153,7 @@ export type OrganizationUncheckedUpdateWithoutProjectParticipationsInput = {
   leadProjects?: Prisma.ProjectUncheckedUpdateManyWithoutLeadOrganizationNestedInput
   libraryFolders?: Prisma.LibraryFolderUncheckedUpdateManyWithoutOrganizationNestedInput
   workTemplates?: Prisma.WorkTemplateUncheckedUpdateManyWithoutOrganizationNestedInput
+  workPackageTemplates?: Prisma.WorkPackageTemplateUncheckedUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationCreateWithoutLibraryFoldersInput = {
@@ -1134,6 +1175,7 @@ export type OrganizationCreateWithoutLibraryFoldersInput = {
   leadProjects?: Prisma.ProjectCreateNestedManyWithoutLeadOrganizationInput
   projectParticipations?: Prisma.ProjectParticipantCreateNestedManyWithoutOrganizationInput
   workTemplates?: Prisma.WorkTemplateCreateNestedManyWithoutOrganizationInput
+  workPackageTemplates?: Prisma.WorkPackageTemplateCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationUncheckedCreateWithoutLibraryFoldersInput = {
@@ -1155,6 +1197,7 @@ export type OrganizationUncheckedCreateWithoutLibraryFoldersInput = {
   leadProjects?: Prisma.ProjectUncheckedCreateNestedManyWithoutLeadOrganizationInput
   projectParticipations?: Prisma.ProjectParticipantUncheckedCreateNestedManyWithoutOrganizationInput
   workTemplates?: Prisma.WorkTemplateUncheckedCreateNestedManyWithoutOrganizationInput
+  workPackageTemplates?: Prisma.WorkPackageTemplateUncheckedCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationCreateOrConnectWithoutLibraryFoldersInput = {
@@ -1192,6 +1235,7 @@ export type OrganizationUpdateWithoutLibraryFoldersInput = {
   leadProjects?: Prisma.ProjectUpdateManyWithoutLeadOrganizationNestedInput
   projectParticipations?: Prisma.ProjectParticipantUpdateManyWithoutOrganizationNestedInput
   workTemplates?: Prisma.WorkTemplateUpdateManyWithoutOrganizationNestedInput
+  workPackageTemplates?: Prisma.WorkPackageTemplateUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationUncheckedUpdateWithoutLibraryFoldersInput = {
@@ -1213,6 +1257,7 @@ export type OrganizationUncheckedUpdateWithoutLibraryFoldersInput = {
   leadProjects?: Prisma.ProjectUncheckedUpdateManyWithoutLeadOrganizationNestedInput
   projectParticipations?: Prisma.ProjectParticipantUncheckedUpdateManyWithoutOrganizationNestedInput
   workTemplates?: Prisma.WorkTemplateUncheckedUpdateManyWithoutOrganizationNestedInput
+  workPackageTemplates?: Prisma.WorkPackageTemplateUncheckedUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationCreateWithoutWorkTemplatesInput = {
@@ -1234,6 +1279,7 @@ export type OrganizationCreateWithoutWorkTemplatesInput = {
   leadProjects?: Prisma.ProjectCreateNestedManyWithoutLeadOrganizationInput
   projectParticipations?: Prisma.ProjectParticipantCreateNestedManyWithoutOrganizationInput
   libraryFolders?: Prisma.LibraryFolderCreateNestedManyWithoutOrganizationInput
+  workPackageTemplates?: Prisma.WorkPackageTemplateCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationUncheckedCreateWithoutWorkTemplatesInput = {
@@ -1255,6 +1301,7 @@ export type OrganizationUncheckedCreateWithoutWorkTemplatesInput = {
   leadProjects?: Prisma.ProjectUncheckedCreateNestedManyWithoutLeadOrganizationInput
   projectParticipations?: Prisma.ProjectParticipantUncheckedCreateNestedManyWithoutOrganizationInput
   libraryFolders?: Prisma.LibraryFolderUncheckedCreateNestedManyWithoutOrganizationInput
+  workPackageTemplates?: Prisma.WorkPackageTemplateUncheckedCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationCreateOrConnectWithoutWorkTemplatesInput = {
@@ -1292,6 +1339,7 @@ export type OrganizationUpdateWithoutWorkTemplatesInput = {
   leadProjects?: Prisma.ProjectUpdateManyWithoutLeadOrganizationNestedInput
   projectParticipations?: Prisma.ProjectParticipantUpdateManyWithoutOrganizationNestedInput
   libraryFolders?: Prisma.LibraryFolderUpdateManyWithoutOrganizationNestedInput
+  workPackageTemplates?: Prisma.WorkPackageTemplateUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationUncheckedUpdateWithoutWorkTemplatesInput = {
@@ -1313,6 +1361,111 @@ export type OrganizationUncheckedUpdateWithoutWorkTemplatesInput = {
   leadProjects?: Prisma.ProjectUncheckedUpdateManyWithoutLeadOrganizationNestedInput
   projectParticipations?: Prisma.ProjectParticipantUncheckedUpdateManyWithoutOrganizationNestedInput
   libraryFolders?: Prisma.LibraryFolderUncheckedUpdateManyWithoutOrganizationNestedInput
+  workPackageTemplates?: Prisma.WorkPackageTemplateUncheckedUpdateManyWithoutOrganizationNestedInput
+}
+
+export type OrganizationCreateWithoutWorkPackageTemplatesInput = {
+  id?: string
+  slug: string
+  kind: $Enums.OrganizationKind
+  name: string
+  description?: string | null
+  legalName?: string | null
+  siren?: string | null
+  siret?: string | null
+  vatNumber?: string | null
+  logoUrl?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  memberships?: Prisma.OrganizationMembershipCreateNestedManyWithoutOrganizationInput
+  invitations?: Prisma.OrganizationInvitationCreateNestedManyWithoutOrganizationInput
+  tradeCategories?: Prisma.OrganizationTradeCategoryCreateNestedManyWithoutOrganizationInput
+  leadProjects?: Prisma.ProjectCreateNestedManyWithoutLeadOrganizationInput
+  projectParticipations?: Prisma.ProjectParticipantCreateNestedManyWithoutOrganizationInput
+  libraryFolders?: Prisma.LibraryFolderCreateNestedManyWithoutOrganizationInput
+  workTemplates?: Prisma.WorkTemplateCreateNestedManyWithoutOrganizationInput
+}
+
+export type OrganizationUncheckedCreateWithoutWorkPackageTemplatesInput = {
+  id?: string
+  slug: string
+  kind: $Enums.OrganizationKind
+  name: string
+  description?: string | null
+  legalName?: string | null
+  siren?: string | null
+  siret?: string | null
+  vatNumber?: string | null
+  logoUrl?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  memberships?: Prisma.OrganizationMembershipUncheckedCreateNestedManyWithoutOrganizationInput
+  invitations?: Prisma.OrganizationInvitationUncheckedCreateNestedManyWithoutOrganizationInput
+  tradeCategories?: Prisma.OrganizationTradeCategoryUncheckedCreateNestedManyWithoutOrganizationInput
+  leadProjects?: Prisma.ProjectUncheckedCreateNestedManyWithoutLeadOrganizationInput
+  projectParticipations?: Prisma.ProjectParticipantUncheckedCreateNestedManyWithoutOrganizationInput
+  libraryFolders?: Prisma.LibraryFolderUncheckedCreateNestedManyWithoutOrganizationInput
+  workTemplates?: Prisma.WorkTemplateUncheckedCreateNestedManyWithoutOrganizationInput
+}
+
+export type OrganizationCreateOrConnectWithoutWorkPackageTemplatesInput = {
+  where: Prisma.OrganizationWhereUniqueInput
+  create: Prisma.XOR<Prisma.OrganizationCreateWithoutWorkPackageTemplatesInput, Prisma.OrganizationUncheckedCreateWithoutWorkPackageTemplatesInput>
+}
+
+export type OrganizationUpsertWithoutWorkPackageTemplatesInput = {
+  update: Prisma.XOR<Prisma.OrganizationUpdateWithoutWorkPackageTemplatesInput, Prisma.OrganizationUncheckedUpdateWithoutWorkPackageTemplatesInput>
+  create: Prisma.XOR<Prisma.OrganizationCreateWithoutWorkPackageTemplatesInput, Prisma.OrganizationUncheckedCreateWithoutWorkPackageTemplatesInput>
+  where?: Prisma.OrganizationWhereInput
+}
+
+export type OrganizationUpdateToOneWithWhereWithoutWorkPackageTemplatesInput = {
+  where?: Prisma.OrganizationWhereInput
+  data: Prisma.XOR<Prisma.OrganizationUpdateWithoutWorkPackageTemplatesInput, Prisma.OrganizationUncheckedUpdateWithoutWorkPackageTemplatesInput>
+}
+
+export type OrganizationUpdateWithoutWorkPackageTemplatesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  kind?: Prisma.EnumOrganizationKindFieldUpdateOperationsInput | $Enums.OrganizationKind
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  legalName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  siren?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  siret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vatNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  memberships?: Prisma.OrganizationMembershipUpdateManyWithoutOrganizationNestedInput
+  invitations?: Prisma.OrganizationInvitationUpdateManyWithoutOrganizationNestedInput
+  tradeCategories?: Prisma.OrganizationTradeCategoryUpdateManyWithoutOrganizationNestedInput
+  leadProjects?: Prisma.ProjectUpdateManyWithoutLeadOrganizationNestedInput
+  projectParticipations?: Prisma.ProjectParticipantUpdateManyWithoutOrganizationNestedInput
+  libraryFolders?: Prisma.LibraryFolderUpdateManyWithoutOrganizationNestedInput
+  workTemplates?: Prisma.WorkTemplateUpdateManyWithoutOrganizationNestedInput
+}
+
+export type OrganizationUncheckedUpdateWithoutWorkPackageTemplatesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  kind?: Prisma.EnumOrganizationKindFieldUpdateOperationsInput | $Enums.OrganizationKind
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  legalName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  siren?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  siret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vatNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  memberships?: Prisma.OrganizationMembershipUncheckedUpdateManyWithoutOrganizationNestedInput
+  invitations?: Prisma.OrganizationInvitationUncheckedUpdateManyWithoutOrganizationNestedInput
+  tradeCategories?: Prisma.OrganizationTradeCategoryUncheckedUpdateManyWithoutOrganizationNestedInput
+  leadProjects?: Prisma.ProjectUncheckedUpdateManyWithoutLeadOrganizationNestedInput
+  projectParticipations?: Prisma.ProjectParticipantUncheckedUpdateManyWithoutOrganizationNestedInput
+  libraryFolders?: Prisma.LibraryFolderUncheckedUpdateManyWithoutOrganizationNestedInput
+  workTemplates?: Prisma.WorkTemplateUncheckedUpdateManyWithoutOrganizationNestedInput
 }
 
 
@@ -1328,6 +1481,7 @@ export type OrganizationCountOutputType = {
   projectParticipations: number
   libraryFolders: number
   workTemplates: number
+  workPackageTemplates: number
 }
 
 export type OrganizationCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1338,6 +1492,7 @@ export type OrganizationCountOutputTypeSelect<ExtArgs extends runtime.Types.Exte
   projectParticipations?: boolean | OrganizationCountOutputTypeCountProjectParticipationsArgs
   libraryFolders?: boolean | OrganizationCountOutputTypeCountLibraryFoldersArgs
   workTemplates?: boolean | OrganizationCountOutputTypeCountWorkTemplatesArgs
+  workPackageTemplates?: boolean | OrganizationCountOutputTypeCountWorkPackageTemplatesArgs
 }
 
 /**
@@ -1399,6 +1554,13 @@ export type OrganizationCountOutputTypeCountWorkTemplatesArgs<ExtArgs extends ru
   where?: Prisma.WorkTemplateWhereInput
 }
 
+/**
+ * OrganizationCountOutputType without action
+ */
+export type OrganizationCountOutputTypeCountWorkPackageTemplatesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.WorkPackageTemplateWhereInput
+}
+
 
 export type OrganizationSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1420,6 +1582,7 @@ export type OrganizationSelect<ExtArgs extends runtime.Types.Extensions.Internal
   projectParticipations?: boolean | Prisma.Organization$projectParticipationsArgs<ExtArgs>
   libraryFolders?: boolean | Prisma.Organization$libraryFoldersArgs<ExtArgs>
   workTemplates?: boolean | Prisma.Organization$workTemplatesArgs<ExtArgs>
+  workPackageTemplates?: boolean | Prisma.Organization$workPackageTemplatesArgs<ExtArgs>
   _count?: boolean | Prisma.OrganizationCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["organization"]>
 
@@ -1477,6 +1640,7 @@ export type OrganizationInclude<ExtArgs extends runtime.Types.Extensions.Interna
   projectParticipations?: boolean | Prisma.Organization$projectParticipationsArgs<ExtArgs>
   libraryFolders?: boolean | Prisma.Organization$libraryFoldersArgs<ExtArgs>
   workTemplates?: boolean | Prisma.Organization$workTemplatesArgs<ExtArgs>
+  workPackageTemplates?: boolean | Prisma.Organization$workPackageTemplatesArgs<ExtArgs>
   _count?: boolean | Prisma.OrganizationCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type OrganizationIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -1492,6 +1656,7 @@ export type $OrganizationPayload<ExtArgs extends runtime.Types.Extensions.Intern
     projectParticipations: Prisma.$ProjectParticipantPayload<ExtArgs>[]
     libraryFolders: Prisma.$LibraryFolderPayload<ExtArgs>[]
     workTemplates: Prisma.$WorkTemplatePayload<ExtArgs>[]
+    workPackageTemplates: Prisma.$WorkPackageTemplatePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1907,6 +2072,7 @@ export interface Prisma__OrganizationClient<T, Null = never, ExtArgs extends run
   projectParticipations<T extends Prisma.Organization$projectParticipationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$projectParticipationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProjectParticipantPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   libraryFolders<T extends Prisma.Organization$libraryFoldersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$libraryFoldersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LibraryFolderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   workTemplates<T extends Prisma.Organization$workTemplatesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$workTemplatesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WorkTemplatePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  workPackageTemplates<T extends Prisma.Organization$workPackageTemplatesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$workPackageTemplatesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WorkPackageTemplatePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2506,6 +2672,30 @@ export type Organization$workTemplatesArgs<ExtArgs extends runtime.Types.Extensi
   take?: number
   skip?: number
   distinct?: Prisma.WorkTemplateScalarFieldEnum | Prisma.WorkTemplateScalarFieldEnum[]
+}
+
+/**
+ * Organization.workPackageTemplates
+ */
+export type Organization$workPackageTemplatesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the WorkPackageTemplate
+   */
+  select?: Prisma.WorkPackageTemplateSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the WorkPackageTemplate
+   */
+  omit?: Prisma.WorkPackageTemplateOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.WorkPackageTemplateInclude<ExtArgs> | null
+  where?: Prisma.WorkPackageTemplateWhereInput
+  orderBy?: Prisma.WorkPackageTemplateOrderByWithRelationInput | Prisma.WorkPackageTemplateOrderByWithRelationInput[]
+  cursor?: Prisma.WorkPackageTemplateWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.WorkPackageTemplateScalarFieldEnum | Prisma.WorkPackageTemplateScalarFieldEnum[]
 }
 
 /**
