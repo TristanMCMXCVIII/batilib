@@ -295,6 +295,10 @@ Template OTP : HTML inline simple (no-framework). Clé `BREVO_API_KEY` côté se
 | Éditeur projet : import depuis bibliothèque (picker 2 panneaux) | ✅ Fait |
 | Éditeur projet : création WP auto depuis WPT sur import bibliothèque | ✅ Fait |
 | Éditeur projet : statut inline DRAFT/IN_PROGRESS/DONE/CANCELLED | ✅ Fait |
+| Page intervenants projet (LEAD + CLIENT + sous-traitants verrouillés) | ✅ Fait |
+| Invitation client sur un projet (`ProjectInvitation` + page `/join-project`) | ✅ Fait |
+| Dispatcher éditeur LEAD → `LeadEditorClient` / CLIENT → `ClientProjectView` | ✅ Fait |
+| Sidebar nav projet role-aware (LEAD/CLIENT/SUBCONTRACTOR) | ✅ Fait |
 | Nest : endpoints métier authentifiés | ❌ Non fait |
 
 ---
@@ -334,10 +338,7 @@ Propagé de register → verify-email → destination finale. Google OAuth utili
 `cancelInvitation` : supprime l'invitation.
 Section "Invitations en attente" affichée dans la page membres **seulement si** `invitations.length > 0`.
 
-### Points d'attention pour l'invitation projet
-- La cible d'une invitation projet sera une **organisation** (pas un user individuel), donc logique différente.
-- Il faudra une table `ProjectInvitation` distincte avec `targetOrganizationId` ou `email` selon le cas.
-- Le token-flow `/join` pourrait être étendu ou dupliqué avec un paramètre `type=project`.
+### Invitation client projet — implémentée (voir section 18)
 
 ---
 
@@ -360,9 +361,10 @@ Section "Invitations en attente" affichée dans la page membres **seulement si**
 ### Fichiers
 ```
 app/(app)/[orgSlug]/projects/[projectSlug]/editors/
-  page.tsx                    → Server Component, fetch initial via getProjectEditorData
+  page.tsx                    → Server Component, dispatcher LEAD/CLIENT via resolveProjectAccess
   _components/
-    editor-client.tsx         → toggle vue (espace/lot), state local, EditorProvider
+    editor-client.tsx         → LeadEditorClient : toggle vue (espace/lot), state local, EditorProvider
+    client-project-view.tsx   → ClientProjectView : vue read-only (progression, espaces, lots)
     editor-context.tsx        → Context : orgSlug, projectSlug, projectId, workPackages, libraryTree, workPackageTemplates, onRefresh
     space-view.tsx            → DndContext unique pour vue espace (reorder spaces + items)
     space-section.tsx         → Composant récursif espace (useSortable, SortableContext enfants)
@@ -389,6 +391,83 @@ app/(app)/[orgSlug]/projects/[projectSlug]/editors/
 - **DnD** : `useId()` sur chaque `DndContext`, un composant React par item sortable (pas de hook dans fonction récursive).
 - **État local** : `useState` initialisé depuis les props + `useEffect([data])` pour resynchroniser après `router.refresh()`.
 - **Statut** : enum `WorkItemStatus` = `DRAFT | IN_PROGRESS | DONE | CANCELLED`, badge cliquable inline (DropdownMenu).
+
+---
+
+## 18. Intervenants projet — dispatcher & permissions (26 oct 2026)
+
+### Rôles participants (`ProjectParticipantRole`)
+- `LEAD` : organisation pro qui pilote le projet (créée à la création du projet)
+- `CLIENT` : organisation cliente invitée via `ProjectInvitation`
+- `SUBCONTRACTOR` : sous-traitant assigné via les lots (non implémenté)
+
+### `resolveProjectAccess(orgSlug, projectSlug)` — `frontend/lib/actions/projects.ts`
+Point d'entrée unique pour toutes les pages projet. Une seule query combine :
+- vérification que l'user est membre ACTIVE de orgSlug
+- récupération du rôle participant (LEAD/CLIENT/SUBCONTRACTOR)
+Retourne `{ projectId, projectName, projectSlug, callerParticipantRole, callerOrgRole }` ou `null`.
+**Utiliser cette fonction** dans le layout et les pages pour toute vérification de droit projet.
+
+### Layout projet — `[projectSlug]/layout.tsx`
+Simple gateway : appelle `resolveProjectAccess`, redirige si null, sinon `SetActiveProject` + children.
+**Pas de header ni de tabs dans le layout** — la sidebar gère la navigation projet.
+
+### `ActiveProjectContext` — `frontend/lib/context/active-project.tsx`
+Étendu avec `participantRole: ProjectParticipantRole`. La sidebar lit ce champ pour adapter la nav.
+`SetActiveProject` accepte maintenant `participantRole` en prop obligatoire.
+
+### Sidebar nav role-aware — `components/layout/app-sidebar.tsx`
+`getProjectNavItems(orgSlug, projectSlug, role)` retourne des tabs différents :
+- LEAD : Éditeur / Intervenants / Documents / Économie
+- CLIENT : Projet / Intervenants / Documents
+- SUBCONTRACTOR : Mes lots / Intervenants / Documents
+Le label du groupe projet affiche "Client" ou "Sous-traitant" en grisé si rôle ≠ LEAD.
+
+### Dispatcher pages — pattern à suivre
+```tsx
+// page.tsx
+const access = await resolveProjectAccess(orgSlug, projectSlug);
+if (!access) notFound();
+if (access.callerParticipantRole === "CLIENT") return <ClientXxxView ... />;
+// LEAD (+ SUBCONTRACTOR en attendant)
+return <LeadXxxClient ... />;
+```
+
+### Sécurité reads vs mutations
+- **Reads** (`getProjectMembers`, `getProjectEditorData`, etc.) : lookup par `ProjectParticipant` → accessible à tous les rôles.
+- **Mutations** (`createWorkItem`, `reorderSpaces`, etc.) : lookup via `leadOrganizationId` dans `getProjectId()` → LEAD uniquement, échoue silencieusement pour CLIENT.
+- `canManage` côté UI : vérifier `callerParticipantRole === "LEAD" && (callerOrgRole === "FOUNDER" || callerOrgRole === "MANAGER")`.
+
+---
+
+## 19. Invitation client projet — `ProjectInvitation` (26 oct 2026)
+
+### Table `ProjectInvitation`
+`id`, `projectId` (**UNIQUE** — 1 seule invitation active par projet), `invitedEmail`, `token` (UUID unique), `expiresAt` (+7j), `invitedById`, `createdAt`.
+Pas d'`organizationId` côté invité — l'organisation est choisie au moment de l'acceptation.
+
+### Actions — `frontend/lib/actions/project-members.ts`
+- `inviteClientToProject(orgSlug, projectSlug, email)` : FOUNDER/MANAGER LEAD only. Vérifie absence de CLIENT participant + absence d'invitation active. Envoie email Brevo.
+- `resendProjectInvitation(orgSlug, projectSlug)` : régénère token + expiresAt, renvoie l'email.
+- `cancelProjectInvitation(orgSlug, projectSlug)` : supprime l'invitation.
+- `getProjectClientInvitation(orgSlug, projectSlug)` : retourne l'invitation en attente ou null. Retourne null si appelé depuis un org non-LEAD (comportement correct).
+- `removeProjectClient(orgSlug, projectSlug)` : supprime le `ProjectParticipant` CLIENT (cascade sur `ProjectParticipantMember`).
+
+### Actions — `frontend/lib/actions/project-invitation.ts` (actions publiques)
+- `getProjectInvitationPreview(token)` : pas de session requise, retourne infos projet + inviteur.
+- `getUserOrgsForProjectJoin(userId)` : orgs de l'user avec leur rôle (FOUNDER/MANAGER/MEMBER).
+- `acceptProjectInvitation(token, orgId)` : crée `ProjectParticipant` CLIENT + `ProjectParticipantMember` (l'user acceptant) en transaction. Redirige vers `/{clientOrgSlug}/projects/{projectSlug}`.
+- `declineProjectInvitation(token)` : supprime l'invitation.
+
+### Page `/join-project?token=xxx` — `app/join-project/`
+Hors `(app)` et `(auth)`, accessible sans session. 4 états :
+1. Non connecté → login/register CTAs avec `redirectTo`
+2. Email différent → avertissement
+3. Connecté, orgs éligibles (FOUNDER/MANAGER) → sélection + orgs MEMBER grisées + option créer une nouvelle org
+4. Aucune org éligible → CTA vers `/onboarding?redirectTo=/join-project?token=xxx`
+
+### Onboarding avec `redirectTo`
+`/onboarding?redirectTo=...` : si `redirectTo` présent, skip la redirection "déjà une org" et redirige vers `redirectTo` après création. Permet le flux : email invitation → inscription → onboarding → acceptation.
 
 ---
 

@@ -49,7 +49,7 @@ import {
     Users,
 } from "lucide-react";
 import type { OrgInfo } from "@/lib/actions/organization";
-import { useActiveProject } from "@/lib/context/active-project";
+import { useActiveProject, type ProjectParticipantRole } from "@/lib/context/active-project";
 
 type UserInfo = {
     id: string;
@@ -64,15 +64,39 @@ const ORG_KIND_LABELS: Record<string, string> = {
     INDIVIDUAL_CLIENT: "Particulier",
 };
 
-function getProjectNavItems(orgSlug: string, projectSlug: string) {
+const PARTICIPANT_ROLE_LABELS: Partial<Record<ProjectParticipantRole, string>> = {
+    CLIENT:        "Client",
+    SUBCONTRACTOR: "Sous-traitant",
+};
+
+function getProjectNavItems(
+    orgSlug: string,
+    projectSlug: string,
+    role: ProjectParticipantRole,
+) {
     const base = `/${orgSlug}/projects/${projectSlug}`;
-    return [
-        { label: "Accueil", href: base, icon: Home, exact: true },
-        { label: "Éditeurs", href: `${base}/editors`, icon: Pencil, exact: false },
-        { label: "Membres", href: `${base}/members`, icon: Users, exact: false },
-        { label: "Documents", href: `${base}/documents`, icon: FileText, exact: false },
-        { label: "Économie", href: `${base}/economics`, icon: TrendingUp, exact: false },
-    ];
+
+    switch (role) {
+        case "CLIENT":
+            return [
+                { label: "Projet",       href: `${base}/editors`,   icon: Pencil,     exact: false },
+                { label: "Intervenants", href: `${base}/members`,   icon: Users,      exact: false },
+                { label: "Documents",    href: `${base}/documents`, icon: FileText,   exact: false },
+            ];
+        case "SUBCONTRACTOR":
+            return [
+                { label: "Mes lots",     href: `${base}/editors`,   icon: Pencil,     exact: false },
+                { label: "Intervenants", href: `${base}/members`,   icon: Users,      exact: false },
+                { label: "Documents",    href: `${base}/documents`, icon: FileText,   exact: false },
+            ];
+        default: // LEAD
+            return [
+                { label: "Éditeur",      href: `${base}/editors`,   icon: Pencil,     exact: false },
+                { label: "Intervenants", href: `${base}/members`,   icon: Users,      exact: false },
+                { label: "Documents",    href: `${base}/documents`, icon: FileText,   exact: false },
+                { label: "Économie",     href: `${base}/economics`, icon: TrendingUp, exact: false },
+            ];
+    }
 }
 
 export default function AppSidebar({ user, orgs }: { user: UserInfo; orgs: OrgInfo[] }) {
@@ -213,12 +237,17 @@ export default function AppSidebar({ user, orgs }: { user: UserInfo; orgs: OrgIn
                                 </SidebarGroup>
 
                                 <SidebarGroup>
-                                    <SidebarGroupLabel className="truncate">
-                                        {activeProject.name}
+                                    <SidebarGroupLabel className="flex items-center justify-between gap-2">
+                                        <span className="truncate">{activeProject.name}</span>
+                                        {PARTICIPANT_ROLE_LABELS[activeProject.participantRole] && (
+                                            <span className="shrink-0 text-xs font-normal text-sidebar-foreground/50">
+                                                {PARTICIPANT_ROLE_LABELS[activeProject.participantRole]}
+                                            </span>
+                                        )}
                                     </SidebarGroupLabel>
                                     <SidebarGroupContent>
                                         <SidebarMenu>
-                                            {getProjectNavItems(currentOrg.orgSlug, activeProject.slug).map((item) => {
+                                            {getProjectNavItems(currentOrg.orgSlug, activeProject.slug, activeProject.participantRole).map((item) => {
                                                 const isActive = item.exact
                                                     ? pathname === item.href
                                                     : pathname === item.href || pathname.startsWith(item.href + "/");

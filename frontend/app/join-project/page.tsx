@@ -1,0 +1,57 @@
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
+import {
+    getProjectInvitationPreview,
+    getUserOrgsForProjectJoin,
+} from "@/lib/actions/project-invitation";
+import JoinProjectClient from "./_components/join-project-client";
+
+type Props = { searchParams: Promise<{ token?: string }> };
+
+export default async function JoinProjectPage({ searchParams }: Props) {
+    const { token } = await searchParams;
+
+    if (!token) return <InvalidInvitation reason="missing" />;
+
+    const [invitation, session] = await Promise.all([
+        getProjectInvitationPreview(token),
+        auth.api.getSession({ headers: await headers() }),
+    ]);
+
+    if (!invitation) return <InvalidInvitation reason="expired" />;
+
+    const userOrgs =
+        session?.user.email.toLowerCase() === invitation.invitedEmail.toLowerCase()
+            ? await getUserOrgsForProjectJoin(session.user.id)
+            : [];
+
+    return (
+        <JoinProjectClient
+            token={token}
+            invitation={invitation}
+            sessionEmail={session?.user.email ?? null}
+            userOrgs={userOrgs}
+        />
+    );
+}
+
+function InvalidInvitation({ reason }: { reason: "missing" | "expired" }) {
+    return (
+        <main className="flex min-h-screen items-center justify-center bg-background px-6">
+            <div className="text-center max-w-sm">
+                <h1 className="page-title">Invitation invalide</h1>
+                <p className="mt-2 caption">
+                    {reason === "expired"
+                        ? "Ce lien d'invitation a expiré ou a déjà été utilisé."
+                        : "Lien d'invitation manquant."}
+                </p>
+                <a
+                    href="/login"
+                    className="mt-6 inline-block text-sm font-medium text-foreground hover:underline"
+                >
+                    Aller à la page de connexion
+                </a>
+            </div>
+        </main>
+    );
+}

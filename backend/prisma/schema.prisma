@@ -52,10 +52,11 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  accounts         Account[]
-  sessions         Session[]
-  memberships      OrganizationMembership[]
-  sentInvitations  OrganizationInvitation[]
+  accounts                Account[]
+  sessions                Session[]
+  memberships             OrganizationMembership[]
+  sentInvitations         OrganizationInvitation[]
+  sentProjectInvitations  ProjectInvitation[]
 }
 
 model Session {
@@ -195,12 +196,25 @@ model Project {
   createdAt            DateTime     @default(now())
   updatedAt            DateTime     @updatedAt
 
-  participants  ProjectParticipant[]
-  spaces        ProjectSpace[]
-  workPackages  WorkPackage[]
-  workItems     WorkItem[]
+  participants      ProjectParticipant[]
+  spaces            ProjectSpace[]
+  workPackages      WorkPackage[]
+  workItems         WorkItem[]
+  clientInvitation  ProjectInvitation?
 
   @@unique([leadOrganizationId, slug])
+}
+
+model ProjectInvitation {
+  id           String   @id @default(cuid())
+  projectId    String   @unique
+  project      Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  invitedEmail String
+  token        String   @unique
+  expiresAt    DateTime
+  invitedById  String
+  invitedBy    User     @relation(fields: [invitedById], references: [id], onDelete: Cascade)
+  createdAt    DateTime @default(now())
 }
 
 enum ProjectParticipantRole {

@@ -17,7 +17,7 @@ type Props = {
     data: ProjectEditorData;
 };
 
-export default function EditorClient({ orgSlug, projectSlug, data }: Props) {
+export default function LeadEditorClient({ orgSlug, projectSlug, data }: Props) {
     const router = useRouter();
     const [view, setView] = useState<View>("space");
     const [spaces, setSpaces] = useState<ProjectSpaceItem[]>(() => data.spaces);

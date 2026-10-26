@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { getProjectForOrg } from "@/lib/actions/projects";
+import { resolveProjectAccess } from "@/lib/actions/projects";
 import { SetActiveProject } from "@/lib/context/active-project";
 
 type Props = {
@@ -9,12 +9,18 @@ type Props = {
 
 export default async function ProjectLayout({ children, params }: Props) {
     const { orgSlug, projectSlug } = await params;
-    const project = await getProjectForOrg(orgSlug, projectSlug);
-    if (!project) redirect(`/${orgSlug}/projects`);
+
+    const access = await resolveProjectAccess(orgSlug, projectSlug);
+    if (!access) redirect(`/${orgSlug}/projects`);
 
     return (
         <>
-            <SetActiveProject id={project.id} slug={project.slug} name={project.name} />
+            <SetActiveProject
+                id={access.projectId}
+                slug={access.projectSlug}
+                name={access.projectName}
+                participantRole={access.callerParticipantRole}
+            />
             {children}
         </>
     );

@@ -2,7 +2,14 @@
 
 import { createContext, useContext, useEffect, useState } from "react";
 
-type ActiveProject = { id: string; slug: string; name: string } | null;
+export type ProjectParticipantRole = "LEAD" | "CLIENT" | "SUBCONTRACTOR";
+
+type ActiveProject = {
+    id: string;
+    slug: string;
+    name: string;
+    participantRole: ProjectParticipantRole;
+} | null;
 
 type ActiveProjectContextValue = {
     activeProject: ActiveProject;
@@ -27,13 +34,23 @@ export function useActiveProject() {
     return useContext(ActiveProjectContext);
 }
 
-export function SetActiveProject({ id, slug, name }: { id: string; slug: string; name: string }) {
+export function SetActiveProject({
+    id,
+    slug,
+    name,
+    participantRole,
+}: {
+    id: string;
+    slug: string;
+    name: string;
+    participantRole: ProjectParticipantRole;
+}) {
     const { setActiveProject } = useContext(ActiveProjectContext);
 
     useEffect(() => {
-        setActiveProject({ id, slug, name });
+        setActiveProject({ id, slug, name, participantRole });
         return () => setActiveProject(null);
-    }, [id, slug, name, setActiveProject]);
+    }, [id, slug, name, participantRole, setActiveProject]);
 
     return null;
 }

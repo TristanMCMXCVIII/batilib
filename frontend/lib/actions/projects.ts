@@ -7,6 +7,55 @@ import { slugify } from "@/lib/slug";
 
 export type ProjectParticipantRole = "LEAD" | "CLIENT" | "SUBCONTRACTOR";
 
+export type ProjectAccess = {
+    projectId: string;
+    projectName: string;
+    projectSlug: string;
+    callerParticipantRole: ProjectParticipantRole;
+    callerOrgRole: string;
+};
+
+export async function resolveProjectAccess(
+    orgSlug: string,
+    projectSlug: string,
+): Promise<ProjectAccess | null> {
+    const session = await auth.api.getSession({ headers: await headers() });
+    if (!session) return null;
+
+    const result = await db.query<{
+        projectId: string;
+        projectName: string;
+        projectSlug: string;
+        participantRole: ProjectParticipantRole;
+        orgRole: string;
+    }>(
+        `SELECT p.id         AS "projectId",
+                p.name       AS "projectName",
+                p.slug       AS "projectSlug",
+                pp.role      AS "participantRole",
+                om.role      AS "orgRole"
+         FROM "Project" p
+         JOIN "ProjectParticipant"    pp ON pp."projectId"      = p.id
+         JOIN "Organization"          o  ON o.id                = pp."organizationId"
+         JOIN "OrganizationMembership" om ON om."organizationId" = o.id
+                                        AND om."userId"         = $3
+                                        AND om.status           = 'ACTIVE'
+         WHERE p.slug = $1 AND o.slug = $2
+         LIMIT 1`,
+        [projectSlug, orgSlug, session.user.id],
+    );
+
+    if (!result.rows.length) return null;
+    const r = result.rows[0];
+    return {
+        projectId: r.projectId,
+        projectName: r.projectName,
+        projectSlug: r.projectSlug,
+        callerParticipantRole: r.participantRole,
+        callerOrgRole: r.orgRole,
+    };
+}
+
 export type ProjectListItem = {
     id: string;
     slug: string;

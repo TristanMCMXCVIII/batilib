@@ -5,7 +5,7 @@ import { getUserPrimaryOrgSlug } from "@/lib/actions/organization";
 import OnboardingForm from "./_components/onboarding-form";
 
 type Props = {
-    searchParams: Promise<{ context?: string }>;
+    searchParams: Promise<{ context?: string; redirectTo?: string }>;
 };
 
 export default async function OnboardingPage({ searchParams }: Props) {
@@ -15,16 +15,24 @@ export default async function OnboardingPage({ searchParams }: Props) {
         redirect(`/verify-email?email=${encodeURIComponent(session?.user.email ?? "")}`);
     }
 
-    // If the user already has an active org, send them to the app
-    const orgSlug = await getUserPrimaryOrgSlug();
-    if (orgSlug) redirect(`/${orgSlug}`);
+    const { context, redirectTo } = await searchParams;
 
-    const { context } = await searchParams;
+    // Validate redirectTo before trusting it
+    const safeRedirectTo =
+        redirectTo && redirectTo.startsWith("/") ? redirectTo : undefined;
+
+    // If the user already has an active org, send them to the app —
+    // unless they're here to create a new org for a specific redirectTo (e.g. join-project)
+    if (!safeRedirectTo) {
+        const orgSlug = await getUserPrimaryOrgSlug();
+        if (orgSlug) redirect(`/${orgSlug}`);
+    }
 
     return (
         <OnboardingForm
             userName={session.user.name}
             context={context === "kicked" ? "kicked" : null}
+            redirectTo={safeRedirectTo}
         />
     );
 }

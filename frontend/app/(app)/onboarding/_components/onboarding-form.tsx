@@ -38,9 +38,11 @@ const KINDS = [
 export default function OnboardingForm({
     userName,
     context,
+    redirectTo,
 }: {
     userName: string;
     context?: "kicked" | null;
+    redirectTo?: string;
 }) {
     const router = useRouter();
     const [selected, setSelected] = useState<OrgKind | null>(null);
@@ -73,7 +75,7 @@ export default function OnboardingForm({
         setError(null);
         try {
             const { orgSlug } = await createOrganization({ kind, name, siret: siretValue });
-            router.push(`/${orgSlug}`);
+            router.push(redirectTo ?? `/${orgSlug}`);
         } catch {
             setError("Une erreur est survenue. Veuillez réessayer.");
             setLoading(false);

@@ -115,7 +115,8 @@ export async function getProjectEditorData(
     const projectResult = await db.query<{ id: string; name: string; slug: string }>(
         `SELECT p.id, p.name, p.slug
          FROM "Project" p
-         JOIN "Organization" o ON o.id = p."leadOrganizationId"
+         JOIN "ProjectParticipant" pp ON pp."projectId" = p.id
+         JOIN "Organization" o ON o.id = pp."organizationId"
          WHERE p.slug = $1 AND o.slug = $2
          LIMIT 1`,
         [projectSlug, orgSlug],
