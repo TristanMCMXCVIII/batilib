@@ -20,6 +20,7 @@ export type WorkPackageTemplateItem = {
     id: string;
     name: string;
     description: string | null;
+    color: string | null;
     defaultMarginRate: string | null;
     tradeCategoryId: string | null;
     tradeCategoryLabel: string | null;
@@ -33,6 +34,7 @@ export type WorkPackageTemplateFormData = {
     description: string;
     defaultMarginRate: string;
     tradeCategoryId: string;
+    color: string;
 };
 
 // ─── Helpers ──────────────────────────────────────────────
@@ -73,6 +75,7 @@ export async function getWorkPackageTemplates(orgSlug: string): Promise<{
                 wpt.id,
                 wpt.name,
                 wpt.description,
+                wpt.color::text                         AS "color",
                 ROUND(wpt."defaultMarginRate", 2)::text AS "defaultMarginRate",
                 wpt."tradeCategoryId",
                 tc.label                                AS "tradeCategoryLabel",
@@ -114,6 +117,7 @@ export async function createWorkPackageTemplate(
     const description = data.description.trim() || null;
     const defaultMarginRate = parseDecimal(data.defaultMarginRate);
     const tradeCategoryId = data.tradeCategoryId.trim() || null;
+    const color = data.color.trim() || null;
 
     if (data.defaultMarginRate.trim() && defaultMarginRate === null)
         return { error: "Taux de marge invalide" };
@@ -122,14 +126,14 @@ export async function createWorkPackageTemplate(
 
     const result = await db.query<{ id: string }>(
         `INSERT INTO "WorkPackageTemplate"
-            (id, "organizationId", name, description, "defaultMarginRate", "tradeCategoryId", position, "createdAt", "updatedAt")
-         SELECT $1, o.id, $3, $4, $5, $6,
+            (id, "organizationId", name, description, color, "defaultMarginRate", "tradeCategoryId", position, "createdAt", "updatedAt")
+         SELECT $1, o.id, $3, $4, $5::\"LotColor\", $6, $7,
                 COALESCE((SELECT MAX(position) + 1 FROM "WorkPackageTemplate" WHERE "organizationId" = o.id), 0),
                 NOW(), NOW()
          FROM "Organization" o
          WHERE o.slug = $2
          RETURNING id`,
-        [id, orgSlug, name, description, defaultMarginRate, tradeCategoryId],
+        [id, orgSlug, name, description, color, defaultMarginRate, tradeCategoryId],
     );
 
     if (!result.rows.length) return { error: "Organisation introuvable" };
@@ -155,6 +159,7 @@ export async function updateWorkPackageTemplate(
     const description = data.description.trim() || null;
     const defaultMarginRate = parseDecimal(data.defaultMarginRate);
     const tradeCategoryId = data.tradeCategoryId.trim() || null;
+    const color = data.color.trim() || null;
 
     if (data.defaultMarginRate.trim() && defaultMarginRate === null)
         return { error: "Taux de marge invalide" };
@@ -163,14 +168,15 @@ export async function updateWorkPackageTemplate(
         `UPDATE "WorkPackageTemplate" wpt
          SET name                 = $3,
              description          = $4,
-             "defaultMarginRate"  = $5,
-             "tradeCategoryId"    = $6,
+             color                = $5::\"LotColor\",
+             "defaultMarginRate"  = $6,
+             "tradeCategoryId"    = $7,
              "updatedAt"          = NOW()
          FROM "Organization" o
          WHERE wpt.id = $1
            AND o.slug = $2
            AND wpt."organizationId" = o.id`,
-        [templateId, orgSlug, name, description, defaultMarginRate, tradeCategoryId],
+        [templateId, orgSlug, name, description, color, defaultMarginRate, tradeCategoryId],
     );
 
     revalidatePath(`/${orgSlug}/library/work-packages`);

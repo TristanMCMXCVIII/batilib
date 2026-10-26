@@ -13,6 +13,7 @@ export type OrgRole = "FOUNDER" | "MANAGER" | "MEMBER";
 export type WorkPackageTemplateRef = {
     id: string;
     name: string;
+    color: string | null;
 };
 
 export type WorkItemTemplateItem = {
@@ -34,6 +35,7 @@ export type LibraryFolderRaw = {
     parentId: string | null;
     workPackageTemplateId: string | null;
     workPackageTemplateName: string | null;
+    workPackageTemplateColor: string | null;
     name: string;
     position: number;
 };
@@ -42,6 +44,7 @@ export type LibraryFolderRaw = {
 export type LibraryFolderItem = LibraryFolderRaw & {
     effectiveWptId: string | null;
     effectiveWptName: string | null;
+    effectiveWptColor: string | null;
     children: LibraryFolderItem[];
     items: WorkItemTemplateItem[];
 };
@@ -83,11 +86,11 @@ function parseDecimal(value: string): number | null {
 function resolveEffectiveWpt(
     folderId: string | null,
     folderMap: Map<string, LibraryFolderRaw>,
-): { id: string; name: string } | null {
+): { id: string; name: string; color: string | null } | null {
     let current = folderId ? folderMap.get(folderId) ?? null : null;
     while (current) {
         if (current.workPackageTemplateId && current.workPackageTemplateName) {
-            return { id: current.workPackageTemplateId, name: current.workPackageTemplateName };
+            return { id: current.workPackageTemplateId, name: current.workPackageTemplateName, color: current.workPackageTemplateColor ?? null };
         }
         current = current.parentId ? folderMap.get(current.parentId) ?? null : null;
     }
@@ -114,6 +117,7 @@ function buildTree(
             ...raw,
             effectiveWptId: effective?.id ?? null,
             effectiveWptName: effective?.name ?? null,
+            effectiveWptColor: effective?.color ?? null,
             children: folders
                 .filter((f) => f.parentId === raw.id)
                 .sort((a, b) => a.position - b.position)
@@ -152,7 +156,8 @@ export async function getLibraryTree(orgSlug: string): Promise<{
                 lf.id,
                 lf."parentId",
                 lf."workPackageTemplateId",
-                wpt.name AS "workPackageTemplateName",
+                wpt.name                AS "workPackageTemplateName",
+                wpt.color::text         AS "workPackageTemplateColor",
                 lf.name,
                 lf.position
              FROM "LibraryFolder" lf
@@ -182,7 +187,7 @@ export async function getLibraryTree(orgSlug: string): Promise<{
             [orgSlug],
         ),
         db.query<WorkPackageTemplateRef>(
-            `SELECT wpt.id, wpt.name
+            `SELECT wpt.id, wpt.name, wpt.color::text AS color
              FROM "WorkPackageTemplate" wpt
              JOIN "Organization" o ON o.id = wpt."organizationId"
              WHERE o.slug = $1

@@ -17,6 +17,26 @@ enum PlatformRole {
   admin
 }
 
+enum LotColor {
+  NAVY
+  BLUE
+  SKY
+  CYAN
+  INDIGO
+  VIOLET
+  PURPLE
+  FUCHSIA
+  PINK
+  ROSE
+  RED
+  ORANGE
+  AMBER
+  YELLOW
+  SLATE
+  ZINC
+  STONE
+}
+
 model User {
   id            String       @id @default(cuid())
   name          String
@@ -245,6 +265,7 @@ model WorkPackage {
   sourceWorkPackageTemplate      WorkPackageTemplate? @relation(fields: [sourceWorkPackageTemplateId], references: [id], onDelete: SetNull)
   name                           String
   description                    String?
+  color                          LotColor?
   position                       Int
   createdAt                      DateTime             @default(now())
   updatedAt                      DateTime             @updatedAt
@@ -338,6 +359,7 @@ model WorkPackageTemplate {
   tradeCategory      TradeCategory? @relation(fields: [tradeCategoryId], references: [id])
   name               String
   description        String?
+  color              LotColor?
   defaultMarginRate  Decimal?
   position           Int
   createdAt          DateTime       @default(now())

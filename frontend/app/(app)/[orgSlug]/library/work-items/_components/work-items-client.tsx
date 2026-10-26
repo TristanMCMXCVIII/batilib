@@ -74,6 +74,7 @@ import {
     type LibraryFolderItem,
     type LibraryTree,
 } from "@/lib/actions/work-item-templates";
+import { LOT_COLOR_MAP, type LotColorKey } from "@/lib/lot-colors";
 import { useRouter } from "next/navigation";
 
 // ─── Types ────────────────────────────────────────────────
@@ -289,12 +290,21 @@ function FolderNode({ folder, depth }: { folder: LibraryFolderItem; depth: numbe
                 }
                 <span className="flex-1 text-sm font-medium text-foreground">{folder.name}</span>
 
-                {folder.effectiveWptName && (
-                    <span className="flex items-center gap-1 text-xs text-muted-foreground/70 bg-background border border-border/60 rounded px-1.5 py-0.5 max-w-[140px] truncate shrink-0">
-                        <Tag className="h-3 w-3 shrink-0" />
-                        <span className="truncate">{folder.effectiveWptName}</span>
-                    </span>
-                )}
+                {folder.effectiveWptName && (() => {
+                    const colorDef = folder.effectiveWptColor
+                        ? LOT_COLOR_MAP[folder.effectiveWptColor as LotColorKey]
+                        : undefined;
+                    const color = colorDef?.hex ?? "#6b7280";
+                    return (
+                        <span
+                            className="flex items-center gap-1 text-xs shrink-0 max-w-[140px] truncate font-medium"
+                            style={{ color }}
+                        >
+                            <Tag className="h-3 w-3 shrink-0" fill="currentColor" stroke="none" />
+                            <span className="truncate">{folder.effectiveWptName}</span>
+                        </span>
+                    );
+                })()}
 
                 {canEdit && (
                     <div

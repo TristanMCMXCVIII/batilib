@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Layers, Loader2, Pencil, Plus } from "lucide-react";
+import { Layers, Loader2, Pencil, Plus, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -27,6 +27,7 @@ import {
     type WorkPackageTemplateFormData,
     type WorkPackageTemplateItem,
 } from "@/lib/actions/work-package-templates";
+import { LOT_COLORS, LOT_COLOR_MAP, type LotColorKey } from "@/lib/lot-colors";
 import { useRouter } from "next/navigation";
 
 type Props = {
@@ -41,12 +42,69 @@ const EMPTY_FORM: WorkPackageTemplateFormData = {
     description: "",
     defaultMarginRate: "",
     tradeCategoryId: "",
+    color: "",
 };
 
 function formatRate(value: string | null): string {
     if (!value) return "—";
     const n = parseFloat(value);
     return isNaN(n) ? "—" : n + " %";
+}
+
+function ColorDot({ colorKey, size = "sm" }: { colorKey: string | null; size?: "sm" | "md" }) {
+    if (!colorKey) return null;
+    const def = LOT_COLOR_MAP[colorKey as LotColorKey];
+    if (!def) return null;
+    const dim = size === "sm" ? "h-2.5 w-2.5" : "h-3.5 w-3.5";
+    return (
+        <span
+            className={`inline-block rounded-full shrink-0 ${dim}`}
+            style={{ backgroundColor: def.hex }}
+            title={def.label}
+        />
+    );
+}
+
+function ColorPicker({
+    value,
+    onChange,
+}: {
+    value: string;
+    onChange: (key: string) => void;
+}) {
+    return (
+        <div className="flex flex-wrap gap-2">
+            {/* Option "aucune couleur" */}
+            <button
+                type="button"
+                onClick={() => onChange("")}
+                title="Aucune couleur"
+                className={`h-6 w-6 rounded-full border-2 flex items-center justify-center transition-all ${
+                    value === ""
+                        ? "border-foreground"
+                        : "border-border hover:border-muted-foreground"
+                }`}
+                style={{ backgroundColor: "#f4f4f5" }}
+            >
+                {value === "" && <X className="h-3 w-3 text-muted-foreground" />}
+            </button>
+
+            {LOT_COLORS.map((c) => (
+                <button
+                    key={c.key}
+                    type="button"
+                    onClick={() => onChange(c.key)}
+                    title={c.label}
+                    className={`h-6 w-6 rounded-full border-2 transition-all ${
+                        value === c.key
+                            ? "border-foreground scale-110"
+                            : "border-transparent hover:scale-110"
+                    }`}
+                    style={{ backgroundColor: c.hex }}
+                />
+            ))}
+        </div>
+    );
 }
 
 export default function WorkPackagesClient({ orgSlug, templates, tradeCategories, callerRole }: Props) {
@@ -76,6 +134,7 @@ export default function WorkPackagesClient({ orgSlug, templates, tradeCategories
             description: template.description ?? "",
             defaultMarginRate: template.defaultMarginRate ?? "",
             tradeCategoryId: template.tradeCategoryId ?? "",
+            color: template.color ?? "",
         });
         setError(null);
         setOpen(true);
@@ -100,6 +159,8 @@ export default function WorkPackagesClient({ orgSlug, templates, tradeCategories
             setSaving(false);
         }
     }
+
+    const selectedColorDef = form.color ? LOT_COLOR_MAP[form.color as LotColorKey] : null;
 
     return (
         <main className="py-8 max-w-5xl">
@@ -162,10 +223,15 @@ export default function WorkPackagesClient({ orgSlug, templates, tradeCategories
                                 {templates.map((t) => (
                                     <tr key={t.id} className="hover:bg-subtle/50 transition-colors group">
                                         <td className="px-4 py-3">
-                                            <span className="font-medium text-foreground">{t.name}</span>
-                                            {t.description && (
-                                                <p className="caption truncate max-w-sm mt-0.5">{t.description}</p>
-                                            )}
+                                            <div className="flex items-center gap-2">
+                                                <ColorDot colorKey={t.color} />
+                                                <div>
+                                                    <span className="font-medium text-foreground">{t.name}</span>
+                                                    {t.description && (
+                                                        <p className="caption truncate max-w-sm mt-0.5">{t.description}</p>
+                                                    )}
+                                                </div>
+                                            </div>
                                         </td>
                                         <td className="px-4 py-3 text-muted-foreground">
                                             {t.tradeCategoryLabel ?? "—"}
@@ -229,6 +295,23 @@ export default function WorkPackagesClient({ orgSlug, templates, tradeCategories
                                 rows={3}
                                 className="flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 resize-none"
                             />
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label>Couleur</Label>
+                            <ColorPicker
+                                value={form.color}
+                                onChange={(key) => setForm((f) => ({ ...f, color: key }))}
+                            />
+                            {selectedColorDef && (
+                                <p className="caption flex items-center gap-1.5 mt-1">
+                                    <span
+                                        className="inline-block h-2 w-2 rounded-full"
+                                        style={{ backgroundColor: selectedColorDef.hex }}
+                                    />
+                                    {selectedColorDef.label}
+                                </p>
+                            )}
                         </div>
 
                         <div className="space-y-2">
