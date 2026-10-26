@@ -264,6 +264,7 @@ export type WorkPackageTemplateWhereInput = {
   folder?: Prisma.XOR<Prisma.LibraryFolderNullableScalarRelationFilter, Prisma.LibraryFolderWhereInput> | null
   tradeCategory?: Prisma.XOR<Prisma.TradeCategoryNullableScalarRelationFilter, Prisma.TradeCategoryWhereInput> | null
   derivedWorkPackages?: Prisma.WorkPackageListRelationFilter
+  taggedFolders?: Prisma.LibraryFolderListRelationFilter
 }
 
 export type WorkPackageTemplateOrderByWithRelationInput = {
@@ -281,6 +282,7 @@ export type WorkPackageTemplateOrderByWithRelationInput = {
   folder?: Prisma.LibraryFolderOrderByWithRelationInput
   tradeCategory?: Prisma.TradeCategoryOrderByWithRelationInput
   derivedWorkPackages?: Prisma.WorkPackageOrderByRelationAggregateInput
+  taggedFolders?: Prisma.LibraryFolderOrderByRelationAggregateInput
 }
 
 export type WorkPackageTemplateWhereUniqueInput = Prisma.AtLeast<{
@@ -301,6 +303,7 @@ export type WorkPackageTemplateWhereUniqueInput = Prisma.AtLeast<{
   folder?: Prisma.XOR<Prisma.LibraryFolderNullableScalarRelationFilter, Prisma.LibraryFolderWhereInput> | null
   tradeCategory?: Prisma.XOR<Prisma.TradeCategoryNullableScalarRelationFilter, Prisma.TradeCategoryWhereInput> | null
   derivedWorkPackages?: Prisma.WorkPackageListRelationFilter
+  taggedFolders?: Prisma.LibraryFolderListRelationFilter
 }, "id">
 
 export type WorkPackageTemplateOrderByWithAggregationInput = {
@@ -349,6 +352,7 @@ export type WorkPackageTemplateCreateInput = {
   folder?: Prisma.LibraryFolderCreateNestedOneWithoutWorkPackageTemplatesInput
   tradeCategory?: Prisma.TradeCategoryCreateNestedOneWithoutWorkPackageTemplatesInput
   derivedWorkPackages?: Prisma.WorkPackageCreateNestedManyWithoutSourceWorkPackageTemplateInput
+  taggedFolders?: Prisma.LibraryFolderCreateNestedManyWithoutWorkPackageTemplateInput
 }
 
 export type WorkPackageTemplateUncheckedCreateInput = {
@@ -363,6 +367,7 @@ export type WorkPackageTemplateUncheckedCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   derivedWorkPackages?: Prisma.WorkPackageUncheckedCreateNestedManyWithoutSourceWorkPackageTemplateInput
+  taggedFolders?: Prisma.LibraryFolderUncheckedCreateNestedManyWithoutWorkPackageTemplateInput
 }
 
 export type WorkPackageTemplateUpdateInput = {
@@ -377,6 +382,7 @@ export type WorkPackageTemplateUpdateInput = {
   folder?: Prisma.LibraryFolderUpdateOneWithoutWorkPackageTemplatesNestedInput
   tradeCategory?: Prisma.TradeCategoryUpdateOneWithoutWorkPackageTemplatesNestedInput
   derivedWorkPackages?: Prisma.WorkPackageUpdateManyWithoutSourceWorkPackageTemplateNestedInput
+  taggedFolders?: Prisma.LibraryFolderUpdateManyWithoutWorkPackageTemplateNestedInput
 }
 
 export type WorkPackageTemplateUncheckedUpdateInput = {
@@ -391,6 +397,7 @@ export type WorkPackageTemplateUncheckedUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   derivedWorkPackages?: Prisma.WorkPackageUncheckedUpdateManyWithoutSourceWorkPackageTemplateNestedInput
+  taggedFolders?: Prisma.LibraryFolderUncheckedUpdateManyWithoutWorkPackageTemplateNestedInput
 }
 
 export type WorkPackageTemplateCreateManyInput = {
@@ -593,6 +600,12 @@ export type WorkPackageTemplateUpdateOneWithoutDerivedWorkPackagesNestedInput = 
   update?: Prisma.XOR<Prisma.XOR<Prisma.WorkPackageTemplateUpdateToOneWithWhereWithoutDerivedWorkPackagesInput, Prisma.WorkPackageTemplateUpdateWithoutDerivedWorkPackagesInput>, Prisma.WorkPackageTemplateUncheckedUpdateWithoutDerivedWorkPackagesInput>
 }
 
+export type WorkPackageTemplateCreateNestedOneWithoutTaggedFoldersInput = {
+  create?: Prisma.XOR<Prisma.WorkPackageTemplateCreateWithoutTaggedFoldersInput, Prisma.WorkPackageTemplateUncheckedCreateWithoutTaggedFoldersInput>
+  connectOrCreate?: Prisma.WorkPackageTemplateCreateOrConnectWithoutTaggedFoldersInput
+  connect?: Prisma.WorkPackageTemplateWhereUniqueInput
+}
+
 export type WorkPackageTemplateCreateNestedManyWithoutFolderInput = {
   create?: Prisma.XOR<Prisma.WorkPackageTemplateCreateWithoutFolderInput, Prisma.WorkPackageTemplateUncheckedCreateWithoutFolderInput> | Prisma.WorkPackageTemplateCreateWithoutFolderInput[] | Prisma.WorkPackageTemplateUncheckedCreateWithoutFolderInput[]
   connectOrCreate?: Prisma.WorkPackageTemplateCreateOrConnectWithoutFolderInput | Prisma.WorkPackageTemplateCreateOrConnectWithoutFolderInput[]
@@ -605,6 +618,16 @@ export type WorkPackageTemplateUncheckedCreateNestedManyWithoutFolderInput = {
   connectOrCreate?: Prisma.WorkPackageTemplateCreateOrConnectWithoutFolderInput | Prisma.WorkPackageTemplateCreateOrConnectWithoutFolderInput[]
   createMany?: Prisma.WorkPackageTemplateCreateManyFolderInputEnvelope
   connect?: Prisma.WorkPackageTemplateWhereUniqueInput | Prisma.WorkPackageTemplateWhereUniqueInput[]
+}
+
+export type WorkPackageTemplateUpdateOneWithoutTaggedFoldersNestedInput = {
+  create?: Prisma.XOR<Prisma.WorkPackageTemplateCreateWithoutTaggedFoldersInput, Prisma.WorkPackageTemplateUncheckedCreateWithoutTaggedFoldersInput>
+  connectOrCreate?: Prisma.WorkPackageTemplateCreateOrConnectWithoutTaggedFoldersInput
+  upsert?: Prisma.WorkPackageTemplateUpsertWithoutTaggedFoldersInput
+  disconnect?: Prisma.WorkPackageTemplateWhereInput | boolean
+  delete?: Prisma.WorkPackageTemplateWhereInput | boolean
+  connect?: Prisma.WorkPackageTemplateWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.WorkPackageTemplateUpdateToOneWithWhereWithoutTaggedFoldersInput, Prisma.WorkPackageTemplateUpdateWithoutTaggedFoldersInput>, Prisma.WorkPackageTemplateUncheckedUpdateWithoutTaggedFoldersInput>
 }
 
 export type WorkPackageTemplateUpdateManyWithoutFolderNestedInput = {
@@ -646,6 +669,7 @@ export type WorkPackageTemplateCreateWithoutOrganizationInput = {
   folder?: Prisma.LibraryFolderCreateNestedOneWithoutWorkPackageTemplatesInput
   tradeCategory?: Prisma.TradeCategoryCreateNestedOneWithoutWorkPackageTemplatesInput
   derivedWorkPackages?: Prisma.WorkPackageCreateNestedManyWithoutSourceWorkPackageTemplateInput
+  taggedFolders?: Prisma.LibraryFolderCreateNestedManyWithoutWorkPackageTemplateInput
 }
 
 export type WorkPackageTemplateUncheckedCreateWithoutOrganizationInput = {
@@ -659,6 +683,7 @@ export type WorkPackageTemplateUncheckedCreateWithoutOrganizationInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   derivedWorkPackages?: Prisma.WorkPackageUncheckedCreateNestedManyWithoutSourceWorkPackageTemplateInput
+  taggedFolders?: Prisma.LibraryFolderUncheckedCreateNestedManyWithoutWorkPackageTemplateInput
 }
 
 export type WorkPackageTemplateCreateOrConnectWithoutOrganizationInput = {
@@ -714,6 +739,7 @@ export type WorkPackageTemplateCreateWithoutTradeCategoryInput = {
   organization: Prisma.OrganizationCreateNestedOneWithoutWorkPackageTemplatesInput
   folder?: Prisma.LibraryFolderCreateNestedOneWithoutWorkPackageTemplatesInput
   derivedWorkPackages?: Prisma.WorkPackageCreateNestedManyWithoutSourceWorkPackageTemplateInput
+  taggedFolders?: Prisma.LibraryFolderCreateNestedManyWithoutWorkPackageTemplateInput
 }
 
 export type WorkPackageTemplateUncheckedCreateWithoutTradeCategoryInput = {
@@ -727,6 +753,7 @@ export type WorkPackageTemplateUncheckedCreateWithoutTradeCategoryInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   derivedWorkPackages?: Prisma.WorkPackageUncheckedCreateNestedManyWithoutSourceWorkPackageTemplateInput
+  taggedFolders?: Prisma.LibraryFolderUncheckedCreateNestedManyWithoutWorkPackageTemplateInput
 }
 
 export type WorkPackageTemplateCreateOrConnectWithoutTradeCategoryInput = {
@@ -766,6 +793,7 @@ export type WorkPackageTemplateCreateWithoutDerivedWorkPackagesInput = {
   organization: Prisma.OrganizationCreateNestedOneWithoutWorkPackageTemplatesInput
   folder?: Prisma.LibraryFolderCreateNestedOneWithoutWorkPackageTemplatesInput
   tradeCategory?: Prisma.TradeCategoryCreateNestedOneWithoutWorkPackageTemplatesInput
+  taggedFolders?: Prisma.LibraryFolderCreateNestedManyWithoutWorkPackageTemplateInput
 }
 
 export type WorkPackageTemplateUncheckedCreateWithoutDerivedWorkPackagesInput = {
@@ -779,6 +807,7 @@ export type WorkPackageTemplateUncheckedCreateWithoutDerivedWorkPackagesInput = 
   position: number
   createdAt?: Date | string
   updatedAt?: Date | string
+  taggedFolders?: Prisma.LibraryFolderUncheckedCreateNestedManyWithoutWorkPackageTemplateInput
 }
 
 export type WorkPackageTemplateCreateOrConnectWithoutDerivedWorkPackagesInput = {
@@ -808,6 +837,7 @@ export type WorkPackageTemplateUpdateWithoutDerivedWorkPackagesInput = {
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutWorkPackageTemplatesNestedInput
   folder?: Prisma.LibraryFolderUpdateOneWithoutWorkPackageTemplatesNestedInput
   tradeCategory?: Prisma.TradeCategoryUpdateOneWithoutWorkPackageTemplatesNestedInput
+  taggedFolders?: Prisma.LibraryFolderUpdateManyWithoutWorkPackageTemplateNestedInput
 }
 
 export type WorkPackageTemplateUncheckedUpdateWithoutDerivedWorkPackagesInput = {
@@ -821,6 +851,40 @@ export type WorkPackageTemplateUncheckedUpdateWithoutDerivedWorkPackagesInput = 
   position?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  taggedFolders?: Prisma.LibraryFolderUncheckedUpdateManyWithoutWorkPackageTemplateNestedInput
+}
+
+export type WorkPackageTemplateCreateWithoutTaggedFoldersInput = {
+  id?: string
+  name: string
+  description?: string | null
+  defaultMarginRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  position: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  organization: Prisma.OrganizationCreateNestedOneWithoutWorkPackageTemplatesInput
+  folder?: Prisma.LibraryFolderCreateNestedOneWithoutWorkPackageTemplatesInput
+  tradeCategory?: Prisma.TradeCategoryCreateNestedOneWithoutWorkPackageTemplatesInput
+  derivedWorkPackages?: Prisma.WorkPackageCreateNestedManyWithoutSourceWorkPackageTemplateInput
+}
+
+export type WorkPackageTemplateUncheckedCreateWithoutTaggedFoldersInput = {
+  id?: string
+  organizationId: string
+  folderId?: string | null
+  tradeCategoryId?: string | null
+  name: string
+  description?: string | null
+  defaultMarginRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  position: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  derivedWorkPackages?: Prisma.WorkPackageUncheckedCreateNestedManyWithoutSourceWorkPackageTemplateInput
+}
+
+export type WorkPackageTemplateCreateOrConnectWithoutTaggedFoldersInput = {
+  where: Prisma.WorkPackageTemplateWhereUniqueInput
+  create: Prisma.XOR<Prisma.WorkPackageTemplateCreateWithoutTaggedFoldersInput, Prisma.WorkPackageTemplateUncheckedCreateWithoutTaggedFoldersInput>
 }
 
 export type WorkPackageTemplateCreateWithoutFolderInput = {
@@ -834,6 +898,7 @@ export type WorkPackageTemplateCreateWithoutFolderInput = {
   organization: Prisma.OrganizationCreateNestedOneWithoutWorkPackageTemplatesInput
   tradeCategory?: Prisma.TradeCategoryCreateNestedOneWithoutWorkPackageTemplatesInput
   derivedWorkPackages?: Prisma.WorkPackageCreateNestedManyWithoutSourceWorkPackageTemplateInput
+  taggedFolders?: Prisma.LibraryFolderCreateNestedManyWithoutWorkPackageTemplateInput
 }
 
 export type WorkPackageTemplateUncheckedCreateWithoutFolderInput = {
@@ -847,6 +912,7 @@ export type WorkPackageTemplateUncheckedCreateWithoutFolderInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   derivedWorkPackages?: Prisma.WorkPackageUncheckedCreateNestedManyWithoutSourceWorkPackageTemplateInput
+  taggedFolders?: Prisma.LibraryFolderUncheckedCreateNestedManyWithoutWorkPackageTemplateInput
 }
 
 export type WorkPackageTemplateCreateOrConnectWithoutFolderInput = {
@@ -857,6 +923,45 @@ export type WorkPackageTemplateCreateOrConnectWithoutFolderInput = {
 export type WorkPackageTemplateCreateManyFolderInputEnvelope = {
   data: Prisma.WorkPackageTemplateCreateManyFolderInput | Prisma.WorkPackageTemplateCreateManyFolderInput[]
   skipDuplicates?: boolean
+}
+
+export type WorkPackageTemplateUpsertWithoutTaggedFoldersInput = {
+  update: Prisma.XOR<Prisma.WorkPackageTemplateUpdateWithoutTaggedFoldersInput, Prisma.WorkPackageTemplateUncheckedUpdateWithoutTaggedFoldersInput>
+  create: Prisma.XOR<Prisma.WorkPackageTemplateCreateWithoutTaggedFoldersInput, Prisma.WorkPackageTemplateUncheckedCreateWithoutTaggedFoldersInput>
+  where?: Prisma.WorkPackageTemplateWhereInput
+}
+
+export type WorkPackageTemplateUpdateToOneWithWhereWithoutTaggedFoldersInput = {
+  where?: Prisma.WorkPackageTemplateWhereInput
+  data: Prisma.XOR<Prisma.WorkPackageTemplateUpdateWithoutTaggedFoldersInput, Prisma.WorkPackageTemplateUncheckedUpdateWithoutTaggedFoldersInput>
+}
+
+export type WorkPackageTemplateUpdateWithoutTaggedFoldersInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  defaultMarginRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  position?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutWorkPackageTemplatesNestedInput
+  folder?: Prisma.LibraryFolderUpdateOneWithoutWorkPackageTemplatesNestedInput
+  tradeCategory?: Prisma.TradeCategoryUpdateOneWithoutWorkPackageTemplatesNestedInput
+  derivedWorkPackages?: Prisma.WorkPackageUpdateManyWithoutSourceWorkPackageTemplateNestedInput
+}
+
+export type WorkPackageTemplateUncheckedUpdateWithoutTaggedFoldersInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  folderId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tradeCategoryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  defaultMarginRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  position?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  derivedWorkPackages?: Prisma.WorkPackageUncheckedUpdateManyWithoutSourceWorkPackageTemplateNestedInput
 }
 
 export type WorkPackageTemplateUpsertWithWhereUniqueWithoutFolderInput = {
@@ -898,6 +1003,7 @@ export type WorkPackageTemplateUpdateWithoutOrganizationInput = {
   folder?: Prisma.LibraryFolderUpdateOneWithoutWorkPackageTemplatesNestedInput
   tradeCategory?: Prisma.TradeCategoryUpdateOneWithoutWorkPackageTemplatesNestedInput
   derivedWorkPackages?: Prisma.WorkPackageUpdateManyWithoutSourceWorkPackageTemplateNestedInput
+  taggedFolders?: Prisma.LibraryFolderUpdateManyWithoutWorkPackageTemplateNestedInput
 }
 
 export type WorkPackageTemplateUncheckedUpdateWithoutOrganizationInput = {
@@ -911,6 +1017,7 @@ export type WorkPackageTemplateUncheckedUpdateWithoutOrganizationInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   derivedWorkPackages?: Prisma.WorkPackageUncheckedUpdateManyWithoutSourceWorkPackageTemplateNestedInput
+  taggedFolders?: Prisma.LibraryFolderUncheckedUpdateManyWithoutWorkPackageTemplateNestedInput
 }
 
 export type WorkPackageTemplateUncheckedUpdateManyWithoutOrganizationInput = {
@@ -948,6 +1055,7 @@ export type WorkPackageTemplateUpdateWithoutTradeCategoryInput = {
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutWorkPackageTemplatesNestedInput
   folder?: Prisma.LibraryFolderUpdateOneWithoutWorkPackageTemplatesNestedInput
   derivedWorkPackages?: Prisma.WorkPackageUpdateManyWithoutSourceWorkPackageTemplateNestedInput
+  taggedFolders?: Prisma.LibraryFolderUpdateManyWithoutWorkPackageTemplateNestedInput
 }
 
 export type WorkPackageTemplateUncheckedUpdateWithoutTradeCategoryInput = {
@@ -961,6 +1069,7 @@ export type WorkPackageTemplateUncheckedUpdateWithoutTradeCategoryInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   derivedWorkPackages?: Prisma.WorkPackageUncheckedUpdateManyWithoutSourceWorkPackageTemplateNestedInput
+  taggedFolders?: Prisma.LibraryFolderUncheckedUpdateManyWithoutWorkPackageTemplateNestedInput
 }
 
 export type WorkPackageTemplateUncheckedUpdateManyWithoutTradeCategoryInput = {
@@ -998,6 +1107,7 @@ export type WorkPackageTemplateUpdateWithoutFolderInput = {
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutWorkPackageTemplatesNestedInput
   tradeCategory?: Prisma.TradeCategoryUpdateOneWithoutWorkPackageTemplatesNestedInput
   derivedWorkPackages?: Prisma.WorkPackageUpdateManyWithoutSourceWorkPackageTemplateNestedInput
+  taggedFolders?: Prisma.LibraryFolderUpdateManyWithoutWorkPackageTemplateNestedInput
 }
 
 export type WorkPackageTemplateUncheckedUpdateWithoutFolderInput = {
@@ -1011,6 +1121,7 @@ export type WorkPackageTemplateUncheckedUpdateWithoutFolderInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   derivedWorkPackages?: Prisma.WorkPackageUncheckedUpdateManyWithoutSourceWorkPackageTemplateNestedInput
+  taggedFolders?: Prisma.LibraryFolderUncheckedUpdateManyWithoutWorkPackageTemplateNestedInput
 }
 
 export type WorkPackageTemplateUncheckedUpdateManyWithoutFolderInput = {
@@ -1032,10 +1143,12 @@ export type WorkPackageTemplateUncheckedUpdateManyWithoutFolderInput = {
 
 export type WorkPackageTemplateCountOutputType = {
   derivedWorkPackages: number
+  taggedFolders: number
 }
 
 export type WorkPackageTemplateCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   derivedWorkPackages?: boolean | WorkPackageTemplateCountOutputTypeCountDerivedWorkPackagesArgs
+  taggedFolders?: boolean | WorkPackageTemplateCountOutputTypeCountTaggedFoldersArgs
 }
 
 /**
@@ -1055,6 +1168,13 @@ export type WorkPackageTemplateCountOutputTypeCountDerivedWorkPackagesArgs<ExtAr
   where?: Prisma.WorkPackageWhereInput
 }
 
+/**
+ * WorkPackageTemplateCountOutputType without action
+ */
+export type WorkPackageTemplateCountOutputTypeCountTaggedFoldersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.LibraryFolderWhereInput
+}
+
 
 export type WorkPackageTemplateSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1071,6 +1191,7 @@ export type WorkPackageTemplateSelect<ExtArgs extends runtime.Types.Extensions.I
   folder?: boolean | Prisma.WorkPackageTemplate$folderArgs<ExtArgs>
   tradeCategory?: boolean | Prisma.WorkPackageTemplate$tradeCategoryArgs<ExtArgs>
   derivedWorkPackages?: boolean | Prisma.WorkPackageTemplate$derivedWorkPackagesArgs<ExtArgs>
+  taggedFolders?: boolean | Prisma.WorkPackageTemplate$taggedFoldersArgs<ExtArgs>
   _count?: boolean | Prisma.WorkPackageTemplateCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["workPackageTemplate"]>
 
@@ -1125,6 +1246,7 @@ export type WorkPackageTemplateInclude<ExtArgs extends runtime.Types.Extensions.
   folder?: boolean | Prisma.WorkPackageTemplate$folderArgs<ExtArgs>
   tradeCategory?: boolean | Prisma.WorkPackageTemplate$tradeCategoryArgs<ExtArgs>
   derivedWorkPackages?: boolean | Prisma.WorkPackageTemplate$derivedWorkPackagesArgs<ExtArgs>
+  taggedFolders?: boolean | Prisma.WorkPackageTemplate$taggedFoldersArgs<ExtArgs>
   _count?: boolean | Prisma.WorkPackageTemplateCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type WorkPackageTemplateIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1145,6 +1267,7 @@ export type $WorkPackageTemplatePayload<ExtArgs extends runtime.Types.Extensions
     folder: Prisma.$LibraryFolderPayload<ExtArgs> | null
     tradeCategory: Prisma.$TradeCategoryPayload<ExtArgs> | null
     derivedWorkPackages: Prisma.$WorkPackagePayload<ExtArgs>[]
+    taggedFolders: Prisma.$LibraryFolderPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1555,6 +1678,7 @@ export interface Prisma__WorkPackageTemplateClient<T, Null = never, ExtArgs exte
   folder<T extends Prisma.WorkPackageTemplate$folderArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.WorkPackageTemplate$folderArgs<ExtArgs>>): Prisma.Prisma__LibraryFolderClient<runtime.Types.Result.GetResult<Prisma.$LibraryFolderPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   tradeCategory<T extends Prisma.WorkPackageTemplate$tradeCategoryArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.WorkPackageTemplate$tradeCategoryArgs<ExtArgs>>): Prisma.Prisma__TradeCategoryClient<runtime.Types.Result.GetResult<Prisma.$TradeCategoryPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   derivedWorkPackages<T extends Prisma.WorkPackageTemplate$derivedWorkPackagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.WorkPackageTemplate$derivedWorkPackagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WorkPackagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  taggedFolders<T extends Prisma.WorkPackageTemplate$taggedFoldersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.WorkPackageTemplate$taggedFoldersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LibraryFolderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2054,6 +2178,30 @@ export type WorkPackageTemplate$derivedWorkPackagesArgs<ExtArgs extends runtime.
   take?: number
   skip?: number
   distinct?: Prisma.WorkPackageScalarFieldEnum | Prisma.WorkPackageScalarFieldEnum[]
+}
+
+/**
+ * WorkPackageTemplate.taggedFolders
+ */
+export type WorkPackageTemplate$taggedFoldersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the LibraryFolder
+   */
+  select?: Prisma.LibraryFolderSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the LibraryFolder
+   */
+  omit?: Prisma.LibraryFolderOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.LibraryFolderInclude<ExtArgs> | null
+  where?: Prisma.LibraryFolderWhereInput
+  orderBy?: Prisma.LibraryFolderOrderByWithRelationInput | Prisma.LibraryFolderOrderByWithRelationInput[]
+  cursor?: Prisma.LibraryFolderWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.LibraryFolderScalarFieldEnum | Prisma.LibraryFolderScalarFieldEnum[]
 }
 
 /**

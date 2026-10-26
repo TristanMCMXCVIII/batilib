@@ -67,7 +67,7 @@ export const ModelName = {
   WorkPackageTradeCategory: 'WorkPackageTradeCategory',
   WorkItem: 'WorkItem',
   LibraryFolder: 'LibraryFolder',
-  WorkTemplate: 'WorkTemplate',
+  WorkItemTemplate: 'WorkItemTemplate',
   WorkPackageTemplate: 'WorkPackageTemplate',
   Verification: 'Verification'
 } as const
@@ -280,7 +280,7 @@ export const WorkItemScalarFieldEnum = {
   workPackageId: 'workPackageId',
   projectSpaceId: 'projectSpaceId',
   tradeCategoryId: 'tradeCategoryId',
-  sourceWorkTemplateId: 'sourceWorkTemplateId',
+  sourceWorkItemTemplateId: 'sourceWorkItemTemplateId',
   name: 'name',
   description: 'description',
   quantity: 'quantity',
@@ -301,6 +301,7 @@ export const LibraryFolderScalarFieldEnum = {
   id: 'id',
   organizationId: 'organizationId',
   parentId: 'parentId',
+  workPackageTemplateId: 'workPackageTemplateId',
   name: 'name',
   position: 'position',
   createdAt: 'createdAt',
@@ -310,7 +311,7 @@ export const LibraryFolderScalarFieldEnum = {
 export type LibraryFolderScalarFieldEnum = (typeof LibraryFolderScalarFieldEnum)[keyof typeof LibraryFolderScalarFieldEnum]
 
 
-export const WorkTemplateScalarFieldEnum = {
+export const WorkItemTemplateScalarFieldEnum = {
   id: 'id',
   organizationId: 'organizationId',
   folderId: 'folderId',
@@ -323,11 +324,12 @@ export const WorkTemplateScalarFieldEnum = {
   estimatedUnitCost: 'estimatedUnitCost',
   quantityExpression: 'quantityExpression',
   defaultChecklist: 'defaultChecklist',
+  position: 'position',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
-export type WorkTemplateScalarFieldEnum = (typeof WorkTemplateScalarFieldEnum)[keyof typeof WorkTemplateScalarFieldEnum]
+export type WorkItemTemplateScalarFieldEnum = (typeof WorkItemTemplateScalarFieldEnum)[keyof typeof WorkItemTemplateScalarFieldEnum]
 
 
 export const WorkPackageTemplateScalarFieldEnum = {

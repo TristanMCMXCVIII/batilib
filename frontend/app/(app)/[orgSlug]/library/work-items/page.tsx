@@ -1,17 +1,18 @@
-import { getWorkTemplates } from "@/lib/actions/work-templates";
+import { getLibraryTree } from "@/lib/actions/work-item-templates";
 import WorkItemsClient from "./_components/work-items-client";
 
 type Props = { params: Promise<{ orgSlug: string }> };
 
 export default async function WorkItemsPage({ params }: Props) {
     const { orgSlug } = await params;
-    const { templates, callerRole } = await getWorkTemplates(orgSlug);
+    const { tree, callerRole, workPackageTemplates } = await getLibraryTree(orgSlug);
 
     return (
         <WorkItemsClient
             orgSlug={orgSlug}
-            templates={templates}
+            tree={tree}
             callerRole={callerRole}
+            workPackageTemplates={workPackageTemplates}
         />
     );
 }

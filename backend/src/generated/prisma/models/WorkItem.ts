@@ -42,7 +42,7 @@ export type WorkItemMinAggregateOutputType = {
   workPackageId: string | null
   projectSpaceId: string | null
   tradeCategoryId: string | null
-  sourceWorkTemplateId: string | null
+  sourceWorkItemTemplateId: string | null
   name: string | null
   description: string | null
   quantity: runtime.Decimal | null
@@ -61,7 +61,7 @@ export type WorkItemMaxAggregateOutputType = {
   workPackageId: string | null
   projectSpaceId: string | null
   tradeCategoryId: string | null
-  sourceWorkTemplateId: string | null
+  sourceWorkItemTemplateId: string | null
   name: string | null
   description: string | null
   quantity: runtime.Decimal | null
@@ -80,7 +80,7 @@ export type WorkItemCountAggregateOutputType = {
   workPackageId: number
   projectSpaceId: number
   tradeCategoryId: number
-  sourceWorkTemplateId: number
+  sourceWorkItemTemplateId: number
   name: number
   description: number
   quantity: number
@@ -112,7 +112,7 @@ export type WorkItemMinAggregateInputType = {
   workPackageId?: true
   projectSpaceId?: true
   tradeCategoryId?: true
-  sourceWorkTemplateId?: true
+  sourceWorkItemTemplateId?: true
   name?: true
   description?: true
   quantity?: true
@@ -131,7 +131,7 @@ export type WorkItemMaxAggregateInputType = {
   workPackageId?: true
   projectSpaceId?: true
   tradeCategoryId?: true
-  sourceWorkTemplateId?: true
+  sourceWorkItemTemplateId?: true
   name?: true
   description?: true
   quantity?: true
@@ -150,7 +150,7 @@ export type WorkItemCountAggregateInputType = {
   workPackageId?: true
   projectSpaceId?: true
   tradeCategoryId?: true
-  sourceWorkTemplateId?: true
+  sourceWorkItemTemplateId?: true
   name?: true
   description?: true
   quantity?: true
@@ -257,7 +257,7 @@ export type WorkItemGroupByOutputType = {
   workPackageId: string | null
   projectSpaceId: string | null
   tradeCategoryId: string | null
-  sourceWorkTemplateId: string | null
+  sourceWorkItemTemplateId: string | null
   name: string
   description: string | null
   quantity: runtime.Decimal
@@ -300,7 +300,7 @@ export type WorkItemWhereInput = {
   workPackageId?: Prisma.StringNullableFilter<"WorkItem"> | string | null
   projectSpaceId?: Prisma.StringNullableFilter<"WorkItem"> | string | null
   tradeCategoryId?: Prisma.StringNullableFilter<"WorkItem"> | string | null
-  sourceWorkTemplateId?: Prisma.StringNullableFilter<"WorkItem"> | string | null
+  sourceWorkItemTemplateId?: Prisma.StringNullableFilter<"WorkItem"> | string | null
   name?: Prisma.StringFilter<"WorkItem"> | string
   description?: Prisma.StringNullableFilter<"WorkItem"> | string | null
   quantity?: Prisma.DecimalFilter<"WorkItem"> | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -316,7 +316,7 @@ export type WorkItemWhereInput = {
   workPackage?: Prisma.XOR<Prisma.WorkPackageNullableScalarRelationFilter, Prisma.WorkPackageWhereInput> | null
   projectSpace?: Prisma.XOR<Prisma.ProjectSpaceNullableScalarRelationFilter, Prisma.ProjectSpaceWhereInput> | null
   tradeCategory?: Prisma.XOR<Prisma.TradeCategoryNullableScalarRelationFilter, Prisma.TradeCategoryWhereInput> | null
-  sourceWorkTemplate?: Prisma.XOR<Prisma.WorkTemplateNullableScalarRelationFilter, Prisma.WorkTemplateWhereInput> | null
+  sourceWorkItemTemplate?: Prisma.XOR<Prisma.WorkItemTemplateNullableScalarRelationFilter, Prisma.WorkItemTemplateWhereInput> | null
 }
 
 export type WorkItemOrderByWithRelationInput = {
@@ -325,7 +325,7 @@ export type WorkItemOrderByWithRelationInput = {
   workPackageId?: Prisma.SortOrderInput | Prisma.SortOrder
   projectSpaceId?: Prisma.SortOrderInput | Prisma.SortOrder
   tradeCategoryId?: Prisma.SortOrderInput | Prisma.SortOrder
-  sourceWorkTemplateId?: Prisma.SortOrderInput | Prisma.SortOrder
+  sourceWorkItemTemplateId?: Prisma.SortOrderInput | Prisma.SortOrder
   name?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   quantity?: Prisma.SortOrder
@@ -341,7 +341,7 @@ export type WorkItemOrderByWithRelationInput = {
   workPackage?: Prisma.WorkPackageOrderByWithRelationInput
   projectSpace?: Prisma.ProjectSpaceOrderByWithRelationInput
   tradeCategory?: Prisma.TradeCategoryOrderByWithRelationInput
-  sourceWorkTemplate?: Prisma.WorkTemplateOrderByWithRelationInput
+  sourceWorkItemTemplate?: Prisma.WorkItemTemplateOrderByWithRelationInput
 }
 
 export type WorkItemWhereUniqueInput = Prisma.AtLeast<{
@@ -353,7 +353,7 @@ export type WorkItemWhereUniqueInput = Prisma.AtLeast<{
   workPackageId?: Prisma.StringNullableFilter<"WorkItem"> | string | null
   projectSpaceId?: Prisma.StringNullableFilter<"WorkItem"> | string | null
   tradeCategoryId?: Prisma.StringNullableFilter<"WorkItem"> | string | null
-  sourceWorkTemplateId?: Prisma.StringNullableFilter<"WorkItem"> | string | null
+  sourceWorkItemTemplateId?: Prisma.StringNullableFilter<"WorkItem"> | string | null
   name?: Prisma.StringFilter<"WorkItem"> | string
   description?: Prisma.StringNullableFilter<"WorkItem"> | string | null
   quantity?: Prisma.DecimalFilter<"WorkItem"> | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -369,7 +369,7 @@ export type WorkItemWhereUniqueInput = Prisma.AtLeast<{
   workPackage?: Prisma.XOR<Prisma.WorkPackageNullableScalarRelationFilter, Prisma.WorkPackageWhereInput> | null
   projectSpace?: Prisma.XOR<Prisma.ProjectSpaceNullableScalarRelationFilter, Prisma.ProjectSpaceWhereInput> | null
   tradeCategory?: Prisma.XOR<Prisma.TradeCategoryNullableScalarRelationFilter, Prisma.TradeCategoryWhereInput> | null
-  sourceWorkTemplate?: Prisma.XOR<Prisma.WorkTemplateNullableScalarRelationFilter, Prisma.WorkTemplateWhereInput> | null
+  sourceWorkItemTemplate?: Prisma.XOR<Prisma.WorkItemTemplateNullableScalarRelationFilter, Prisma.WorkItemTemplateWhereInput> | null
 }, "id">
 
 export type WorkItemOrderByWithAggregationInput = {
@@ -378,7 +378,7 @@ export type WorkItemOrderByWithAggregationInput = {
   workPackageId?: Prisma.SortOrderInput | Prisma.SortOrder
   projectSpaceId?: Prisma.SortOrderInput | Prisma.SortOrder
   tradeCategoryId?: Prisma.SortOrderInput | Prisma.SortOrder
-  sourceWorkTemplateId?: Prisma.SortOrderInput | Prisma.SortOrder
+  sourceWorkItemTemplateId?: Prisma.SortOrderInput | Prisma.SortOrder
   name?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   quantity?: Prisma.SortOrder
@@ -406,7 +406,7 @@ export type WorkItemScalarWhereWithAggregatesInput = {
   workPackageId?: Prisma.StringNullableWithAggregatesFilter<"WorkItem"> | string | null
   projectSpaceId?: Prisma.StringNullableWithAggregatesFilter<"WorkItem"> | string | null
   tradeCategoryId?: Prisma.StringNullableWithAggregatesFilter<"WorkItem"> | string | null
-  sourceWorkTemplateId?: Prisma.StringNullableWithAggregatesFilter<"WorkItem"> | string | null
+  sourceWorkItemTemplateId?: Prisma.StringNullableWithAggregatesFilter<"WorkItem"> | string | null
   name?: Prisma.StringWithAggregatesFilter<"WorkItem"> | string
   description?: Prisma.StringNullableWithAggregatesFilter<"WorkItem"> | string | null
   quantity?: Prisma.DecimalWithAggregatesFilter<"WorkItem"> | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -437,7 +437,7 @@ export type WorkItemCreateInput = {
   workPackage?: Prisma.WorkPackageCreateNestedOneWithoutWorkItemsInput
   projectSpace?: Prisma.ProjectSpaceCreateNestedOneWithoutWorkItemsInput
   tradeCategory?: Prisma.TradeCategoryCreateNestedOneWithoutWorkItemsInput
-  sourceWorkTemplate?: Prisma.WorkTemplateCreateNestedOneWithoutWorkItemsInput
+  sourceWorkItemTemplate?: Prisma.WorkItemTemplateCreateNestedOneWithoutWorkItemsInput
 }
 
 export type WorkItemUncheckedCreateInput = {
@@ -446,7 +446,7 @@ export type WorkItemUncheckedCreateInput = {
   workPackageId?: string | null
   projectSpaceId?: string | null
   tradeCategoryId?: string | null
-  sourceWorkTemplateId?: string | null
+  sourceWorkItemTemplateId?: string | null
   name: string
   description?: string | null
   quantity: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -477,7 +477,7 @@ export type WorkItemUpdateInput = {
   workPackage?: Prisma.WorkPackageUpdateOneWithoutWorkItemsNestedInput
   projectSpace?: Prisma.ProjectSpaceUpdateOneWithoutWorkItemsNestedInput
   tradeCategory?: Prisma.TradeCategoryUpdateOneWithoutWorkItemsNestedInput
-  sourceWorkTemplate?: Prisma.WorkTemplateUpdateOneWithoutWorkItemsNestedInput
+  sourceWorkItemTemplate?: Prisma.WorkItemTemplateUpdateOneWithoutWorkItemsNestedInput
 }
 
 export type WorkItemUncheckedUpdateInput = {
@@ -486,7 +486,7 @@ export type WorkItemUncheckedUpdateInput = {
   workPackageId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   projectSpaceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tradeCategoryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  sourceWorkTemplateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sourceWorkItemTemplateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   quantity?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -506,7 +506,7 @@ export type WorkItemCreateManyInput = {
   workPackageId?: string | null
   projectSpaceId?: string | null
   tradeCategoryId?: string | null
-  sourceWorkTemplateId?: string | null
+  sourceWorkItemTemplateId?: string | null
   name: string
   description?: string | null
   quantity: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -541,7 +541,7 @@ export type WorkItemUncheckedUpdateManyInput = {
   workPackageId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   projectSpaceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tradeCategoryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  sourceWorkTemplateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sourceWorkItemTemplateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   quantity?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -571,7 +571,7 @@ export type WorkItemCountOrderByAggregateInput = {
   workPackageId?: Prisma.SortOrder
   projectSpaceId?: Prisma.SortOrder
   tradeCategoryId?: Prisma.SortOrder
-  sourceWorkTemplateId?: Prisma.SortOrder
+  sourceWorkItemTemplateId?: Prisma.SortOrder
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
   quantity?: Prisma.SortOrder
@@ -596,7 +596,7 @@ export type WorkItemMaxOrderByAggregateInput = {
   workPackageId?: Prisma.SortOrder
   projectSpaceId?: Prisma.SortOrder
   tradeCategoryId?: Prisma.SortOrder
-  sourceWorkTemplateId?: Prisma.SortOrder
+  sourceWorkItemTemplateId?: Prisma.SortOrder
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
   quantity?: Prisma.SortOrder
@@ -615,7 +615,7 @@ export type WorkItemMinOrderByAggregateInput = {
   workPackageId?: Prisma.SortOrder
   projectSpaceId?: Prisma.SortOrder
   tradeCategoryId?: Prisma.SortOrder
-  sourceWorkTemplateId?: Prisma.SortOrder
+  sourceWorkItemTemplateId?: Prisma.SortOrder
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
   quantity?: Prisma.SortOrder
@@ -813,45 +813,45 @@ export type EnumWorkItemStatusFieldUpdateOperationsInput = {
   set?: $Enums.WorkItemStatus
 }
 
-export type WorkItemCreateNestedManyWithoutSourceWorkTemplateInput = {
-  create?: Prisma.XOR<Prisma.WorkItemCreateWithoutSourceWorkTemplateInput, Prisma.WorkItemUncheckedCreateWithoutSourceWorkTemplateInput> | Prisma.WorkItemCreateWithoutSourceWorkTemplateInput[] | Prisma.WorkItemUncheckedCreateWithoutSourceWorkTemplateInput[]
-  connectOrCreate?: Prisma.WorkItemCreateOrConnectWithoutSourceWorkTemplateInput | Prisma.WorkItemCreateOrConnectWithoutSourceWorkTemplateInput[]
-  createMany?: Prisma.WorkItemCreateManySourceWorkTemplateInputEnvelope
+export type WorkItemCreateNestedManyWithoutSourceWorkItemTemplateInput = {
+  create?: Prisma.XOR<Prisma.WorkItemCreateWithoutSourceWorkItemTemplateInput, Prisma.WorkItemUncheckedCreateWithoutSourceWorkItemTemplateInput> | Prisma.WorkItemCreateWithoutSourceWorkItemTemplateInput[] | Prisma.WorkItemUncheckedCreateWithoutSourceWorkItemTemplateInput[]
+  connectOrCreate?: Prisma.WorkItemCreateOrConnectWithoutSourceWorkItemTemplateInput | Prisma.WorkItemCreateOrConnectWithoutSourceWorkItemTemplateInput[]
+  createMany?: Prisma.WorkItemCreateManySourceWorkItemTemplateInputEnvelope
   connect?: Prisma.WorkItemWhereUniqueInput | Prisma.WorkItemWhereUniqueInput[]
 }
 
-export type WorkItemUncheckedCreateNestedManyWithoutSourceWorkTemplateInput = {
-  create?: Prisma.XOR<Prisma.WorkItemCreateWithoutSourceWorkTemplateInput, Prisma.WorkItemUncheckedCreateWithoutSourceWorkTemplateInput> | Prisma.WorkItemCreateWithoutSourceWorkTemplateInput[] | Prisma.WorkItemUncheckedCreateWithoutSourceWorkTemplateInput[]
-  connectOrCreate?: Prisma.WorkItemCreateOrConnectWithoutSourceWorkTemplateInput | Prisma.WorkItemCreateOrConnectWithoutSourceWorkTemplateInput[]
-  createMany?: Prisma.WorkItemCreateManySourceWorkTemplateInputEnvelope
+export type WorkItemUncheckedCreateNestedManyWithoutSourceWorkItemTemplateInput = {
+  create?: Prisma.XOR<Prisma.WorkItemCreateWithoutSourceWorkItemTemplateInput, Prisma.WorkItemUncheckedCreateWithoutSourceWorkItemTemplateInput> | Prisma.WorkItemCreateWithoutSourceWorkItemTemplateInput[] | Prisma.WorkItemUncheckedCreateWithoutSourceWorkItemTemplateInput[]
+  connectOrCreate?: Prisma.WorkItemCreateOrConnectWithoutSourceWorkItemTemplateInput | Prisma.WorkItemCreateOrConnectWithoutSourceWorkItemTemplateInput[]
+  createMany?: Prisma.WorkItemCreateManySourceWorkItemTemplateInputEnvelope
   connect?: Prisma.WorkItemWhereUniqueInput | Prisma.WorkItemWhereUniqueInput[]
 }
 
-export type WorkItemUpdateManyWithoutSourceWorkTemplateNestedInput = {
-  create?: Prisma.XOR<Prisma.WorkItemCreateWithoutSourceWorkTemplateInput, Prisma.WorkItemUncheckedCreateWithoutSourceWorkTemplateInput> | Prisma.WorkItemCreateWithoutSourceWorkTemplateInput[] | Prisma.WorkItemUncheckedCreateWithoutSourceWorkTemplateInput[]
-  connectOrCreate?: Prisma.WorkItemCreateOrConnectWithoutSourceWorkTemplateInput | Prisma.WorkItemCreateOrConnectWithoutSourceWorkTemplateInput[]
-  upsert?: Prisma.WorkItemUpsertWithWhereUniqueWithoutSourceWorkTemplateInput | Prisma.WorkItemUpsertWithWhereUniqueWithoutSourceWorkTemplateInput[]
-  createMany?: Prisma.WorkItemCreateManySourceWorkTemplateInputEnvelope
+export type WorkItemUpdateManyWithoutSourceWorkItemTemplateNestedInput = {
+  create?: Prisma.XOR<Prisma.WorkItemCreateWithoutSourceWorkItemTemplateInput, Prisma.WorkItemUncheckedCreateWithoutSourceWorkItemTemplateInput> | Prisma.WorkItemCreateWithoutSourceWorkItemTemplateInput[] | Prisma.WorkItemUncheckedCreateWithoutSourceWorkItemTemplateInput[]
+  connectOrCreate?: Prisma.WorkItemCreateOrConnectWithoutSourceWorkItemTemplateInput | Prisma.WorkItemCreateOrConnectWithoutSourceWorkItemTemplateInput[]
+  upsert?: Prisma.WorkItemUpsertWithWhereUniqueWithoutSourceWorkItemTemplateInput | Prisma.WorkItemUpsertWithWhereUniqueWithoutSourceWorkItemTemplateInput[]
+  createMany?: Prisma.WorkItemCreateManySourceWorkItemTemplateInputEnvelope
   set?: Prisma.WorkItemWhereUniqueInput | Prisma.WorkItemWhereUniqueInput[]
   disconnect?: Prisma.WorkItemWhereUniqueInput | Prisma.WorkItemWhereUniqueInput[]
   delete?: Prisma.WorkItemWhereUniqueInput | Prisma.WorkItemWhereUniqueInput[]
   connect?: Prisma.WorkItemWhereUniqueInput | Prisma.WorkItemWhereUniqueInput[]
-  update?: Prisma.WorkItemUpdateWithWhereUniqueWithoutSourceWorkTemplateInput | Prisma.WorkItemUpdateWithWhereUniqueWithoutSourceWorkTemplateInput[]
-  updateMany?: Prisma.WorkItemUpdateManyWithWhereWithoutSourceWorkTemplateInput | Prisma.WorkItemUpdateManyWithWhereWithoutSourceWorkTemplateInput[]
+  update?: Prisma.WorkItemUpdateWithWhereUniqueWithoutSourceWorkItemTemplateInput | Prisma.WorkItemUpdateWithWhereUniqueWithoutSourceWorkItemTemplateInput[]
+  updateMany?: Prisma.WorkItemUpdateManyWithWhereWithoutSourceWorkItemTemplateInput | Prisma.WorkItemUpdateManyWithWhereWithoutSourceWorkItemTemplateInput[]
   deleteMany?: Prisma.WorkItemScalarWhereInput | Prisma.WorkItemScalarWhereInput[]
 }
 
-export type WorkItemUncheckedUpdateManyWithoutSourceWorkTemplateNestedInput = {
-  create?: Prisma.XOR<Prisma.WorkItemCreateWithoutSourceWorkTemplateInput, Prisma.WorkItemUncheckedCreateWithoutSourceWorkTemplateInput> | Prisma.WorkItemCreateWithoutSourceWorkTemplateInput[] | Prisma.WorkItemUncheckedCreateWithoutSourceWorkTemplateInput[]
-  connectOrCreate?: Prisma.WorkItemCreateOrConnectWithoutSourceWorkTemplateInput | Prisma.WorkItemCreateOrConnectWithoutSourceWorkTemplateInput[]
-  upsert?: Prisma.WorkItemUpsertWithWhereUniqueWithoutSourceWorkTemplateInput | Prisma.WorkItemUpsertWithWhereUniqueWithoutSourceWorkTemplateInput[]
-  createMany?: Prisma.WorkItemCreateManySourceWorkTemplateInputEnvelope
+export type WorkItemUncheckedUpdateManyWithoutSourceWorkItemTemplateNestedInput = {
+  create?: Prisma.XOR<Prisma.WorkItemCreateWithoutSourceWorkItemTemplateInput, Prisma.WorkItemUncheckedCreateWithoutSourceWorkItemTemplateInput> | Prisma.WorkItemCreateWithoutSourceWorkItemTemplateInput[] | Prisma.WorkItemUncheckedCreateWithoutSourceWorkItemTemplateInput[]
+  connectOrCreate?: Prisma.WorkItemCreateOrConnectWithoutSourceWorkItemTemplateInput | Prisma.WorkItemCreateOrConnectWithoutSourceWorkItemTemplateInput[]
+  upsert?: Prisma.WorkItemUpsertWithWhereUniqueWithoutSourceWorkItemTemplateInput | Prisma.WorkItemUpsertWithWhereUniqueWithoutSourceWorkItemTemplateInput[]
+  createMany?: Prisma.WorkItemCreateManySourceWorkItemTemplateInputEnvelope
   set?: Prisma.WorkItemWhereUniqueInput | Prisma.WorkItemWhereUniqueInput[]
   disconnect?: Prisma.WorkItemWhereUniqueInput | Prisma.WorkItemWhereUniqueInput[]
   delete?: Prisma.WorkItemWhereUniqueInput | Prisma.WorkItemWhereUniqueInput[]
   connect?: Prisma.WorkItemWhereUniqueInput | Prisma.WorkItemWhereUniqueInput[]
-  update?: Prisma.WorkItemUpdateWithWhereUniqueWithoutSourceWorkTemplateInput | Prisma.WorkItemUpdateWithWhereUniqueWithoutSourceWorkTemplateInput[]
-  updateMany?: Prisma.WorkItemUpdateManyWithWhereWithoutSourceWorkTemplateInput | Prisma.WorkItemUpdateManyWithWhereWithoutSourceWorkTemplateInput[]
+  update?: Prisma.WorkItemUpdateWithWhereUniqueWithoutSourceWorkItemTemplateInput | Prisma.WorkItemUpdateWithWhereUniqueWithoutSourceWorkItemTemplateInput[]
+  updateMany?: Prisma.WorkItemUpdateManyWithWhereWithoutSourceWorkItemTemplateInput | Prisma.WorkItemUpdateManyWithWhereWithoutSourceWorkItemTemplateInput[]
   deleteMany?: Prisma.WorkItemScalarWhereInput | Prisma.WorkItemScalarWhereInput[]
 }
 
@@ -871,7 +871,7 @@ export type WorkItemCreateWithoutTradeCategoryInput = {
   project: Prisma.ProjectCreateNestedOneWithoutWorkItemsInput
   workPackage?: Prisma.WorkPackageCreateNestedOneWithoutWorkItemsInput
   projectSpace?: Prisma.ProjectSpaceCreateNestedOneWithoutWorkItemsInput
-  sourceWorkTemplate?: Prisma.WorkTemplateCreateNestedOneWithoutWorkItemsInput
+  sourceWorkItemTemplate?: Prisma.WorkItemTemplateCreateNestedOneWithoutWorkItemsInput
 }
 
 export type WorkItemUncheckedCreateWithoutTradeCategoryInput = {
@@ -879,7 +879,7 @@ export type WorkItemUncheckedCreateWithoutTradeCategoryInput = {
   projectId: string
   workPackageId?: string | null
   projectSpaceId?: string | null
-  sourceWorkTemplateId?: string | null
+  sourceWorkItemTemplateId?: string | null
   name: string
   description?: string | null
   quantity: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -928,7 +928,7 @@ export type WorkItemScalarWhereInput = {
   workPackageId?: Prisma.StringNullableFilter<"WorkItem"> | string | null
   projectSpaceId?: Prisma.StringNullableFilter<"WorkItem"> | string | null
   tradeCategoryId?: Prisma.StringNullableFilter<"WorkItem"> | string | null
-  sourceWorkTemplateId?: Prisma.StringNullableFilter<"WorkItem"> | string | null
+  sourceWorkItemTemplateId?: Prisma.StringNullableFilter<"WorkItem"> | string | null
   name?: Prisma.StringFilter<"WorkItem"> | string
   description?: Prisma.StringNullableFilter<"WorkItem"> | string | null
   quantity?: Prisma.DecimalFilter<"WorkItem"> | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -958,7 +958,7 @@ export type WorkItemCreateWithoutProjectInput = {
   workPackage?: Prisma.WorkPackageCreateNestedOneWithoutWorkItemsInput
   projectSpace?: Prisma.ProjectSpaceCreateNestedOneWithoutWorkItemsInput
   tradeCategory?: Prisma.TradeCategoryCreateNestedOneWithoutWorkItemsInput
-  sourceWorkTemplate?: Prisma.WorkTemplateCreateNestedOneWithoutWorkItemsInput
+  sourceWorkItemTemplate?: Prisma.WorkItemTemplateCreateNestedOneWithoutWorkItemsInput
 }
 
 export type WorkItemUncheckedCreateWithoutProjectInput = {
@@ -966,7 +966,7 @@ export type WorkItemUncheckedCreateWithoutProjectInput = {
   workPackageId?: string | null
   projectSpaceId?: string | null
   tradeCategoryId?: string | null
-  sourceWorkTemplateId?: string | null
+  sourceWorkItemTemplateId?: string | null
   name: string
   description?: string | null
   quantity: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1022,7 +1022,7 @@ export type WorkItemCreateWithoutProjectSpaceInput = {
   project: Prisma.ProjectCreateNestedOneWithoutWorkItemsInput
   workPackage?: Prisma.WorkPackageCreateNestedOneWithoutWorkItemsInput
   tradeCategory?: Prisma.TradeCategoryCreateNestedOneWithoutWorkItemsInput
-  sourceWorkTemplate?: Prisma.WorkTemplateCreateNestedOneWithoutWorkItemsInput
+  sourceWorkItemTemplate?: Prisma.WorkItemTemplateCreateNestedOneWithoutWorkItemsInput
 }
 
 export type WorkItemUncheckedCreateWithoutProjectSpaceInput = {
@@ -1030,7 +1030,7 @@ export type WorkItemUncheckedCreateWithoutProjectSpaceInput = {
   projectId: string
   workPackageId?: string | null
   tradeCategoryId?: string | null
-  sourceWorkTemplateId?: string | null
+  sourceWorkItemTemplateId?: string | null
   name: string
   description?: string | null
   quantity: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1086,7 +1086,7 @@ export type WorkItemCreateWithoutWorkPackageInput = {
   project: Prisma.ProjectCreateNestedOneWithoutWorkItemsInput
   projectSpace?: Prisma.ProjectSpaceCreateNestedOneWithoutWorkItemsInput
   tradeCategory?: Prisma.TradeCategoryCreateNestedOneWithoutWorkItemsInput
-  sourceWorkTemplate?: Prisma.WorkTemplateCreateNestedOneWithoutWorkItemsInput
+  sourceWorkItemTemplate?: Prisma.WorkItemTemplateCreateNestedOneWithoutWorkItemsInput
 }
 
 export type WorkItemUncheckedCreateWithoutWorkPackageInput = {
@@ -1094,7 +1094,7 @@ export type WorkItemUncheckedCreateWithoutWorkPackageInput = {
   projectId: string
   projectSpaceId?: string | null
   tradeCategoryId?: string | null
-  sourceWorkTemplateId?: string | null
+  sourceWorkItemTemplateId?: string | null
   name: string
   description?: string | null
   quantity: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1134,7 +1134,7 @@ export type WorkItemUpdateManyWithWhereWithoutWorkPackageInput = {
   data: Prisma.XOR<Prisma.WorkItemUpdateManyMutationInput, Prisma.WorkItemUncheckedUpdateManyWithoutWorkPackageInput>
 }
 
-export type WorkItemCreateWithoutSourceWorkTemplateInput = {
+export type WorkItemCreateWithoutSourceWorkItemTemplateInput = {
   id?: string
   name: string
   description?: string | null
@@ -1153,7 +1153,7 @@ export type WorkItemCreateWithoutSourceWorkTemplateInput = {
   tradeCategory?: Prisma.TradeCategoryCreateNestedOneWithoutWorkItemsInput
 }
 
-export type WorkItemUncheckedCreateWithoutSourceWorkTemplateInput = {
+export type WorkItemUncheckedCreateWithoutSourceWorkItemTemplateInput = {
   id?: string
   projectId: string
   workPackageId?: string | null
@@ -1172,30 +1172,30 @@ export type WorkItemUncheckedCreateWithoutSourceWorkTemplateInput = {
   updatedAt?: Date | string
 }
 
-export type WorkItemCreateOrConnectWithoutSourceWorkTemplateInput = {
+export type WorkItemCreateOrConnectWithoutSourceWorkItemTemplateInput = {
   where: Prisma.WorkItemWhereUniqueInput
-  create: Prisma.XOR<Prisma.WorkItemCreateWithoutSourceWorkTemplateInput, Prisma.WorkItemUncheckedCreateWithoutSourceWorkTemplateInput>
+  create: Prisma.XOR<Prisma.WorkItemCreateWithoutSourceWorkItemTemplateInput, Prisma.WorkItemUncheckedCreateWithoutSourceWorkItemTemplateInput>
 }
 
-export type WorkItemCreateManySourceWorkTemplateInputEnvelope = {
-  data: Prisma.WorkItemCreateManySourceWorkTemplateInput | Prisma.WorkItemCreateManySourceWorkTemplateInput[]
+export type WorkItemCreateManySourceWorkItemTemplateInputEnvelope = {
+  data: Prisma.WorkItemCreateManySourceWorkItemTemplateInput | Prisma.WorkItemCreateManySourceWorkItemTemplateInput[]
   skipDuplicates?: boolean
 }
 
-export type WorkItemUpsertWithWhereUniqueWithoutSourceWorkTemplateInput = {
+export type WorkItemUpsertWithWhereUniqueWithoutSourceWorkItemTemplateInput = {
   where: Prisma.WorkItemWhereUniqueInput
-  update: Prisma.XOR<Prisma.WorkItemUpdateWithoutSourceWorkTemplateInput, Prisma.WorkItemUncheckedUpdateWithoutSourceWorkTemplateInput>
-  create: Prisma.XOR<Prisma.WorkItemCreateWithoutSourceWorkTemplateInput, Prisma.WorkItemUncheckedCreateWithoutSourceWorkTemplateInput>
+  update: Prisma.XOR<Prisma.WorkItemUpdateWithoutSourceWorkItemTemplateInput, Prisma.WorkItemUncheckedUpdateWithoutSourceWorkItemTemplateInput>
+  create: Prisma.XOR<Prisma.WorkItemCreateWithoutSourceWorkItemTemplateInput, Prisma.WorkItemUncheckedCreateWithoutSourceWorkItemTemplateInput>
 }
 
-export type WorkItemUpdateWithWhereUniqueWithoutSourceWorkTemplateInput = {
+export type WorkItemUpdateWithWhereUniqueWithoutSourceWorkItemTemplateInput = {
   where: Prisma.WorkItemWhereUniqueInput
-  data: Prisma.XOR<Prisma.WorkItemUpdateWithoutSourceWorkTemplateInput, Prisma.WorkItemUncheckedUpdateWithoutSourceWorkTemplateInput>
+  data: Prisma.XOR<Prisma.WorkItemUpdateWithoutSourceWorkItemTemplateInput, Prisma.WorkItemUncheckedUpdateWithoutSourceWorkItemTemplateInput>
 }
 
-export type WorkItemUpdateManyWithWhereWithoutSourceWorkTemplateInput = {
+export type WorkItemUpdateManyWithWhereWithoutSourceWorkItemTemplateInput = {
   where: Prisma.WorkItemScalarWhereInput
-  data: Prisma.XOR<Prisma.WorkItemUpdateManyMutationInput, Prisma.WorkItemUncheckedUpdateManyWithoutSourceWorkTemplateInput>
+  data: Prisma.XOR<Prisma.WorkItemUpdateManyMutationInput, Prisma.WorkItemUncheckedUpdateManyWithoutSourceWorkItemTemplateInput>
 }
 
 export type WorkItemCreateManyTradeCategoryInput = {
@@ -1203,7 +1203,7 @@ export type WorkItemCreateManyTradeCategoryInput = {
   projectId: string
   workPackageId?: string | null
   projectSpaceId?: string | null
-  sourceWorkTemplateId?: string | null
+  sourceWorkItemTemplateId?: string | null
   name: string
   description?: string | null
   quantity: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1233,7 +1233,7 @@ export type WorkItemUpdateWithoutTradeCategoryInput = {
   project?: Prisma.ProjectUpdateOneRequiredWithoutWorkItemsNestedInput
   workPackage?: Prisma.WorkPackageUpdateOneWithoutWorkItemsNestedInput
   projectSpace?: Prisma.ProjectSpaceUpdateOneWithoutWorkItemsNestedInput
-  sourceWorkTemplate?: Prisma.WorkTemplateUpdateOneWithoutWorkItemsNestedInput
+  sourceWorkItemTemplate?: Prisma.WorkItemTemplateUpdateOneWithoutWorkItemsNestedInput
 }
 
 export type WorkItemUncheckedUpdateWithoutTradeCategoryInput = {
@@ -1241,7 +1241,7 @@ export type WorkItemUncheckedUpdateWithoutTradeCategoryInput = {
   projectId?: Prisma.StringFieldUpdateOperationsInput | string
   workPackageId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   projectSpaceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  sourceWorkTemplateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sourceWorkItemTemplateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   quantity?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1260,7 +1260,7 @@ export type WorkItemUncheckedUpdateManyWithoutTradeCategoryInput = {
   projectId?: Prisma.StringFieldUpdateOperationsInput | string
   workPackageId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   projectSpaceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  sourceWorkTemplateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sourceWorkItemTemplateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   quantity?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1279,7 +1279,7 @@ export type WorkItemCreateManyProjectInput = {
   workPackageId?: string | null
   projectSpaceId?: string | null
   tradeCategoryId?: string | null
-  sourceWorkTemplateId?: string | null
+  sourceWorkItemTemplateId?: string | null
   name: string
   description?: string | null
   quantity: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1309,7 +1309,7 @@ export type WorkItemUpdateWithoutProjectInput = {
   workPackage?: Prisma.WorkPackageUpdateOneWithoutWorkItemsNestedInput
   projectSpace?: Prisma.ProjectSpaceUpdateOneWithoutWorkItemsNestedInput
   tradeCategory?: Prisma.TradeCategoryUpdateOneWithoutWorkItemsNestedInput
-  sourceWorkTemplate?: Prisma.WorkTemplateUpdateOneWithoutWorkItemsNestedInput
+  sourceWorkItemTemplate?: Prisma.WorkItemTemplateUpdateOneWithoutWorkItemsNestedInput
 }
 
 export type WorkItemUncheckedUpdateWithoutProjectInput = {
@@ -1317,7 +1317,7 @@ export type WorkItemUncheckedUpdateWithoutProjectInput = {
   workPackageId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   projectSpaceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tradeCategoryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  sourceWorkTemplateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sourceWorkItemTemplateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   quantity?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1336,7 +1336,7 @@ export type WorkItemUncheckedUpdateManyWithoutProjectInput = {
   workPackageId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   projectSpaceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tradeCategoryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  sourceWorkTemplateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sourceWorkItemTemplateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   quantity?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1355,7 +1355,7 @@ export type WorkItemCreateManyProjectSpaceInput = {
   projectId: string
   workPackageId?: string | null
   tradeCategoryId?: string | null
-  sourceWorkTemplateId?: string | null
+  sourceWorkItemTemplateId?: string | null
   name: string
   description?: string | null
   quantity: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1385,7 +1385,7 @@ export type WorkItemUpdateWithoutProjectSpaceInput = {
   project?: Prisma.ProjectUpdateOneRequiredWithoutWorkItemsNestedInput
   workPackage?: Prisma.WorkPackageUpdateOneWithoutWorkItemsNestedInput
   tradeCategory?: Prisma.TradeCategoryUpdateOneWithoutWorkItemsNestedInput
-  sourceWorkTemplate?: Prisma.WorkTemplateUpdateOneWithoutWorkItemsNestedInput
+  sourceWorkItemTemplate?: Prisma.WorkItemTemplateUpdateOneWithoutWorkItemsNestedInput
 }
 
 export type WorkItemUncheckedUpdateWithoutProjectSpaceInput = {
@@ -1393,7 +1393,7 @@ export type WorkItemUncheckedUpdateWithoutProjectSpaceInput = {
   projectId?: Prisma.StringFieldUpdateOperationsInput | string
   workPackageId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tradeCategoryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  sourceWorkTemplateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sourceWorkItemTemplateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   quantity?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1412,7 +1412,7 @@ export type WorkItemUncheckedUpdateManyWithoutProjectSpaceInput = {
   projectId?: Prisma.StringFieldUpdateOperationsInput | string
   workPackageId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tradeCategoryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  sourceWorkTemplateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sourceWorkItemTemplateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   quantity?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1431,7 +1431,7 @@ export type WorkItemCreateManyWorkPackageInput = {
   projectId: string
   projectSpaceId?: string | null
   tradeCategoryId?: string | null
-  sourceWorkTemplateId?: string | null
+  sourceWorkItemTemplateId?: string | null
   name: string
   description?: string | null
   quantity: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1461,7 +1461,7 @@ export type WorkItemUpdateWithoutWorkPackageInput = {
   project?: Prisma.ProjectUpdateOneRequiredWithoutWorkItemsNestedInput
   projectSpace?: Prisma.ProjectSpaceUpdateOneWithoutWorkItemsNestedInput
   tradeCategory?: Prisma.TradeCategoryUpdateOneWithoutWorkItemsNestedInput
-  sourceWorkTemplate?: Prisma.WorkTemplateUpdateOneWithoutWorkItemsNestedInput
+  sourceWorkItemTemplate?: Prisma.WorkItemTemplateUpdateOneWithoutWorkItemsNestedInput
 }
 
 export type WorkItemUncheckedUpdateWithoutWorkPackageInput = {
@@ -1469,7 +1469,7 @@ export type WorkItemUncheckedUpdateWithoutWorkPackageInput = {
   projectId?: Prisma.StringFieldUpdateOperationsInput | string
   projectSpaceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tradeCategoryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  sourceWorkTemplateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sourceWorkItemTemplateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   quantity?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1488,7 +1488,7 @@ export type WorkItemUncheckedUpdateManyWithoutWorkPackageInput = {
   projectId?: Prisma.StringFieldUpdateOperationsInput | string
   projectSpaceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tradeCategoryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  sourceWorkTemplateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sourceWorkItemTemplateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   quantity?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1502,7 +1502,7 @@ export type WorkItemUncheckedUpdateManyWithoutWorkPackageInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
-export type WorkItemCreateManySourceWorkTemplateInput = {
+export type WorkItemCreateManySourceWorkItemTemplateInput = {
   id?: string
   projectId: string
   workPackageId?: string | null
@@ -1521,7 +1521,7 @@ export type WorkItemCreateManySourceWorkTemplateInput = {
   updatedAt?: Date | string
 }
 
-export type WorkItemUpdateWithoutSourceWorkTemplateInput = {
+export type WorkItemUpdateWithoutSourceWorkItemTemplateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1540,7 +1540,7 @@ export type WorkItemUpdateWithoutSourceWorkTemplateInput = {
   tradeCategory?: Prisma.TradeCategoryUpdateOneWithoutWorkItemsNestedInput
 }
 
-export type WorkItemUncheckedUpdateWithoutSourceWorkTemplateInput = {
+export type WorkItemUncheckedUpdateWithoutSourceWorkItemTemplateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   projectId?: Prisma.StringFieldUpdateOperationsInput | string
   workPackageId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1559,7 +1559,7 @@ export type WorkItemUncheckedUpdateWithoutSourceWorkTemplateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
-export type WorkItemUncheckedUpdateManyWithoutSourceWorkTemplateInput = {
+export type WorkItemUncheckedUpdateManyWithoutSourceWorkItemTemplateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   projectId?: Prisma.StringFieldUpdateOperationsInput | string
   workPackageId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1586,7 +1586,7 @@ export type WorkItemSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   workPackageId?: boolean
   projectSpaceId?: boolean
   tradeCategoryId?: boolean
-  sourceWorkTemplateId?: boolean
+  sourceWorkItemTemplateId?: boolean
   name?: boolean
   description?: boolean
   quantity?: boolean
@@ -1602,7 +1602,7 @@ export type WorkItemSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   workPackage?: boolean | Prisma.WorkItem$workPackageArgs<ExtArgs>
   projectSpace?: boolean | Prisma.WorkItem$projectSpaceArgs<ExtArgs>
   tradeCategory?: boolean | Prisma.WorkItem$tradeCategoryArgs<ExtArgs>
-  sourceWorkTemplate?: boolean | Prisma.WorkItem$sourceWorkTemplateArgs<ExtArgs>
+  sourceWorkItemTemplate?: boolean | Prisma.WorkItem$sourceWorkItemTemplateArgs<ExtArgs>
 }, ExtArgs["result"]["workItem"]>
 
 export type WorkItemSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1611,7 +1611,7 @@ export type WorkItemSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   workPackageId?: boolean
   projectSpaceId?: boolean
   tradeCategoryId?: boolean
-  sourceWorkTemplateId?: boolean
+  sourceWorkItemTemplateId?: boolean
   name?: boolean
   description?: boolean
   quantity?: boolean
@@ -1627,7 +1627,7 @@ export type WorkItemSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   workPackage?: boolean | Prisma.WorkItem$workPackageArgs<ExtArgs>
   projectSpace?: boolean | Prisma.WorkItem$projectSpaceArgs<ExtArgs>
   tradeCategory?: boolean | Prisma.WorkItem$tradeCategoryArgs<ExtArgs>
-  sourceWorkTemplate?: boolean | Prisma.WorkItem$sourceWorkTemplateArgs<ExtArgs>
+  sourceWorkItemTemplate?: boolean | Prisma.WorkItem$sourceWorkItemTemplateArgs<ExtArgs>
 }, ExtArgs["result"]["workItem"]>
 
 export type WorkItemSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1636,7 +1636,7 @@ export type WorkItemSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   workPackageId?: boolean
   projectSpaceId?: boolean
   tradeCategoryId?: boolean
-  sourceWorkTemplateId?: boolean
+  sourceWorkItemTemplateId?: boolean
   name?: boolean
   description?: boolean
   quantity?: boolean
@@ -1652,7 +1652,7 @@ export type WorkItemSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   workPackage?: boolean | Prisma.WorkItem$workPackageArgs<ExtArgs>
   projectSpace?: boolean | Prisma.WorkItem$projectSpaceArgs<ExtArgs>
   tradeCategory?: boolean | Prisma.WorkItem$tradeCategoryArgs<ExtArgs>
-  sourceWorkTemplate?: boolean | Prisma.WorkItem$sourceWorkTemplateArgs<ExtArgs>
+  sourceWorkItemTemplate?: boolean | Prisma.WorkItem$sourceWorkItemTemplateArgs<ExtArgs>
 }, ExtArgs["result"]["workItem"]>
 
 export type WorkItemSelectScalar = {
@@ -1661,7 +1661,7 @@ export type WorkItemSelectScalar = {
   workPackageId?: boolean
   projectSpaceId?: boolean
   tradeCategoryId?: boolean
-  sourceWorkTemplateId?: boolean
+  sourceWorkItemTemplateId?: boolean
   name?: boolean
   description?: boolean
   quantity?: boolean
@@ -1675,27 +1675,27 @@ export type WorkItemSelectScalar = {
   updatedAt?: boolean
 }
 
-export type WorkItemOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "projectId" | "workPackageId" | "projectSpaceId" | "tradeCategoryId" | "sourceWorkTemplateId" | "name" | "description" | "quantity" | "unit" | "status" | "executions" | "position" | "plannedStartDate" | "plannedEndDate" | "createdAt" | "updatedAt", ExtArgs["result"]["workItem"]>
+export type WorkItemOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "projectId" | "workPackageId" | "projectSpaceId" | "tradeCategoryId" | "sourceWorkItemTemplateId" | "name" | "description" | "quantity" | "unit" | "status" | "executions" | "position" | "plannedStartDate" | "plannedEndDate" | "createdAt" | "updatedAt", ExtArgs["result"]["workItem"]>
 export type WorkItemInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
   workPackage?: boolean | Prisma.WorkItem$workPackageArgs<ExtArgs>
   projectSpace?: boolean | Prisma.WorkItem$projectSpaceArgs<ExtArgs>
   tradeCategory?: boolean | Prisma.WorkItem$tradeCategoryArgs<ExtArgs>
-  sourceWorkTemplate?: boolean | Prisma.WorkItem$sourceWorkTemplateArgs<ExtArgs>
+  sourceWorkItemTemplate?: boolean | Prisma.WorkItem$sourceWorkItemTemplateArgs<ExtArgs>
 }
 export type WorkItemIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
   workPackage?: boolean | Prisma.WorkItem$workPackageArgs<ExtArgs>
   projectSpace?: boolean | Prisma.WorkItem$projectSpaceArgs<ExtArgs>
   tradeCategory?: boolean | Prisma.WorkItem$tradeCategoryArgs<ExtArgs>
-  sourceWorkTemplate?: boolean | Prisma.WorkItem$sourceWorkTemplateArgs<ExtArgs>
+  sourceWorkItemTemplate?: boolean | Prisma.WorkItem$sourceWorkItemTemplateArgs<ExtArgs>
 }
 export type WorkItemIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
   workPackage?: boolean | Prisma.WorkItem$workPackageArgs<ExtArgs>
   projectSpace?: boolean | Prisma.WorkItem$projectSpaceArgs<ExtArgs>
   tradeCategory?: boolean | Prisma.WorkItem$tradeCategoryArgs<ExtArgs>
-  sourceWorkTemplate?: boolean | Prisma.WorkItem$sourceWorkTemplateArgs<ExtArgs>
+  sourceWorkItemTemplate?: boolean | Prisma.WorkItem$sourceWorkItemTemplateArgs<ExtArgs>
 }
 
 export type $WorkItemPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1705,7 +1705,7 @@ export type $WorkItemPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     workPackage: Prisma.$WorkPackagePayload<ExtArgs> | null
     projectSpace: Prisma.$ProjectSpacePayload<ExtArgs> | null
     tradeCategory: Prisma.$TradeCategoryPayload<ExtArgs> | null
-    sourceWorkTemplate: Prisma.$WorkTemplatePayload<ExtArgs> | null
+    sourceWorkItemTemplate: Prisma.$WorkItemTemplatePayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1713,7 +1713,7 @@ export type $WorkItemPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     workPackageId: string | null
     projectSpaceId: string | null
     tradeCategoryId: string | null
-    sourceWorkTemplateId: string | null
+    sourceWorkItemTemplateId: string | null
     name: string
     description: string | null
     quantity: runtime.Decimal
@@ -2123,7 +2123,7 @@ export interface Prisma__WorkItemClient<T, Null = never, ExtArgs extends runtime
   workPackage<T extends Prisma.WorkItem$workPackageArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.WorkItem$workPackageArgs<ExtArgs>>): Prisma.Prisma__WorkPackageClient<runtime.Types.Result.GetResult<Prisma.$WorkPackagePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   projectSpace<T extends Prisma.WorkItem$projectSpaceArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.WorkItem$projectSpaceArgs<ExtArgs>>): Prisma.Prisma__ProjectSpaceClient<runtime.Types.Result.GetResult<Prisma.$ProjectSpacePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   tradeCategory<T extends Prisma.WorkItem$tradeCategoryArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.WorkItem$tradeCategoryArgs<ExtArgs>>): Prisma.Prisma__TradeCategoryClient<runtime.Types.Result.GetResult<Prisma.$TradeCategoryPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-  sourceWorkTemplate<T extends Prisma.WorkItem$sourceWorkTemplateArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.WorkItem$sourceWorkTemplateArgs<ExtArgs>>): Prisma.Prisma__WorkTemplateClient<runtime.Types.Result.GetResult<Prisma.$WorkTemplatePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  sourceWorkItemTemplate<T extends Prisma.WorkItem$sourceWorkItemTemplateArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.WorkItem$sourceWorkItemTemplateArgs<ExtArgs>>): Prisma.Prisma__WorkItemTemplateClient<runtime.Types.Result.GetResult<Prisma.$WorkItemTemplatePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2158,7 +2158,7 @@ export interface WorkItemFieldRefs {
   readonly workPackageId: Prisma.FieldRef<"WorkItem", 'String'>
   readonly projectSpaceId: Prisma.FieldRef<"WorkItem", 'String'>
   readonly tradeCategoryId: Prisma.FieldRef<"WorkItem", 'String'>
-  readonly sourceWorkTemplateId: Prisma.FieldRef<"WorkItem", 'String'>
+  readonly sourceWorkItemTemplateId: Prisma.FieldRef<"WorkItem", 'String'>
   readonly name: Prisma.FieldRef<"WorkItem", 'String'>
   readonly description: Prisma.FieldRef<"WorkItem", 'String'>
   readonly quantity: Prisma.FieldRef<"WorkItem", 'Decimal'>
@@ -2628,22 +2628,22 @@ export type WorkItem$tradeCategoryArgs<ExtArgs extends runtime.Types.Extensions.
 }
 
 /**
- * WorkItem.sourceWorkTemplate
+ * WorkItem.sourceWorkItemTemplate
  */
-export type WorkItem$sourceWorkTemplateArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type WorkItem$sourceWorkItemTemplateArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
-   * Select specific fields to fetch from the WorkTemplate
+   * Select specific fields to fetch from the WorkItemTemplate
    */
-  select?: Prisma.WorkTemplateSelect<ExtArgs> | null
+  select?: Prisma.WorkItemTemplateSelect<ExtArgs> | null
   /**
-   * Omit specific fields from the WorkTemplate
+   * Omit specific fields from the WorkItemTemplate
    */
-  omit?: Prisma.WorkTemplateOmit<ExtArgs> | null
+  omit?: Prisma.WorkItemTemplateOmit<ExtArgs> | null
   /**
    * Choose, which related nodes to fetch as well
    */
-  include?: Prisma.WorkTemplateInclude<ExtArgs> | null
-  where?: Prisma.WorkTemplateWhereInput
+  include?: Prisma.WorkItemTemplateInclude<ExtArgs> | null
+  where?: Prisma.WorkItemTemplateWhereInput
 }
 
 /**

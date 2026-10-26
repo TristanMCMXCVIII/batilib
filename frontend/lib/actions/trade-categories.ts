@@ -101,7 +101,7 @@ export async function deleteTradeCategory(id: string): Promise<{ error?: string 
             [id],
         );
         await client.query(
-            `UPDATE "WorkTemplate" SET "tradeCategoryId" = NULL WHERE "tradeCategoryId" = $1`,
+            `UPDATE "WorkItemTemplate" SET "tradeCategoryId" = NULL WHERE "tradeCategoryId" = $1`,
             [id],
         );
         await client.query(

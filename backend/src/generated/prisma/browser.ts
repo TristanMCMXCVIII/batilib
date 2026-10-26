@@ -98,10 +98,10 @@ export type WorkItem = Prisma.WorkItemModel
  */
 export type LibraryFolder = Prisma.LibraryFolderModel
 /**
- * Model WorkTemplate
+ * Model WorkItemTemplate
  * 
  */
-export type WorkTemplate = Prisma.WorkTemplateModel
+export type WorkItemTemplate = Prisma.WorkItemTemplateModel
 /**
  * Model WorkPackageTemplate
  * 

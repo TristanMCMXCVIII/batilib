@@ -97,7 +97,7 @@ model Organization {
   leadProjects          Project[]
   projectParticipations ProjectParticipant[]
   libraryFolders          LibraryFolder[]
-  workTemplates           WorkTemplate[]
+  workItemTemplates       WorkItemTemplate[]
   workPackageTemplates    WorkPackageTemplate[]
 }
 
@@ -152,9 +152,10 @@ model TradeCategory {
   organizations        OrganizationTradeCategory[]
   workPackages         WorkPackageTradeCategory[]
   workItems            WorkItem[]
-  workTemplates        WorkTemplate[]
+  workItemTemplates    WorkItemTemplate[]
   workPackageTemplates WorkPackageTemplate[]
 }
+
 
 model OrganizationTradeCategory {
   organizationId  String
@@ -271,8 +272,8 @@ model WorkItem {
   projectSpace         ProjectSpace?  @relation(fields: [projectSpaceId], references: [id])
   tradeCategoryId      String?
   tradeCategory        TradeCategory? @relation(fields: [tradeCategoryId], references: [id])
-  sourceWorkTemplateId String?
-  sourceWorkTemplate   WorkTemplate?  @relation(fields: [sourceWorkTemplateId], references: [id])
+  sourceWorkItemTemplateId String?
+  sourceWorkItemTemplate   WorkItemTemplate?  @relation(fields: [sourceWorkItemTemplateId], references: [id])
   name                 String
   description          String?
   quantity             Decimal
@@ -287,39 +288,42 @@ model WorkItem {
 }
 
 model LibraryFolder {
-  id             String          @id @default(cuid())
-  organizationId String
-  organization   Organization    @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  parentId       String?
-  parent         LibraryFolder?  @relation("LibraryFolderHierarchy", fields: [parentId], references: [id])
-  children       LibraryFolder[] @relation("LibraryFolderHierarchy")
-  name           String
-  position       Int
-  createdAt      DateTime        @default(now())
-  updatedAt      DateTime        @updatedAt
+  id                    String               @id @default(cuid())
+  organizationId        String
+  organization          Organization         @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  parentId              String?
+  parent                LibraryFolder?       @relation("LibraryFolderHierarchy", fields: [parentId], references: [id])
+  children              LibraryFolder[]      @relation("LibraryFolderHierarchy")
+  workPackageTemplateId String?
+  workPackageTemplate   WorkPackageTemplate? @relation("LibraryFolderTag", fields: [workPackageTemplateId], references: [id], onDelete: SetNull)
+  name                  String
+  position              Int
+  createdAt             DateTime             @default(now())
+  updatedAt             DateTime             @updatedAt
 
-  workTemplates        WorkTemplate[]
-  workPackageTemplates WorkPackageTemplate[]
+  workItemTemplates    WorkItemTemplate[]
+  workPackageTemplates WorkPackageTemplate[] @relation("WorkPackageTemplateFolder")
 }
 
-model WorkTemplate {
-  id                 String         @id @default(cuid())
-  organizationId     String
-  organization       Organization   @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  folderId           String?
-  folder             LibraryFolder? @relation(fields: [folderId], references: [id])
-  tradeCategoryId    String?
-  tradeCategory      TradeCategory? @relation(fields: [tradeCategoryId], references: [id])
-  name               String
-  description        String?
-  unit               String
-  defaultTaxRate     Decimal?
-  defaultUnitPrice   Decimal?
-  estimatedUnitCost  Decimal?
+model WorkItemTemplate {
+  id               String         @id @default(cuid())
+  organizationId   String
+  organization     Organization   @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  folderId         String?
+  folder           LibraryFolder? @relation(fields: [folderId], references: [id])
+  tradeCategoryId  String?
+  tradeCategory    TradeCategory? @relation(fields: [tradeCategoryId], references: [id])
+  name             String
+  description      String?
+  unit             String
+  defaultTaxRate   Decimal?
+  defaultUnitPrice Decimal?
+  estimatedUnitCost Decimal?
   quantityExpression String?
-  defaultChecklist   Json           @default("[]")
-  createdAt          DateTime       @default(now())
-  updatedAt          DateTime       @updatedAt
+  defaultChecklist  Json     @default("[]")
+  position          Int      @default(0)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
 
   workItems WorkItem[]
 }
@@ -329,7 +333,7 @@ model WorkPackageTemplate {
   organizationId     String
   organization       Organization   @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   folderId           String?
-  folder             LibraryFolder? @relation(fields: [folderId], references: [id])
+  folder             LibraryFolder? @relation("WorkPackageTemplateFolder", fields: [folderId], references: [id])
   tradeCategoryId    String?
   tradeCategory      TradeCategory? @relation(fields: [tradeCategoryId], references: [id])
   name               String
@@ -340,6 +344,7 @@ model WorkPackageTemplate {
   updatedAt          DateTime       @updatedAt
 
   derivedWorkPackages WorkPackage[]
+  taggedFolders       LibraryFolder[] @relation("LibraryFolderTag")
 }
 
 model Verification {
