@@ -178,3 +178,44 @@ Fond subtil + bordure ultra-légère. **Jamais de `border-dashed`** (réservé a
 - **Avatar utilisateur** : toujours `rounded-full` (cercle)
 - **Logo organisation** : toujours `rounded-lg` ou `rounded-xl` (carré arrondi), jamais rond
 - Upload avatar/logo : compression via `sharp` côté serveur (256×256, WebP qualité 85), limite 20 Mo en entrée. Routes : `/api/upload/avatar` et `/api/upload/org-logo`
+
+---
+
+## Couleurs de lot (LotColor)
+
+Palette de 17 couleurs pour les `WorkPackageTemplate` et `WorkPackage`. Définie dans `frontend/lib/lot-colors.ts`.
+
+```ts
+import { LOT_COLOR_MAP, LOT_COLORS, type LotColorKey } from "@/lib/lot-colors";
+```
+
+Chaque entrée expose :
+- `key` — valeur de l'enum Prisma (`LotColor`) : `NAVY`, `BLUE`, `SKY`, `CYAN`, `INDIGO`, `VIOLET`, `PURPLE`, `FUCHSIA`, `PINK`, `ROSE`, `RED`, `ORANGE`, `AMBER`, `YELLOW`, `SLATE`, `ZINC`, `STONE`
+- `hex` — couleur sombre, lisible sur fond blanc (usage : texte, icônes, dots)
+- `pastel` — variante claire (usage : fond de badge, tag, chip)
+- `label` — libellé français
+
+### Patterns courants
+
+**Dot indicateur (petit cercle coloré) :**
+```tsx
+<span className="inline-block h-2.5 w-2.5 rounded-full shrink-0" style={{ backgroundColor: LOT_COLOR_MAP[color].hex }} />
+```
+
+**Icône + texte colorés (ex. tag de lot sur un dossier) :**
+```tsx
+// fill="currentColor" stroke="none" → icône pleine dans la couleur
+const color = LOT_COLOR_MAP[colorKey]?.hex ?? "#6b7280";
+<span className="flex items-center gap-1 text-xs font-medium" style={{ color }}>
+    <Tag className="h-3 w-3 shrink-0" fill="currentColor" stroke="none" />
+    {label}
+</span>
+```
+
+**Sélecteur de couleur (Sheet de formulaire) :**
+Utiliser le composant `ColorPicker` de `work-packages-client.tsx` comme référence — grille de cercles cliquables avec option « aucune couleur » (×).
+
+### Règles
+- Couleur stockée en DB comme enum `LotColor` ; cast SQL : `$1::\"LotColor\"`
+- Toujours afficher un fallback neutre (`#6b7280`) si la couleur est `null`
+- Ne pas utiliser le pastel pour du texte (contraste insuffisant sur fond blanc)

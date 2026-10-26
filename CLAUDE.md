@@ -268,7 +268,7 @@ Template OTP : HTML inline simple (no-framework). Clé `BREVO_API_KEY` côté se
 
 ---
 
-## 13. État fonctionnel — 23 octobre 2026
+## 13. État fonctionnel — 26 octobre 2026
 
 | Fonctionnalité | Statut |
 |----------------|--------|
@@ -290,15 +290,20 @@ Template OTP : HTML inline simple (no-framework). Clé `BREVO_API_KEY` côté se
 | Organisation : invitations (création token + email Brevo) | ✅ Fait |
 | Organisation : invitations en attente (liste, renvoyer, annuler) | ✅ Fait |
 | Acceptation d'invitation par token (`/join`) | ✅ Fait |
+| Bibliothèque : arbre WIT/dossiers/WPT, DnD, CRUD | ✅ Fait |
+| Éditeur projet : vue par espace + vue par lot, DnD | ✅ Fait |
+| Éditeur projet : import depuis bibliothèque (picker 2 panneaux) | ✅ Fait |
+| Éditeur projet : création WP auto depuis WPT sur import bibliothèque | ✅ Fait |
+| Éditeur projet : statut inline DRAFT/IN_PROGRESS/DONE/CANCELLED | ✅ Fait |
 | Nest : endpoints métier authentifiés | ❌ Non fait |
-| Projets / chantiers | ❌ Non fait |
 
 ---
 
 ## 14. Prochaines priorités
 
 1. **API Nest** : mettre en place un guard d'auth (valider le cookie de session Better Auth) avant tout endpoint métier.
-2. **Modèle métier** : `Project`, `WorkItem` en parcours artisan simple (voir `docs/PROJECT_CONTEXT.md` section 4).
+2. **Éditeur — temps réel** : brancher Socket.io (Gateway Nest) sur l'éditeur de chantier (voir section 16).
+3. **Éditeur — devis/chiffrage** : affichage des prix et marges dans l'éditeur (données financières protégées).
 
 ---
 
@@ -344,6 +349,46 @@ Section "Invitations en attente" affichée dans la page membres **seulement si**
 - DB partagée entre Next (pg Pool direct) et Nest (Prisma) — pas de seconde base.
 - Fichiers dans **Cloudflare R2**, accédés via proxy signé `/api/files/[...key]`.
 - Google et mot de passe seulement — pas d'autre provider en V0.
+
+---
+
+## 17. Éditeur de projet — architecture implémentée (26 oct 2026)
+
+### Route
+`/[orgSlug]/projects/[projectSlug]/editors` — Server Component (`page.tsx`) + Client Components.
+
+### Fichiers
+```
+app/(app)/[orgSlug]/projects/[projectSlug]/editors/
+  page.tsx                    → Server Component, fetch initial via getProjectEditorData
+  _components/
+    editor-client.tsx         → toggle vue (espace/lot), state local, EditorProvider
+    editor-context.tsx        → Context : orgSlug, projectSlug, projectId, workPackages, libraryTree, workPackageTemplates, onRefresh
+    space-view.tsx            → DndContext unique pour vue espace (reorder spaces + items)
+    space-section.tsx         → Composant récursif espace (useSortable, SortableContext enfants)
+    package-view.tsx          → DndContext pour vue lot (reorder items dans WP)
+    work-package-section.tsx  → Section lot (useSortable, SortableContext items)
+    work-item-row.tsx         → Ligne ouvrage (useSortable, status badge, dot couleur lot)
+    work-item-form-sheet.tsx  → Sheet création/édition ouvrage (name, qty, unit, lot)
+    work-item-form-sheet.tsx  → Sheet création/édition espace
+    library-picker-sheet.tsx  → Sheet import depuis bibliothèque (2 panneaux : arbre + liste)
+    work-package-form-sheet.tsx → Sheet création/édition lot (color picker LOT_COLORS)
+```
+
+### Server Actions — `frontend/lib/actions/project-editor.ts`
+- `getProjectEditorData(orgSlug, projectSlug)` → `ProjectEditorData` (espaces + WP + items + libraryTree + WPTs)
+- `createProjectSpace` / `deleteProjectSpace` / `reorderSpaces`
+- `createWorkItem` / `updateWorkItemStatus` / `deleteWorkItem` / `reorderWorkItems`
+- `createWorkPackage` / `deleteWorkPackage` (transaction BEGIN/COMMIT : unassign items → delete WP)
+- `resolveEffectiveWptFromTemplate(templateId)` : remonte la hiérarchie de `LibraryFolder` pour trouver le premier ancêtre avec `workPackageTemplateId`
+- `resolveOrCreateWorkPackage(orgSlug, projectId, wptId)` : idempotent — cherche par `sourceWorkPackageTemplateId` avant de créer
+
+### Règles et patterns
+- **Resolution WPT → WP** : 100 % serveur (jamais côté client). `createWorkItem` reçoit `templateId` optionnel, la résolution WPT est transparente.
+- **Sécurité `parentId`** : `createProjectSpace` valide que le `parentId` appartient bien au même projet avant INSERT.
+- **DnD** : `useId()` sur chaque `DndContext`, un composant React par item sortable (pas de hook dans fonction récursive).
+- **État local** : `useState` initialisé depuis les props + `useEffect([data])` pour resynchroniser après `router.refresh()`.
+- **Statut** : enum `WorkItemStatus` = `DRAFT | IN_PROGRESS | DONE | CANCELLED`, badge cliquable inline (DropdownMenu).
 
 ---
 
