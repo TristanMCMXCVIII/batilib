@@ -104,9 +104,11 @@ pnpm prisma migrate dev --name <nom>   # seulement si migration nécessaire
 - **`ProjectParticipantMember`** : jointure ProjectParticipant↔OrganizationMembership (membres individuels dans le participant).
 - **`ProjectInvitation`** : `projectId` (**UNIQUE** — 1 seule invitation active par projet), `invitedEmail`, `token`, `expiresAt` (+7j). Pas d'`organizationId` côté invité.
 - **`ProjectSpace`** : espace/pièce hiérarchique (self-ref `parentId?`), `name`, `position`.
-- **`WorkPackage`** : lot de chantier, `name`, `color?` (enum `LotColor`), `position`, `sourceWorkPackageTemplateId?`, `assignedProjectParticipantId?`.
+- **`WorkPackage`** : lot de chantier, `name`, `color?` (enum `LotColor`), `marginRate?` (Decimal — marge du lot), `position`, `sourceWorkPackageTemplateId?`, `assignedProjectParticipantId?`.
 - **`WorkPackageTradeCategory`** : jointure WorkPackage↔TradeCategory.
 - **`WorkItem`** : ouvrage instancié, `name`, `quantity` (Decimal), `unit`, `status` (enum `WorkItemStatus`: `DRAFT`/`IN_PROGRESS`/`DONE`/`CANCELLED`), `position`, `workPackageId?`, `projectSpaceId?`, `sourceWorkItemTemplateId?`, `executions` (Json `[]`), `plannedStartDate?`, `plannedEndDate?`.
+  - **Financier** : `puEstimeHt?`, `puSubcontractorHt?`, `quantitySubcontractor?`, `marginRate?` (override lot), `tauxTva` (défaut 0.10).
+- **`Project`** : ajouter `defaultMarginRate?` (Decimal — marge globale projet, fallback si lot sans marge).
 
 ### Bibliothèque
 - **`LibraryFolder`** : dossier hiérarchique N niveaux, `workPackageTemplateId?` (tag sémantique "ce dossier = ce lot").
@@ -354,6 +356,9 @@ Template OTP : HTML inline simple (no-framework). Clé `BREVO_API_KEY` côté se
 | Éditeur projet : vue espace + vue lot, DnD reorder, statuts inline | ✅ Fait |
 | Éditeur projet : import depuis bibliothèque (picker 2 panneaux) | ✅ Fait |
 | Éditeur projet : création WP auto depuis WPT sur import bibliothèque | ✅ Fait |
+| Éditeur projet : champs financiers ouvrage (puEstimeHt, ST, marge, TVA, TTC) | ✅ Fait |
+| Éditeur projet : marge par lot (WorkPackage.marginRate) | ✅ Fait |
+| Éditeur projet : filtre données financières selon rôle CLIENT | ❌ Non fait |
 | Page intervenants projet : LEAD + CLIENT + sous-traitants (UI verrouillés) | ✅ Fait |
 | Invitation client sur un projet (`ProjectInvitation` + `/join-project`) | ✅ Fait |
 | Dispatcher LEAD → `LeadEditorClient` / CLIENT → `ClientProjectView` | ✅ Fait |
@@ -364,9 +369,10 @@ Template OTP : HTML inline simple (no-framework). Clé `BREVO_API_KEY` côté se
 
 ## 14. Prochaines priorités
 
-1. **API Nest** : guard d'auth (valider le cookie de session Better Auth) avant tout endpoint métier.
-2. **Éditeur — temps réel** : Socket.io Gateway Nest, rooms par projet (voir section 16).
-3. **Éditeur — devis/chiffrage** : prix et marges dans l'éditeur (données financières protégées).
+1. **Filtre CLIENT** : dans `getProjectEditorData`, ne pas retourner les champs financiers (`puEstimeHt`, `puSubcontractorHt`, `marginRate`, etc.) si `callerParticipantRole === "CLIENT"`. **Blocker avant démo client.**
+2. **defaultMarginRate projet** : aucune UI pour le définir — à ajouter dans les settings projet.
+3. **API Nest** : guard d'auth (valider le cookie de session Better Auth) avant tout endpoint métier.
+4. **Éditeur — temps réel** : Socket.io Gateway Nest, rooms par projet (voir section 16).
 
 ---
 

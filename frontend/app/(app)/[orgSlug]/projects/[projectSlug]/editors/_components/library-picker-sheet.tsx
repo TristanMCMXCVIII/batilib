@@ -77,7 +77,12 @@ export default function LibraryPickerSheet({ open, onOpenChange, spaceId, spaceN
             workPackageId: defaultWorkPackageId ?? "",
             spaceId,
             templateId: template.id,
-            // La résolution du WPT effectif se fait entièrement côté serveur via templateId
+            // Pré-remplir depuis le template de bibliothèque
+            puEstimeHt: template.estimatedUnitCost ?? "",
+            puSubcontractorHt: "",
+            quantitySubcontractor: "",
+            marginRate: "",
+            tauxTva: template.defaultTaxRate ?? "0.10",
         });
         setSaving(false);
         if (result.error) {

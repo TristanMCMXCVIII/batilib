@@ -30,6 +30,7 @@ export default function WorkPackageFormSheet({ open, onOpenChange, editPkg }: Pr
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
     const [color, setColor] = useState<LotColorKey | "">("");
+    const [marginRateStr, setMarginRateStr] = useState(""); // ex : "30" pour 30 %
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState("");
 
@@ -38,6 +39,9 @@ export default function WorkPackageFormSheet({ open, onOpenChange, editPkg }: Pr
             setName(editPkg?.name ?? "");
             setDescription(editPkg?.description ?? "");
             setColor((editPkg?.color as LotColorKey) ?? "");
+            setMarginRateStr(
+                editPkg?.marginRate ? (parseFloat(editPkg.marginRate) * 100).toFixed(0) : "",
+            );
             setError("");
         }
     }, [open, editPkg]);
@@ -46,17 +50,20 @@ export default function WorkPackageFormSheet({ open, onOpenChange, editPkg }: Pr
         setSaving(true);
         setError("");
         let result: { error?: string };
+        const marginRate = marginRateStr ? (parseFloat(marginRateStr) / 100).toString() : "";
         if (editPkg) {
             result = await updateWorkPackage(orgSlug, projectSlug, editPkg.id, {
                 name,
                 description,
                 color,
+                marginRate,
             });
         } else {
             result = await createWorkPackage(orgSlug, projectSlug, {
                 name,
                 description,
                 color,
+                marginRate,
             });
         }
         setSaving(false);
@@ -129,6 +136,31 @@ export default function WorkPackageFormSheet({ open, onOpenChange, editPkg }: Pr
                                 />
                             ))}
                         </div>
+                    </div>
+
+                    <div className="space-y-2">
+                        <Label>Marge du lot (%)</Label>
+                        <div className="flex items-center gap-2">
+                            <Input
+                                type="number"
+                                min="0"
+                                max="100"
+                                step="1"
+                                value={marginRateStr}
+                                onChange={(e) => setMarginRateStr(e.target.value)}
+                                placeholder="ex : 30"
+                                className="w-28"
+                            />
+                            <span className="text-sm text-muted-foreground">%</span>
+                            {marginRateStr && (
+                                <span className="text-xs text-muted-foreground">
+                                    × {(1 + parseFloat(marginRateStr) / 100).toFixed(2)}
+                                </span>
+                            )}
+                        </div>
+                        <p className="text-xs text-muted-foreground">
+                            Appliquée à chaque ouvrage du lot (sauf override sur l&apos;ouvrage).
+                        </p>
                     </div>
 
                     {error && <p className="text-error">{error}</p>}

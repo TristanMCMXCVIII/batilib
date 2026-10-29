@@ -23,6 +23,12 @@ export type WorkItemItem = {
     unit: string;
     status: WorkItemStatus;
     position: number;
+    // Financier
+    puEstimeHt: string | null;
+    puSubcontractorHt: string | null;
+    quantitySubcontractor: string | null;
+    marginRate: string | null;
+    tauxTva: string;
 };
 
 export type ProjectSpaceItem = {
@@ -39,12 +45,13 @@ export type WorkPackageItem = {
     name: string;
     description: string | null;
     color: string | null;
+    marginRate: string | null;
     position: number;
     workItems: WorkItemItem[];
 };
 
 export type ProjectEditorData = {
-    project: { id: string; name: string; slug: string };
+    project: { id: string; name: string; slug: string; defaultMarginRate: string | null };
     spaces: ProjectSpaceItem[];
     workPackages: WorkPackageItem[];
     libraryTree: LibraryTree;
@@ -111,8 +118,8 @@ export async function getProjectEditorData(
     const membershipId = await getMembership(orgSlug, session.user.id);
     if (!membershipId) return null;
 
-    const projectResult = await db.query<{ id: string; name: string; slug: string }>(
-        `SELECT p.id, p.name, p.slug
+    const projectResult = await db.query<{ id: string; name: string; slug: string; defaultMarginRate: string | null }>(
+        `SELECT p.id, p.name, p.slug, p."defaultMarginRate"::text AS "defaultMarginRate"
          FROM "Project" p
          JOIN "ProjectParticipant" pp ON pp."projectId" = p.id
          JOIN "Organization" o ON o.id = pp."organizationId"
@@ -136,23 +143,28 @@ export async function getProjectEditorData(
                 wi.id,
                 wi."projectSpaceId",
                 wi."workPackageId",
-                wp.name                AS "workPackageName",
-                wp.color::text         AS "workPackageColor",
+                wp.name                       AS "workPackageName",
+                wp.color::text                AS "workPackageColor",
                 wi."sourceWorkItemTemplateId",
                 wi.name,
                 wi.description,
-                wi.quantity::text      AS quantity,
+                wi.quantity::text             AS quantity,
                 wi.unit,
-                wi.status::text        AS status,
-                wi.position
+                wi.status::text               AS status,
+                wi.position,
+                wi."puEstimeHt"::text         AS "puEstimeHt",
+                wi."puSubcontractorHt"::text  AS "puSubcontractorHt",
+                wi."quantitySubcontractor"::text AS "quantitySubcontractor",
+                wi."marginRate"::text         AS "marginRate",
+                wi."tauxTva"::text            AS "tauxTva"
              FROM "WorkItem" wi
              LEFT JOIN "WorkPackage" wp ON wp.id = wi."workPackageId"
              WHERE wi."projectId" = $1
              ORDER BY wi.position ASC`,
             [project.id],
         ),
-        db.query<{ id: string; name: string; description: string | null; color: string | null; position: number }>(
-            `SELECT id, name, description, color::text AS color, position
+        db.query<{ id: string; name: string; description: string | null; color: string | null; marginRate: string | null; position: number }>(
+            `SELECT id, name, description, color::text AS color, "marginRate"::text AS "marginRate", position
              FROM "WorkPackage"
              WHERE "projectId" = $1
              ORDER BY position ASC`,
@@ -344,6 +356,14 @@ export type WorkItemFormData = {
     unit: string;
     quantity: string;
     workPackageId: string;
+    // Financier — chaînes vides = non renseigné
+    puEstimeHt: string;
+    puSubcontractorHt: string;
+    quantitySubcontractor: string;
+    /** Taux décimal stocké en DB (ex : "0.30" = 30 %). "" = hérite du lot. */
+    marginRate: string;
+    /** "0.055" | "0.10" | "0.20" */
+    tauxTva: string;
 };
 
 // Remonte l'arbre des dossiers d'un WorkItemTemplate pour trouver son WPT effectif.
@@ -378,12 +398,14 @@ async function resolveOrCreateWorkPackage(projectId: string, wptId: string): Pro
     );
     if (existing.rows.length) return existing.rows[0].id;
 
-    const wpt = await db.query<{ name: string; color: string | null }>(
-        `SELECT name, color::text AS color FROM "WorkPackageTemplate" WHERE id = $1 LIMIT 1`,
+    const wpt = await db.query<{ name: string; color: string | null; defaultMarginRate: string | null }>(
+        `SELECT name, color::text AS color, "defaultMarginRate"::text AS "defaultMarginRate"
+         FROM "WorkPackageTemplate" WHERE id = $1 LIMIT 1`,
         [wptId],
     );
     if (!wpt.rows.length) return null;
-    const { name, color } = wpt.rows[0];
+    const { name, color, defaultMarginRate } = wpt.rows[0];
+    const marginRate = defaultMarginRate ? parseFloat(defaultMarginRate) : null;
 
     const posResult = await db.query<{ max: number }>(
         `SELECT COALESCE(MAX(position), 0) AS max FROM "WorkPackage" WHERE "projectId" = $1`,
@@ -394,9 +416,9 @@ async function resolveOrCreateWorkPackage(projectId: string, wptId: string): Pro
 
     await db.query(
         `INSERT INTO "WorkPackage"
-            (id, "projectId", "sourceWorkPackageTemplateId", name, color, position, "createdAt", "updatedAt")
-         VALUES ($1, $2, $3, $4, $5::\"LotColor\", $6, NOW(), NOW())`,
-        [wpId, projectId, wptId, name, color, position],
+            (id, "projectId", "sourceWorkPackageTemplateId", name, color, "marginRate", position, "createdAt", "updatedAt")
+         VALUES ($1, $2, $3, $4, $5::\"LotColor\", $6, $7, NOW(), NOW())`,
+        [wpId, projectId, wptId, name, color, marginRate, position],
     );
     return wpId;
 }
@@ -430,6 +452,12 @@ export async function createWorkItem(
     const spaceId = data.spaceId ?? null;
     const templateId = data.templateId ?? null;
 
+    const puEstimeHt = parseFloat(data.puEstimeHt) > 0 ? parseFloat(data.puEstimeHt) : null;
+    const puSubcontractorHt = parseFloat(data.puSubcontractorHt) > 0 ? parseFloat(data.puSubcontractorHt) : null;
+    const quantitySubcontractor = parseFloat(data.quantitySubcontractor) > 0 ? parseFloat(data.quantitySubcontractor) : null;
+    const marginRate = data.marginRate ? parseFloat(data.marginRate) : null;
+    const tauxTva = parseFloat(data.tauxTva) || 0.10;
+
     // Priorité 1 : lot sélectionné explicitement par l'utilisateur
     let workPackageId = data.workPackageId.trim() || null;
 
@@ -453,9 +481,12 @@ export async function createWorkItem(
     await db.query(
         `INSERT INTO "WorkItem"
             (id, "projectId", "projectSpaceId", "workPackageId", "sourceWorkItemTemplateId",
-             name, description, unit, quantity, status, executions, position, "createdAt", "updatedAt")
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, 'DRAFT', '[]'::jsonb, $10, NOW(), NOW())`,
-        [id, projectId, spaceId, workPackageId, templateId, name, description, unit, quantity, position],
+             name, description, unit, quantity,
+             "puEstimeHt", "puSubcontractorHt", "quantitySubcontractor", "marginRate", "tauxTva",
+             status, executions, position, "createdAt", "updatedAt")
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, 'DRAFT', '[]'::jsonb, $15, NOW(), NOW())`,
+        [id, projectId, spaceId, workPackageId, templateId, name, description, unit, quantity,
+         puEstimeHt, puSubcontractorHt, quantitySubcontractor, marginRate, tauxTva, position],
     );
 
     revalidate(orgSlug, projectSlug);
@@ -485,21 +516,33 @@ export async function updateWorkItem(
     const description = data.description.trim() || null;
     const workPackageId = data.workPackageId.trim() || null;
 
+    const puEstimeHt = parseFloat(data.puEstimeHt) > 0 ? parseFloat(data.puEstimeHt) : null;
+    const puSubcontractorHt = parseFloat(data.puSubcontractorHt) > 0 ? parseFloat(data.puSubcontractorHt) : null;
+    const quantitySubcontractor = parseFloat(data.quantitySubcontractor) > 0 ? parseFloat(data.quantitySubcontractor) : null;
+    const marginRate = data.marginRate ? parseFloat(data.marginRate) : null;
+    const tauxTva = parseFloat(data.tauxTva) || 0.10;
+
     await db.query(
         `UPDATE "WorkItem" wi
-         SET name             = $3,
-             description      = $4,
-             unit             = $5,
-             quantity         = $6,
-             "workPackageId"  = $7,
-             "updatedAt"      = NOW()
+         SET name                    = $3,
+             description             = $4,
+             unit                    = $5,
+             quantity                = $6,
+             "workPackageId"         = $7,
+             "puEstimeHt"            = $8,
+             "puSubcontractorHt"     = $9,
+             "quantitySubcontractor" = $10,
+             "marginRate"            = $11,
+             "tauxTva"               = $12,
+             "updatedAt"             = NOW()
          FROM "Project" p, "Organization" o
          WHERE wi.id = $1
            AND wi."projectId" = p.id
            AND p.slug = $2
            AND p."leadOrganizationId" = o.id
-           AND o.slug = $8`,
-        [itemId, projectSlug, name, description, unit, quantity, workPackageId, orgSlug],
+           AND o.slug = $13`,
+        [itemId, projectSlug, name, description, unit, quantity, workPackageId,
+         puEstimeHt, puSubcontractorHt, quantitySubcontractor, marginRate, tauxTva, orgSlug],
     );
 
     revalidate(orgSlug, projectSlug);
@@ -597,6 +640,8 @@ export type WorkPackageFormData = {
     name: string;
     description: string;
     color: string;
+    /** Taux décimal (ex : "0.30" = 30 %). "" = pas de marge définie sur ce lot. */
+    marginRate: string;
 };
 
 export async function createWorkPackage(
@@ -618,6 +663,7 @@ export async function createWorkPackage(
 
     const description = data.description.trim() || null;
     const color = data.color.trim() || null;
+    const marginRate = data.marginRate ? parseFloat(data.marginRate) : null;
 
     const posResult = await db.query<{ max: number }>(
         `SELECT COALESCE(MAX(position), 0) AS max FROM "WorkPackage" WHERE "projectId" = $1`,
@@ -628,9 +674,9 @@ export async function createWorkPackage(
     const id = randomUUID();
     await db.query(
         `INSERT INTO "WorkPackage"
-            (id, "projectId", name, description, color, position, "createdAt", "updatedAt")
-         VALUES ($1, $2, $3, $4, $5::\"LotColor\", $6, NOW(), NOW())`,
-        [id, projectId, name, description, color, position],
+            (id, "projectId", name, description, color, "marginRate", position, "createdAt", "updatedAt")
+         VALUES ($1, $2, $3, $4, $5::\"LotColor\", $6, $7, NOW(), NOW())`,
+        [id, projectId, name, description, color, marginRate, position],
     );
 
     revalidate(orgSlug, projectSlug);
@@ -654,17 +700,18 @@ export async function updateWorkPackage(
 
     const description = data.description.trim() || null;
     const color = data.color.trim() || null;
+    const marginRate = data.marginRate ? parseFloat(data.marginRate) : null;
 
     await db.query(
         `UPDATE "WorkPackage" wp
-         SET name = $3, description = $4, color = $5::\"LotColor\", "updatedAt" = NOW()
+         SET name = $3, description = $4, color = $5::\"LotColor\", "marginRate" = $6, "updatedAt" = NOW()
          FROM "Project" p, "Organization" o
          WHERE wp.id = $1
            AND wp."projectId" = p.id
            AND p.slug = $2
            AND p."leadOrganizationId" = o.id
-           AND o.slug = $6`,
-        [wpId, projectSlug, name, description, color, orgSlug],
+           AND o.slug = $7`,
+        [wpId, projectSlug, name, description, color, marginRate, orgSlug],
     );
 
     revalidate(orgSlug, projectSlug);

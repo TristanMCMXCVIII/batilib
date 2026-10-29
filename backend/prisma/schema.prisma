@@ -193,6 +193,7 @@ model Project {
   leadOrganization     Organization @relation(fields: [leadOrganizationId], references: [id], onDelete: Cascade)
   slug                 String
   name                 String
+  defaultMarginRate    Decimal?
   createdAt            DateTime     @default(now())
   updatedAt            DateTime     @updatedAt
 
@@ -280,6 +281,7 @@ model WorkPackage {
   name                           String
   description                    String?
   color                          LotColor?
+  marginRate                     Decimal?
   position                       Int
   createdAt                      DateTime             @default(now())
   updatedAt                      DateTime             @updatedAt
@@ -309,17 +311,22 @@ model WorkItem {
   tradeCategory        TradeCategory? @relation(fields: [tradeCategoryId], references: [id])
   sourceWorkItemTemplateId String?
   sourceWorkItemTemplate   WorkItemTemplate?  @relation(fields: [sourceWorkItemTemplateId], references: [id])
-  name                 String
-  description          String?
-  quantity             Decimal
-  unit                 String
-  status               WorkItemStatus @default(DRAFT)
-  executions           Json           @default("[]")
-  position             Int
-  plannedStartDate     DateTime?
-  plannedEndDate       DateTime?
-  createdAt            DateTime       @default(now())
-  updatedAt            DateTime       @updatedAt
+  name                  String
+  description           String?
+  quantity              Decimal
+  unit                  String
+  puEstimeHt            Decimal?
+  puSubcontractorHt     Decimal?
+  quantitySubcontractor Decimal?
+  marginRate            Decimal?
+  tauxTva               Decimal        @default(0.10)
+  status                WorkItemStatus @default(DRAFT)
+  executions            Json           @default("[]")
+  position              Int
+  plannedStartDate      DateTime?
+  plannedEndDate        DateTime?
+  createdAt             DateTime       @default(now())
+  updatedAt             DateTime       @updatedAt
 }
 
 model LibraryFolder {

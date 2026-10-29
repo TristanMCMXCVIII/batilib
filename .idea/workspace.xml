@@ -6,14 +6,13 @@
   <component name="ChangeListManager">
     <list default="true" id="91bb42b5-23ba-4990-b282-3e17123ba51e" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/lib/actions/organization-settings.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/lib/actions/organization-settings.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/lib/actions/project-members.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/lib/actions/project-members.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/lib/auth.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/lib/auth.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/lib/db.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/lib/db.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/lib/mail/send-email.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/lib/mail/send-email.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/lib/r2.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/lib/r2.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/pnpm-lock.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/pnpm-lock.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CLAUDE.md" beforeDir="false" afterPath="$PROJECT_DIR$/CLAUDE.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/app/(app)/[orgSlug]/projects/[projectSlug]/editors/_components/editor-context.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/app/(app)/[orgSlug]/projects/[projectSlug]/editors/_components/editor-context.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/app/(app)/[orgSlug]/projects/[projectSlug]/editors/_components/library-picker-sheet.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/app/(app)/[orgSlug]/projects/[projectSlug]/editors/_components/library-picker-sheet.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/app/(app)/[orgSlug]/projects/[projectSlug]/editors/_components/work-item-form-sheet.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/app/(app)/[orgSlug]/projects/[projectSlug]/editors/_components/work-item-form-sheet.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/app/(app)/[orgSlug]/projects/[projectSlug]/editors/_components/work-package-form-sheet.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/app/(app)/[orgSlug]/projects/[projectSlug]/editors/_components/work-package-form-sheet.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/app/(app)/[orgSlug]/projects/[projectSlug]/editors/_components/work-package-section.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/app/(app)/[orgSlug]/projects/[projectSlug]/editors/_components/work-package-section.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/lib/actions/project-editor.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/lib/actions/project-editor.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -75,7 +74,7 @@
       <workItem from="1792073546981" duration="1027000" />
       <workItem from="1792081384549" duration="152070000" />
       <workItem from="1793272782576" duration="677000" />
-      <workItem from="1793274866140" duration="7009000" />
+      <workItem from="1793274866140" duration="18095000" />
     </task>
     <servers />
   </component>

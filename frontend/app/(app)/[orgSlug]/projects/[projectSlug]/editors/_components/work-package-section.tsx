@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { SortableContext, verticalListSortingStrategy, useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { ChevronRight, GripVertical, MoreHorizontal, Pencil, Plus, Trash2 } from "lucide-react";
@@ -15,6 +15,7 @@ import {
 import type { WorkPackageItem } from "@/lib/actions/project-editor";
 import { deleteWorkPackage } from "@/lib/actions/project-editor";
 import { LOT_COLOR_MAP, type LotColorKey } from "@/lib/lot-colors";
+import { computeLotTotals, formatCurrency } from "@/lib/pricing";
 import { useEditor } from "./editor-context";
 import WorkItemRow from "./work-item-row";
 import WorkItemFormSheet from "./work-item-form-sheet";
@@ -26,7 +27,7 @@ type Props = {
 };
 
 export default function WorkPackageSection({ pkg }: Props) {
-    const { orgSlug, projectSlug, onRefresh } = useEditor();
+    const { orgSlug, projectSlug, projectDefaultMarginRate, onRefresh } = useEditor();
     const [open, setOpen] = useState(true);
     const [addItemOpen, setAddItemOpen] = useState(false);
     const [libraryOpen, setLibraryOpen] = useState(false);
@@ -51,6 +52,13 @@ export default function WorkPackageSection({ pkg }: Props) {
 
     const color = pkg.color ? LOT_COLOR_MAP[pkg.color as LotColorKey] : null;
     const itemIds = pkg.workItems.map((i) => `item-${i.id}`);
+
+    const lotMarginRate = pkg.marginRate ? parseFloat(pkg.marginRate) : null;
+    const totals = useMemo(
+        () => computeLotTotals(pkg.workItems, lotMarginRate, projectDefaultMarginRate),
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        [pkg.workItems, lotMarginRate, projectDefaultMarginRate],
+    );
 
     async function handleDelete() {
         setDeleting(true);
@@ -95,6 +103,8 @@ export default function WorkPackageSection({ pkg }: Props) {
                     <span className="text-sm font-semibold text-foreground">{pkg.name}</span>
                     <span className="caption text-xs">
                         {pkg.workItems.length} ouvrage{pkg.workItems.length !== 1 ? "s" : ""}
+                        {pkg.marginRate && ` · ×${(1 + parseFloat(pkg.marginRate)).toFixed(2)}`}
+                        {totals.totalAfficheHt > 0 && ` · ${formatCurrency(totals.totalAfficheHt)} HT`}
                     </span>
                 </button>
 
