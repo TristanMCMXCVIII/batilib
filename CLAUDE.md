@@ -36,6 +36,8 @@
 
 ## 2. Variables d'environnement
 
+**Validation au démarrage** : `frontend/lib/env.ts` valide toutes les variables via Zod — le serveur crashe immédiatement avec un message clair si une variable manque. Ne jamais utiliser `process.env` directement dans `lib/` — importer `env` depuis `@/lib/env`.
+
 **`frontend/.env.local`** (jamais versionner) :
 ```
 BETTER_AUTH_SECRET=
@@ -222,6 +224,8 @@ if (!session) return { error: "Non authentifié" };
 ```
 
 Requêtes DB via `db` (Pool pg direct) — **pas Prisma côté frontend**. SQL paramétré, transactions explicites pour opérations atomiques.
+
+**Validation des inputs** : utiliser Zod via `@/lib/validations` **avant** toute vérification de rôle. Pattern : `safeParse` → retourner `{ error: issues[0].message }` si invalide. Ajouter les nouveaux schémas dans `validations.ts`, ne pas les définir inline dans l'action.
 
 Fichiers actions :
 - `organization.ts` : `createOrganization`, `getUserPrimaryOrgSlug`, `getUserOrgs`

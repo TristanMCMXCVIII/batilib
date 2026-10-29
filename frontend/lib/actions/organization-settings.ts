@@ -8,6 +8,8 @@ import { revalidatePath } from "next/cache";
 import type { OrgKind } from "./organization";
 import { slugify } from "@/lib/slug";
 import { sendEmail } from "@/lib/mail/send-email";
+import { inviteMemberSchema, updateOrganizationSchema } from "@/lib/validations";
+import { env } from "@/lib/env";
 export type { OrgKind };
 
 // ─── Types ────────────────────────────────────────────────
@@ -111,6 +113,11 @@ export async function updateOrganization(
 ): Promise<{ error?: string; newSlug?: string }> {
     const session = await getSession();
     if (!session) return { error: "Non authentifié" };
+
+    const parsed = updateOrganizationSchema.safeParse(data);
+    if (!parsed.success) {
+        return { error: parsed.error.issues[0]?.message ?? "Données invalides" };
+    }
 
     const role = await getCallerRole(orgSlug, session.user.id);
     if (role !== "FOUNDER") return { error: "Action réservée au fondateur" };
@@ -314,7 +321,7 @@ export async function resendInvitation(
     );
 
     const roleLabel = role === "MANAGER" ? "Manager" : "Membre";
-    const inviteUrl = `${process.env.BETTER_AUTH_URL}/join?token=${newToken}`;
+    const inviteUrl = `${env.BETTER_AUTH_URL}/join?token=${newToken}`;
 
     await sendEmail({
         to: email,
@@ -370,6 +377,11 @@ export async function inviteMember(
     const session = await getSession();
     if (!session) return { error: "Non authentifié" };
 
+    const parsed = inviteMemberSchema.safeParse({ email, role });
+    if (!parsed.success) {
+        return { error: parsed.error.issues[0]?.message ?? "Données invalides" };
+    }
+
     const callerRole = await getCallerRole(orgSlug, session.user.id);
     if (callerRole !== "FOUNDER") return { error: "Action réservée au fondateur" };
 
@@ -405,7 +417,7 @@ export async function inviteMember(
     );
 
     const roleLabel = role === "MANAGER" ? "Manager" : "Membre";
-    const inviteUrl = `${process.env.BETTER_AUTH_URL}/join?token=${token}`;
+    const inviteUrl = `${env.BETTER_AUTH_URL}/join?token=${token}`;
 
     await sendEmail({
         to: email.toLowerCase().trim(),

@@ -1,3 +1,5 @@
+import { env } from "@/lib/env";
+
 type SendEmailParams = {
     to: string;
     subject: string;
@@ -14,12 +16,12 @@ export async function sendEmail({
         headers: {
             accept: "application/json",
             "content-type": "application/json",
-            "api-key": process.env.BREVO_API_KEY as string,
+            "api-key": env.BREVO_API_KEY,
         },
         body: JSON.stringify({
             sender: {
-                name: process.env.BREVO_SENDER_NAME,
-                email: process.env.BREVO_SENDER_EMAIL,
+                name: env.BREVO_SENDER_NAME,
+                email: env.BREVO_SENDER_EMAIL,
             },
             to: [
                 {

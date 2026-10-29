@@ -3,6 +3,7 @@
 import { getSession } from "@/lib/session";
 import { db } from "@/lib/db";
 import { sendEmail } from "@/lib/mail/send-email";
+import { env } from "@/lib/env";
 
 // ─── Types ────────────────────────────────────────────────
 
@@ -245,7 +246,7 @@ export async function inviteClientToProject(
         [projectId, normalizedEmail, token, expiresAt, session.user.id],
     );
 
-    const inviteUrl = `${process.env.BETTER_AUTH_URL}/join-project?token=${token}`;
+    const inviteUrl = `${env.BETTER_AUTH_URL}/join-project?token=${token}`;
 
     await sendEmail({
         to: normalizedEmail,
@@ -309,7 +310,7 @@ export async function resendProjectInvitation(
         [newToken, expiresAt, id],
     );
 
-    const inviteUrl = `${process.env.BETTER_AUTH_URL}/join-project?token=${newToken}`;
+    const inviteUrl = `${env.BETTER_AUTH_URL}/join-project?token=${newToken}`;
 
     await sendEmail({
         to: invitedEmail,

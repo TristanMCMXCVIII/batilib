@@ -3,10 +3,11 @@ import { admin } from "better-auth/plugins";
 import { emailOTP } from "better-auth/plugins";
 import { sendEmail } from "@/lib/mail/send-email";
 import { db } from "@/lib/db";
+import { env } from "@/lib/env";
 
 
 export const auth = betterAuth({
-    baseURL: process.env.BETTER_AUTH_URL,
+    baseURL: env.BETTER_AUTH_URL,
 
     database: db,
 
@@ -34,8 +35,8 @@ export const auth = betterAuth({
 
     socialProviders: {
         google: {
-            clientId: process.env.GOOGLE_CLIENT_ID as string,
-            clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+            clientId: env.GOOGLE_CLIENT_ID,
+            clientSecret: env.GOOGLE_CLIENT_SECRET,
         },
     },
 
