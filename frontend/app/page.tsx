@@ -1,10 +1,9 @@
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
+import { getSession } from "@/lib/session";
 import { redirect } from "next/navigation";
 import { getUserPrimaryOrgSlug } from "@/lib/actions/organization";
 
 export default async function RootPage() {
-    const session = await auth.api.getSession({ headers: await headers() });
+    const session = await getSession();
 
     if (!session) redirect("/login");
     if (!session.user.emailVerified) {

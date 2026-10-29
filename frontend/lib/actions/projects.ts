@@ -1,8 +1,7 @@
 "use server";
 
-import { auth } from "@/lib/auth";
+import { getSession } from "@/lib/session";
 import { db } from "@/lib/db";
-import { headers } from "next/headers";
 import { slugify } from "@/lib/slug";
 
 export type ProjectParticipantRole = "LEAD" | "CLIENT" | "SUBCONTRACTOR";
@@ -19,7 +18,7 @@ export async function resolveProjectAccess(
     orgSlug: string,
     projectSlug: string,
 ): Promise<ProjectAccess | null> {
-    const session = await auth.api.getSession({ headers: await headers() });
+    const session = await getSession();
     if (!session) return null;
 
     const result = await db.query<{
@@ -98,7 +97,7 @@ async function generateUniqueProjectSlug(orgId: string, name: string): Promise<s
 }
 
 export async function getOrgProjects(orgSlug: string): Promise<ProjectListItem[]> {
-    const session = await auth.api.getSession({ headers: await headers() });
+    const session = await getSession();
     if (!session) return [];
 
     const membershipId = await getMembershipId(orgSlug, session.user.id);
@@ -140,7 +139,7 @@ export async function getProjectForOrg(
     orgSlug: string,
     projectSlug: string,
 ): Promise<ProjectDetail | null> {
-    const session = await auth.api.getSession({ headers: await headers() });
+    const session = await getSession();
     if (!session) return null;
 
     const membershipId = await getMembershipId(orgSlug, session.user.id);
@@ -178,7 +177,7 @@ export async function createProject(
     orgSlug: string,
     name: string,
 ): Promise<{ projectSlug: string } | { error: string }> {
-    const session = await auth.api.getSession({ headers: await headers() });
+    const session = await getSession();
     if (!session) return { error: "Non authentifié" };
 
     const trimmedName = name.trim();

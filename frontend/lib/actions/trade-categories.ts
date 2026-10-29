@@ -1,8 +1,7 @@
 "use server";
 
-import { auth } from "@/lib/auth";
+import { getSession } from "@/lib/session";
 import { db } from "@/lib/db";
-import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
 
 // ─── Types ────────────────────────────────────────────────
@@ -17,7 +16,7 @@ export type TradeCategoryItem = {
 // ─── Guard ────────────────────────────────────────────────
 
 async function requireAdmin() {
-    const session = await auth.api.getSession({ headers: await headers() });
+    const session = await getSession();
     if (!session || session.user.role !== "admin") return null;
     return session;
 }

@@ -2,15 +2,13 @@ import { betterAuth } from "better-auth";
 import { admin } from "better-auth/plugins";
 import { emailOTP } from "better-auth/plugins";
 import { sendEmail } from "@/lib/mail/send-email";
-import { Pool } from "pg";
+import { db } from "@/lib/db";
 
 
 export const auth = betterAuth({
     baseURL: process.env.BETTER_AUTH_URL,
 
-    database: new Pool({
-        connectionString: process.env.DATABASE_URL,
-    }),
+    database: db,
 
     emailAndPassword: {
         enabled: true,

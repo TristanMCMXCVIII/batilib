@@ -1,9 +1,8 @@
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
+import { getSession } from "@/lib/session";
 import ProfileClient from "./_components/profile-client";
 
 export default async function ProfilePage() {
-    const session = await auth.api.getSession({ headers: await headers() });
+    const session = await getSession();
 
     return <ProfileClient user={session!.user} />;
 }

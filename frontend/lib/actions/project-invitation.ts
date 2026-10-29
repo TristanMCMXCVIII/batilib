@@ -1,8 +1,7 @@
 "use server";
 
-import { auth } from "@/lib/auth";
+import { getSession } from "@/lib/session";
 import { db } from "@/lib/db";
-import { headers } from "next/headers";
 
 // ─── Types ────────────────────────────────────────────────
 
@@ -79,7 +78,7 @@ export async function acceptProjectInvitation(
     token: string,
     orgId: string,
 ): Promise<{ error?: string; clientOrgSlug?: string; projectSlug?: string }> {
-    const session = await auth.api.getSession({ headers: await headers() });
+    const session = await getSession();
     if (!session) return { error: "Non authentifié" };
 
     const invResult = await db.query<{
@@ -161,7 +160,7 @@ export async function acceptProjectInvitation(
 }
 
 export async function declineProjectInvitation(token: string): Promise<void> {
-    const session = await auth.api.getSession({ headers: await headers() });
+    const session = await getSession();
     if (!session) return;
     await db.query(`DELETE FROM "ProjectInvitation" WHERE token = $1`, [token]);
 }

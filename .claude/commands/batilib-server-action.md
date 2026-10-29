@@ -20,13 +20,12 @@ Quand tu crées ou modifies une Server Action dans `frontend/lib/actions/`.
 ```ts
 "use server";
 
-import { auth } from "@/lib/auth";
+import { getSession } from "@/lib/session";  // helper React.cache() — toujours utiliser celui-ci
 import { db } from "@/lib/db";
-import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
 
 export async function monAction(param: string): Promise<{ error?: string }> {
-    const session = await auth.api.getSession({ headers: await headers() });
+    const session = await getSession();
     if (!session) return { error: "Non authentifié" };
 
     // Vérifier le rôle si nécessaire (voir batilib-permissions)

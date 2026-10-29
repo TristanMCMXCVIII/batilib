@@ -1,5 +1,4 @@
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
+import { getSession } from "@/lib/session";
 import {
     getProjectInvitationPreview,
     getUserOrgsForProjectJoin,
@@ -15,7 +14,7 @@ export default async function JoinProjectPage({ searchParams }: Props) {
 
     const [invitation, session] = await Promise.all([
         getProjectInvitationPreview(token),
-        auth.api.getSession({ headers: await headers() }),
+        getSession(),
     ]);
 
     if (!invitation) return <InvalidInvitation reason="expired" />;

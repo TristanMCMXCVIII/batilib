@@ -1,8 +1,7 @@
 "use server";
 
-import { auth } from "@/lib/auth";
+import { getSession } from "@/lib/session";
 import { db } from "@/lib/db";
-import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { randomUUID } from "crypto";
 import { getLibraryTree, type LibraryTree, type WorkPackageTemplateRef } from "./work-item-templates";
@@ -106,7 +105,7 @@ export async function getProjectEditorData(
     orgSlug: string,
     projectSlug: string,
 ): Promise<ProjectEditorData | null> {
-    const session = await auth.api.getSession({ headers: await headers() });
+    const session = await getSession();
     if (!session) return null;
 
     const membershipId = await getMembership(orgSlug, session.user.id);
@@ -197,7 +196,7 @@ export async function createProjectSpace(
     projectSlug: string,
     data: { name: string; parentId?: string | null },
 ): Promise<{ error?: string; id?: string }> {
-    const session = await auth.api.getSession({ headers: await headers() });
+    const session = await getSession();
     if (!session) return { error: "Non authentifié" };
 
     const membershipId = await getMembership(orgSlug, session.user.id);
@@ -245,7 +244,7 @@ export async function renameProjectSpace(
     spaceId: string,
     name: string,
 ): Promise<{ error?: string }> {
-    const session = await auth.api.getSession({ headers: await headers() });
+    const session = await getSession();
     if (!session) return { error: "Non authentifié" };
 
     const membershipId = await getMembership(orgSlug, session.user.id);
@@ -275,7 +274,7 @@ export async function deleteProjectSpace(
     projectSlug: string,
     spaceId: string,
 ): Promise<{ error?: string }> {
-    const session = await auth.api.getSession({ headers: await headers() });
+    const session = await getSession();
     if (!session) return { error: "Non authentifié" };
 
     const membershipId = await getMembership(orgSlug, session.user.id);
@@ -312,7 +311,7 @@ export async function reorderSpaces(
     projectSlug: string,
     updates: { id: string; position: number; parentId: string | null }[],
 ): Promise<{ error?: string }> {
-    const session = await auth.api.getSession({ headers: await headers() });
+    const session = await getSession();
     if (!session) return { error: "Non authentifié" };
 
     const membershipId = await getMembership(orgSlug, session.user.id);
@@ -410,7 +409,7 @@ export async function createWorkItem(
         templateId?: string | null;
     },
 ): Promise<{ error?: string; id?: string }> {
-    const session = await auth.api.getSession({ headers: await headers() });
+    const session = await getSession();
     if (!session) return { error: "Non authentifié" };
 
     const membershipId = await getMembership(orgSlug, session.user.id);
@@ -469,7 +468,7 @@ export async function updateWorkItem(
     itemId: string,
     data: WorkItemFormData,
 ): Promise<{ error?: string }> {
-    const session = await auth.api.getSession({ headers: await headers() });
+    const session = await getSession();
     if (!session) return { error: "Non authentifié" };
 
     const membershipId = await getMembership(orgSlug, session.user.id);
@@ -513,7 +512,7 @@ export async function updateWorkItemStatus(
     itemId: string,
     status: WorkItemStatus,
 ): Promise<{ error?: string }> {
-    const session = await auth.api.getSession({ headers: await headers() });
+    const session = await getSession();
     if (!session) return { error: "Non authentifié" };
 
     const membershipId = await getMembership(orgSlug, session.user.id);
@@ -540,7 +539,7 @@ export async function deleteWorkItem(
     projectSlug: string,
     itemId: string,
 ): Promise<{ error?: string }> {
-    const session = await auth.api.getSession({ headers: await headers() });
+    const session = await getSession();
     if (!session) return { error: "Non authentifié" };
 
     const membershipId = await getMembership(orgSlug, session.user.id);
@@ -566,7 +565,7 @@ export async function reorderWorkItems(
     projectSlug: string,
     updates: { id: string; position: number; projectSpaceId: string | null; workPackageId: string | null }[],
 ): Promise<{ error?: string }> {
-    const session = await auth.api.getSession({ headers: await headers() });
+    const session = await getSession();
     if (!session) return { error: "Non authentifié" };
 
     const membershipId = await getMembership(orgSlug, session.user.id);
@@ -605,7 +604,7 @@ export async function createWorkPackage(
     projectSlug: string,
     data: WorkPackageFormData,
 ): Promise<{ error?: string; id?: string }> {
-    const session = await auth.api.getSession({ headers: await headers() });
+    const session = await getSession();
     if (!session) return { error: "Non authentifié" };
 
     const membershipId = await getMembership(orgSlug, session.user.id);
@@ -644,7 +643,7 @@ export async function updateWorkPackage(
     wpId: string,
     data: WorkPackageFormData,
 ): Promise<{ error?: string }> {
-    const session = await auth.api.getSession({ headers: await headers() });
+    const session = await getSession();
     if (!session) return { error: "Non authentifié" };
 
     const membershipId = await getMembership(orgSlug, session.user.id);
@@ -677,7 +676,7 @@ export async function deleteWorkPackage(
     projectSlug: string,
     wpId: string,
 ): Promise<{ error?: string }> {
-    const session = await auth.api.getSession({ headers: await headers() });
+    const session = await getSession();
     if (!session) return { error: "Non authentifié" };
 
     const membershipId = await getMembership(orgSlug, session.user.id);

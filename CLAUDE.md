@@ -1,7 +1,17 @@
 # CLAUDE.md — BatiLib
 
-> Document d'entrée pour les agents de code. Reflète l'état réel du dépôt au 23 octobre 2026.
+> Document d'entrée pour les agents de code. Reflète l'état réel du dépôt au 29 octobre 2026.
 > **Inspecter le code avant toute modification.** Ce fichier fait foi sur `docs/PROJECT_CONTEXT.md` pour l'état courant.
+
+---
+
+## 0. Chargement des skills
+
+| Tâche | Skill à charger en premier |
+|-------|---------------------------|
+| Nouvelle page ou composant UI | `batilib-ui` |
+| Nouvelle Server Action | `batilib-server-action` |
+| Logique de droits / accès | `batilib-permissions` |
 
 ---
 
@@ -76,12 +86,30 @@ pnpm prisma migrate dev --name <nom>   # seulement si migration nécessaire
 - **`Session`** : token, `expiresAt`, `ipAddress`, `userAgent`, `impersonatedBy`.
 - **`Verification`** : OTP et liens de vérification.
 
+### Couleurs
+- **`LotColor`** (enum) : `NAVY | BLUE | SKY | CYAN | INDIGO | VIOLET | PURPLE | FUCHSIA | PINK | ROSE | RED | ORANGE | AMBER | YELLOW | SLATE | ZINC | STONE`. Utilitaires dans `frontend/lib/lot-colors.ts` (`LOT_COLORS`, `LOT_COLOR_MAP`). Cast SQL : `$1::"LotColor"`.
+
 ### Organisation (multi-tenant)
-- **`Organization`** : `id`, `kind` (enum `OrganizationKind`: `BUILDING_COMPANY` / `CLIENT_COMPANY` / `INDIVIDUAL_CLIENT`), `name`, `description`, `legalName`, `siren`, `siret`, `vatNumber`, `logoUrl`.
+- **`Organization`** : `id`, `slug` (unique global, immutable), `kind` (enum `OrganizationKind`: `BUILDING_COMPANY` / `CLIENT_COMPANY` / `INDIVIDUAL_CLIENT`), `name`, `description`, `legalName`, `siren`, `siret`, `vatNumber`, `logoUrl`.
 - **`OrganizationMembership`** : jointure User↔Organization, `role` (enum `OrganizationMemberRole`: `FOUNDER` / `MANAGER` / `MEMBER`), `status` (enum `MembershipStatus`: `PENDING` / `ACTIVE` / `SUSPENDED`). Unique sur `(organizationId, userId)`.
 - **`OrganizationInvitation`** : `email`, `role`, `token` (UUID unique), `expiresAt` (+7 jours), `invitedById`.
 - **`TradeCategory`** : référentiel métiers (`code`, `label`).
 - **`OrganizationTradeCategory`** : jointure Organization↔TradeCategory.
+
+### Projet
+- **`Project`** : `id`, `slug` (unique par org), `leadOrganizationId`, `name`.
+- **`ProjectParticipant`** : org participante au projet, `role` (enum `ProjectParticipantRole`: `LEAD` / `CLIENT` / `SUBCONTRACTOR`). Une org LEAD créée automatiquement à la création du projet.
+- **`ProjectParticipantMember`** : jointure ProjectParticipant↔OrganizationMembership (membres individuels dans le participant).
+- **`ProjectInvitation`** : `projectId` (**UNIQUE** — 1 seule invitation active par projet), `invitedEmail`, `token`, `expiresAt` (+7j). Pas d'`organizationId` côté invité.
+- **`ProjectSpace`** : espace/pièce hiérarchique (self-ref `parentId?`), `name`, `position`.
+- **`WorkPackage`** : lot de chantier, `name`, `color?` (enum `LotColor`), `position`, `sourceWorkPackageTemplateId?`, `assignedProjectParticipantId?`.
+- **`WorkPackageTradeCategory`** : jointure WorkPackage↔TradeCategory.
+- **`WorkItem`** : ouvrage instancié, `name`, `quantity` (Decimal), `unit`, `status` (enum `WorkItemStatus`: `DRAFT`/`IN_PROGRESS`/`DONE`/`CANCELLED`), `position`, `workPackageId?`, `projectSpaceId?`, `sourceWorkItemTemplateId?`, `executions` (Json `[]`), `plannedStartDate?`, `plannedEndDate?`.
+
+### Bibliothèque
+- **`LibraryFolder`** : dossier hiérarchique N niveaux, `workPackageTemplateId?` (tag sémantique "ce dossier = ce lot").
+- **`WorkItemTemplate`** : ouvrage modèle, `folderId?`, `name`, `unit`, `defaultUnitPrice?`, `estimatedUnitCost?`, `defaultTaxRate?`, `quantityExpression?`, `defaultChecklist` (Json), `position`.
+- **`WorkPackageTemplate`** : blueprint de lot, `folderId?`, `name`, `color?` (LotColor), `defaultMarginRate?`, `position`. Relation inverse : `taggedFolders LibraryFolder[]`.
 
 ### Règles d'autorisation organisation (côté serveur)
 Toutes les mutations organisation vérifient le rôle via `getCallerRole()` dans `frontend/lib/actions/organization-settings.ts`. Seul le `FOUNDER` peut : modifier l'identité, changer les rôles, retirer des membres, inviter, transférer le rôle fondateur. Le transfert de fondateur est une transaction atomique (BEGIN/COMMIT).
@@ -126,38 +154,59 @@ Toutes les mutations organisation vérifient le rôle via `getCallerRole()` dans
 ### Structure App Router
 ```
 app/
-  page.tsx                          → redirect /app (racine publique)
-  (auth)/                           → layout sans sidebar (pages auth)
-    login, register, verify-email,
-    forgot-password, reset-password,
-    auth/error, auth/verify-existing-account
-  (app)/                            → layout avec sidebar (protégé)
-    layout.tsx                      → vérifie session + emailVerified
-    profile/page.tsx                → profil utilisateur
-    app/page.tsx                    → redirect /app/:orgId ou /onboarding
-    app/[orgId]/
-      page.tsx                      → accueil organisation (placeholder)
-      layout.tsx                    → layout avec orgId dans l'URL
-      organization/
-        page.tsx                    → redirect /organization/presentation
+  page.tsx                          → redirect /{orgSlug} ou /onboarding
+  (auth)/                           → layout sans sidebar
+    login/, register/
+    forgot-password/, reset-password/
+    auth/error/, auth/verify-existing-account/
+  (app)/                            → layout: vérifie session, redirect /login
+    verify-email/page.tsx           → vérification OTP post-inscription
+    onboarding/page.tsx             → création organisation (OnboardingForm)
+    [orgSlug]/
+      layout.tsx                    → vérifie emailVerified + membership ACTIVE ; sidebar
+      page.tsx                      → accueil org (placeholder)
+      my-account/page.tsx           → profil utilisateur (ProfileClient)
+      new-organization/page.tsx     → créer une nouvelle organisation
+      my-organization/
+        layout.tsx                  → layout onglets org
+        page.tsx                    → redirect /presentation
         presentation/page.tsx       → identité + légal (OrgPresentationClient)
         members/page.tsx            → membres + invitations (MembersClient)
         billing/page.tsx            → (placeholder)
-  onboarding/page.tsx               → création organisation (OnboardingForm)
+      projects/
+        page.tsx                    → liste des projets (ProjectsClient)
+        [projectSlug]/
+          layout.tsx                → resolveProjectAccess → SetActiveProject
+          page.tsx                  → redirect /editors
+          editors/page.tsx          → dispatcher LEAD→LeadEditorClient / CLIENT→ClientProjectView
+          members/page.tsx          → intervenants projet (ProjectMembersClient)
+          documents/page.tsx        → (placeholder)
+          economics/page.tsx        → (placeholder)
+      library/
+        layout.tsx                  → layout onglets bibliothèque
+        page.tsx                    → redirect /work-items
+        work-items/page.tsx         → arbre WIT/dossiers DnD (WorkItemsClient)
+        work-packages/page.tsx      → liste WPT (WorkPackagesClient)
+  join/page.tsx                     → acceptation invitation org (hors app/auth)
+  join-project/page.tsx             → acceptation invitation projet (hors app/auth)
   admin/
     layout.tsx                      → vérifie role=admin
     users/page.tsx                  → liste utilisateurs
+    utils/
+      trade-category/page.tsx       → gestion corps de métier (TradeCategoryClient)
+      plans/page.tsx                → (placeholder)
   api/
     auth/[...all]/route.ts          → Better Auth handler
     upload/avatar/route.ts          → POST upload avatar → R2
+    upload/org-logo/route.ts        → POST upload logo org → R2
     files/[...key]/route.ts         → GET proxy R2 → signed URL (302)
 ```
 
 ### Flux de navigation
-1. Utilisateur non connecté → `/login`
-2. Connecté non vérifié → `/verify-email`
-3. Connecté + vérifié, sans org → `/onboarding`
-4. Connecté + vérifié + org → `/app/:orgId`
+1. Non connecté → `/login`
+2. Connecté, email non vérifié → `/verify-email?email=...`
+3. Connecté + vérifié, sans org (ou kicked) → `/onboarding`
+4. Connecté + vérifié + org → `/{orgSlug}`
 5. Admin → accès `/admin` en plus (lien dans sidebar si `role === "admin"`)
 
 ---
@@ -166,19 +215,29 @@ app/
 
 Les Server Actions sont dans `frontend/lib/actions/`. Toutes commencent par vérifier la session :
 ```ts
-const session = await auth.api.getSession({ headers: await headers() });
+import { getSession } from "@/lib/session";  // React.cache() — NE PAS utiliser auth.api.getSession directement
+
+const session = await getSession();
 if (!session) return { error: "Non authentifié" };
 ```
 
 Requêtes DB via `db` (Pool pg direct) — **pas Prisma côté frontend**. SQL paramétré, transactions explicites pour opérations atomiques.
 
-Fichiers :
-- `organization.ts` : `createOrganization`, `getUserPrimaryOrgId`
+Fichiers actions :
+- `organization.ts` : `createOrganization`, `getUserPrimaryOrgSlug`, `getUserOrgs`
 - `organization-settings.ts` : `getOrgWithRole`, `getOrgMembers`, `updateOrganization`, `updateMemberRole`, `removeMember`, `transferFounder`, `inviteMember`
+- `projects.ts` : `createProject`, `getOrgProjects`, `resolveProjectAccess`
+- `project-editor.ts` : `getProjectEditorData`, `createProjectSpace`, `createWorkItem`, `createWorkPackage`, `reorderSpaces`, `reorderWorkItems`, `updateWorkItemStatus`, `resolveOrCreateWorkPackage`
+- `project-members.ts` : `inviteClientToProject`, `removeProjectClient`, `getProjectClientInvitation`
+- `project-invitation.ts` : `getProjectInvitationPreview`, `acceptProjectInvitation`, `declineProjectInvitation`
+- `work-item-templates.ts` : `getLibraryTree`, `createWorkItemTemplate`, `updateWorkItemTemplate`, `deleteWorkItemTemplate`, `reorderItems`, `reorderFolders`, `createFolder`, `renameFolder`, `setFolderWpt`, `deleteFolder`
+- `work-package-templates.ts` : WPT CRUD
+- `invitation.ts` : invitations organisation (accepter/refuser depuis /join)
+- `work-templates.ts` : **déprécié** — re-exporte work-item-templates.ts (ne pas utiliser)
 
 ---
 
-## 8. Profil utilisateur (`/profile`)
+## 8. Profil utilisateur (`/[orgSlug]/my-account`)
 
 Fonctions implémentées dans `ProfileClient` :
 - **Modifier le nom** : `authClient.updateUser({ name })`
@@ -268,7 +327,7 @@ Template OTP : HTML inline simple (no-framework). Clé `BREVO_API_KEY` côté se
 
 ---
 
-## 13. État fonctionnel — 26 octobre 2026
+## 13. État fonctionnel — 29 octobre 2026
 
 | Fonctionnalité | Statut |
 |----------------|--------|
@@ -276,28 +335,24 @@ Template OTP : HTML inline simple (no-framework). Clé `BREVO_API_KEY` côté se
 | Vérification OTP email (Brevo) | ✅ Fait |
 | Reset mot de passe (email avec lien) | ✅ Fait |
 | Connexion Google + account linking | ✅ Fait |
-| Blocage `/app` si non connecté / non vérifié | ✅ Fait |
+| Blocage pages si non connecté / non vérifié | ✅ Fait |
 | Admin `/admin/users` (liste, rôles) | ✅ Fait |
-| Profil : modifier nom | ✅ Fait |
-| Profil : modifier photo (upload R2) | ✅ Fait |
-| Profil : changer mot de passe | ✅ Fait |
-| Profil : supprimer compte (avec confirmation) | ✅ Fait |
-| Profil : méthodes connexion (credential/google) | ✅ Fait |
+| Admin `/admin/utils/trade-category` (gestion corps de métier) | ✅ Fait |
+| Profil `/[orgSlug]/my-account` : nom, photo, mot de passe, suppression, méthodes connexion | ✅ Fait |
 | Onboarding : création organisation (3 types) | ✅ Fait |
+| Multi-org : création d'une nouvelle org depuis `/[orgSlug]/new-organization` | ✅ Fait |
 | Organisation : présentation + édition (FOUNDER) | ✅ Fait |
-| Organisation : membres + rôles + retrait | ✅ Fait |
-| Organisation : transfert fondateur | ✅ Fait |
-| Organisation : invitations (création token + email Brevo) | ✅ Fait |
-| Organisation : invitations en attente (liste, renvoyer, annuler) | ✅ Fait |
-| Acceptation d'invitation par token (`/join`) | ✅ Fait |
-| Bibliothèque : arbre WIT/dossiers/WPT, DnD, CRUD | ✅ Fait |
-| Éditeur projet : vue par espace + vue par lot, DnD | ✅ Fait |
+| Organisation : membres + rôles + retrait + transfert fondateur | ✅ Fait |
+| Organisation : invitations (token + email Brevo, liste, renvoyer, annuler) | ✅ Fait |
+| Acceptation d'invitation org par token (`/join`) | ✅ Fait |
+| Bibliothèque WIT : arbre dossiers/WIT, DnD, CRUD, badge WPT sur dossier | ✅ Fait |
+| Bibliothèque WPT : liste WPT, CRUD, color picker | ✅ Fait |
+| Éditeur projet : vue espace + vue lot, DnD reorder, statuts inline | ✅ Fait |
 | Éditeur projet : import depuis bibliothèque (picker 2 panneaux) | ✅ Fait |
 | Éditeur projet : création WP auto depuis WPT sur import bibliothèque | ✅ Fait |
-| Éditeur projet : statut inline DRAFT/IN_PROGRESS/DONE/CANCELLED | ✅ Fait |
-| Page intervenants projet (LEAD + CLIENT + sous-traitants verrouillés) | ✅ Fait |
-| Invitation client sur un projet (`ProjectInvitation` + page `/join-project`) | ✅ Fait |
-| Dispatcher éditeur LEAD → `LeadEditorClient` / CLIENT → `ClientProjectView` | ✅ Fait |
+| Page intervenants projet : LEAD + CLIENT + sous-traitants (UI verrouillés) | ✅ Fait |
+| Invitation client sur un projet (`ProjectInvitation` + `/join-project`) | ✅ Fait |
+| Dispatcher LEAD → `LeadEditorClient` / CLIENT → `ClientProjectView` | ✅ Fait |
 | Sidebar nav projet role-aware (LEAD/CLIENT/SUBCONTRACTOR) | ✅ Fait |
 | Nest : endpoints métier authentifiés | ❌ Non fait |
 
@@ -305,15 +360,15 @@ Template OTP : HTML inline simple (no-framework). Clé `BREVO_API_KEY` côté se
 
 ## 14. Prochaines priorités
 
-1. **API Nest** : mettre en place un guard d'auth (valider le cookie de session Better Auth) avant tout endpoint métier.
-2. **Éditeur — temps réel** : brancher Socket.io (Gateway Nest) sur l'éditeur de chantier (voir section 16).
-3. **Éditeur — devis/chiffrage** : affichage des prix et marges dans l'éditeur (données financières protégées).
+1. **API Nest** : guard d'auth (valider le cookie de session Better Auth) avant tout endpoint métier.
+2. **Éditeur — temps réel** : Socket.io Gateway Nest, rooms par projet (voir section 16).
+3. **Éditeur — devis/chiffrage** : prix et marges dans l'éditeur (données financières protégées).
 
 ---
 
 ## 15. Pattern invitation par token — à réutiliser
 
-Implémenté pour les organisations. À réutiliser (avec adaptation) pour les invitations sur les projets.
+Implémenté pour les organisations et les projets clients (voir section 19).
 
 ### Table `OrganizationInvitation`
 `id`, `organizationId`, `email`, `role`, `token` (UUID unique), `expiresAt` (+7 jours), `invitedById`, `createdAt`.
@@ -372,7 +427,7 @@ app/(app)/[orgSlug]/projects/[projectSlug]/editors/
     work-package-section.tsx  → Section lot (useSortable, SortableContext items)
     work-item-row.tsx         → Ligne ouvrage (useSortable, status badge, dot couleur lot)
     work-item-form-sheet.tsx  → Sheet création/édition ouvrage (name, qty, unit, lot)
-    work-item-form-sheet.tsx  → Sheet création/édition espace
+    space-form-sheet.tsx      → Sheet création/édition espace
     library-picker-sheet.tsx  → Sheet import depuis bibliothèque (2 panneaux : arbre + liste)
     work-package-form-sheet.tsx → Sheet création/édition lot (color picker LOT_COLORS)
 ```

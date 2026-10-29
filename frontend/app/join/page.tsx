@@ -1,5 +1,4 @@
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
+import { getSession } from "@/lib/session";
 import { getInvitationPreview } from "@/lib/actions/invitation";
 import JoinClient from "./_components/join-client";
 
@@ -12,7 +11,7 @@ export default async function JoinPage({ searchParams }: Props) {
 
     const [invitation, session] = await Promise.all([
         getInvitationPreview(token),
-        auth.api.getSession({ headers: await headers() }),
+        getSession(),
     ]);
 
     if (!invitation) return <InvalidInvitation reason="expired" />;

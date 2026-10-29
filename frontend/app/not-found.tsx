@@ -1,11 +1,10 @@
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
+import { getSession } from "@/lib/session";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 
 export default async function NotFound() {
-    const session = await auth.api.getSession({ headers: await headers() });
+    const session = await getSession();
     const href = session ? "/app" : "/login";
     const label = session ? "Retourner sur l'application" : "Se connecter";
 

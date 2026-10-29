@@ -48,8 +48,9 @@ async function getCallerRole(orgId: string, userId: string): Promise<OrgRole | n
     return result.rows[0]?.role ?? null;
 }
 
-// Usage dans une Server Action
-const session = await auth.api.getSession({ headers: await headers() });
+// Usage dans une Server Action (utiliser getSession() — pas auth.api.getSession directement)
+import { getSession } from "@/lib/session";
+const session = await getSession();
 if (!session) return { error: "Non authentifié" };
 
 const role = await getCallerRole(orgId, session.user.id);
@@ -59,7 +60,49 @@ if (role !== "FOUNDER") return { error: "Action réservée au fondateur" };
 
 ---
 
-## Rôles Organisation dans le contexte métier (futur)
+## Pattern de vérification — Projet (implémenté)
+
+Utiliser `resolveProjectAccess(orgSlug, projectSlug)` depuis `frontend/lib/actions/projects.ts`.
+Retourne `ProjectAccess | null` — null = pas d'accès, redirect.
+
+```ts
+export type ProjectAccess = {
+    projectId: string;
+    projectName: string;
+    projectSlug: string;
+    callerParticipantRole: "LEAD" | "CLIENT" | "SUBCONTRACTOR";
+    callerOrgRole: "FOUNDER" | "MANAGER" | "MEMBER";
+};
+```
+
+**Rôles projet** (`ProjectParticipantRole`) :
+
+| Rôle | Accès |
+|------|-------|
+| `LEAD` | org pilote — toutes mutations, éditeur complet, intervenants, économie |
+| `CLIENT` | org cliente invitée — vue read-only (ClientProjectView), intervenants, documents |
+| `SUBCONTRACTOR` | sous-traitant assigné — vue lots propres (non implémenté côté UI) |
+
+**canManage côté UI :**
+```ts
+const canManage = callerParticipantRole === "LEAD" &&
+    (callerOrgRole === "FOUNDER" || callerOrgRole === "MANAGER");
+```
+
+**Reads** : accessibles à tous les rôles projet (lookup via `ProjectParticipant`).
+**Mutations** : LEAD uniquement — `getProjectId()` cherche via `leadOrganizationId`, échoue pour CLIENT.
+
+**Pattern page avec dispatcher :**
+```tsx
+const access = await resolveProjectAccess(orgSlug, projectSlug);
+if (!access) notFound();
+if (access.callerParticipantRole === "CLIENT") return <ClientXxxView ... />;
+return <LeadXxxClient ... />;
+```
+
+---
+
+## Rôles Organisation dans le contexte métier
 
 Une organisation a un **type** (`OrganizationKind`) qui détermine son rôle dans un projet :
 
@@ -69,8 +112,6 @@ Une organisation a un **type** (`OrganizationKind`) qui détermine son rôle dan
 | `CLIENT_COMPANY` | Client entreprise — voit les devis/factures HT, pas les marges internes |
 | `INDIVIDUAL_CLIENT` | Client particulier — voit les devis/factures TTC, interface simplifiée |
 | `BUILDING_COMPANY` (invitée) | Sous-traitant — voit uniquement son lot et ses montants |
-
-**À implémenter** : table `ProjectParticipation` pour lier une organisation à un projet avec son périmètre (lots attribués, niveau de visibilité).
 
 ---
 

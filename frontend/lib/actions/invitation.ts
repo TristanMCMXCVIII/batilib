@@ -1,8 +1,7 @@
 "use server";
 
-import { auth } from "@/lib/auth";
+import { getSession } from "@/lib/session";
 import { db } from "@/lib/db";
-import { headers } from "next/headers";
 
 export type InvitationPreview = {
     token: string;
@@ -33,7 +32,7 @@ export async function getInvitationPreview(token: string): Promise<InvitationPre
 }
 
 export async function acceptInvitation(token: string): Promise<{ error?: string; orgSlug?: string }> {
-    const session = await auth.api.getSession({ headers: await headers() });
+    const session = await getSession();
     if (!session) return { error: "Non authentifié" };
 
     const result = await db.query<{
@@ -89,7 +88,7 @@ export async function acceptInvitation(token: string): Promise<{ error?: string;
 }
 
 export async function declineInvitation(token: string): Promise<void> {
-    const session = await auth.api.getSession({ headers: await headers() });
+    const session = await getSession();
     if (!session) return;
     await db.query(`DELETE FROM "OrganizationInvitation" WHERE token = $1`, [token]);
 }

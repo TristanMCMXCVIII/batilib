@@ -1,16 +1,15 @@
-import { auth } from "@/lib/auth";
+import { getSession } from "@/lib/session";
 import { db } from "@/lib/db";
 import { r2, R2_BUCKET } from "@/lib/r2";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { randomUUID } from "crypto";
-import { headers } from "next/headers";
 import sharp from "sharp";
 
 const MAX_SIZE = 20 * 1024 * 1024; // 20 Mo — garde-fou avant compression
 const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp"];
 
 export async function POST(request: Request) {
-    const session = await auth.api.getSession({ headers: await headers() });
+    const session = await getSession();
     if (!session) {
         return Response.json({ error: "Non autorisé" }, { status: 401 });
     }

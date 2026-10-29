@@ -1,8 +1,7 @@
 "use server";
 
-import { auth } from "@/lib/auth";
+import { getSession } from "@/lib/session";
 import { db } from "@/lib/db";
-import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { randomUUID } from "crypto";
 
@@ -144,7 +143,7 @@ export async function getLibraryTree(orgSlug: string): Promise<{
     callerRole: OrgRole | null;
     workPackageTemplates: WorkPackageTemplateRef[];
 }> {
-    const session = await auth.api.getSession({ headers: await headers() });
+    const session = await getSession();
     if (!session) return { tree: { folders: [], rootItems: [] }, callerRole: null, workPackageTemplates: [] };
 
     const callerRole = await getCallerRole(orgSlug, session.user.id);
@@ -207,7 +206,7 @@ export async function createWorkItemTemplate(
     data: WorkItemTemplateFormData,
     folderId?: string | null,
 ): Promise<{ error?: string; id?: string }> {
-    const session = await auth.api.getSession({ headers: await headers() });
+    const session = await getSession();
     if (!session) return { error: "Non authentifié" };
 
     const role = await getCallerRole(orgSlug, session.user.id);
@@ -251,7 +250,7 @@ export async function updateWorkItemTemplate(
     templateId: string,
     data: WorkItemTemplateFormData,
 ): Promise<{ error?: string }> {
-    const session = await auth.api.getSession({ headers: await headers() });
+    const session = await getSession();
     if (!session) return { error: "Non authentifié" };
 
     const role = await getCallerRole(orgSlug, session.user.id);
@@ -295,7 +294,7 @@ export async function deleteWorkItemTemplate(
     orgSlug: string,
     templateId: string,
 ): Promise<{ error?: string }> {
-    const session = await auth.api.getSession({ headers: await headers() });
+    const session = await getSession();
     if (!session) return { error: "Non authentifié" };
 
     const role = await getCallerRole(orgSlug, session.user.id);
@@ -320,7 +319,7 @@ export async function createFolder(
     orgSlug: string,
     data: { name: string; parentId: string | null },
 ): Promise<{ error?: string; id?: string }> {
-    const session = await auth.api.getSession({ headers: await headers() });
+    const session = await getSession();
     if (!session) return { error: "Non authentifié" };
 
     const role = await getCallerRole(orgSlug, session.user.id);
@@ -363,7 +362,7 @@ export async function renameFolder(
     folderId: string,
     name: string,
 ): Promise<{ error?: string }> {
-    const session = await auth.api.getSession({ headers: await headers() });
+    const session = await getSession();
     if (!session) return { error: "Non authentifié" };
 
     const role = await getCallerRole(orgSlug, session.user.id);
@@ -391,7 +390,7 @@ export async function setFolderWpt(
     folderId: string,
     workPackageTemplateId: string | null,
 ): Promise<{ error?: string }> {
-    const session = await auth.api.getSession({ headers: await headers() });
+    const session = await getSession();
     if (!session) return { error: "Non authentifié" };
 
     const role = await getCallerRole(orgSlug, session.user.id);
@@ -415,7 +414,7 @@ export async function reorderItems(
     orgSlug: string,
     updates: { id: string; folderId: string | null; position: number }[],
 ): Promise<{ error?: string }> {
-    const session = await auth.api.getSession({ headers: await headers() });
+    const session = await getSession();
     if (!session) return { error: "Non authentifié" };
 
     const role = await getCallerRole(orgSlug, session.user.id);
@@ -450,7 +449,7 @@ export async function reorderFolders(
     orgSlug: string,
     updates: { id: string; position: number }[],
 ): Promise<{ error?: string }> {
-    const session = await auth.api.getSession({ headers: await headers() });
+    const session = await getSession();
     if (!session) return { error: "Non authentifié" };
 
     const role = await getCallerRole(orgSlug, session.user.id);
@@ -484,7 +483,7 @@ export async function deleteFolder(
     orgSlug: string,
     folderId: string,
 ): Promise<{ error?: string }> {
-    const session = await auth.api.getSession({ headers: await headers() });
+    const session = await getSession();
     if (!session) return { error: "Non authentifié" };
 
     const role = await getCallerRole(orgSlug, session.user.id);

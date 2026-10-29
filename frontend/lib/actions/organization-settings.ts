@@ -1,10 +1,9 @@
 "use server";
 
-import { auth } from "@/lib/auth";
+import { getSession } from "@/lib/session";
 import { db } from "@/lib/db";
 import { r2, R2_BUCKET } from "@/lib/r2";
 import { DeleteObjectCommand } from "@aws-sdk/client-s3";
-import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
 import type { OrgKind } from "./organization";
 import { slugify } from "@/lib/slug";
@@ -66,7 +65,7 @@ async function getCallerRole(orgSlug: string, userId: string): Promise<OrgRole |
 export async function getOrgWithRole(
     orgSlug: string,
 ): Promise<{ org: OrgData; role: OrgRole } | null> {
-    const session = await auth.api.getSession({ headers: await headers() });
+    const session = await getSession();
     if (!session) return null;
 
     const result = await db.query<OrgData & { role: OrgRole }>(
@@ -110,7 +109,7 @@ export async function updateOrganization(
     orgSlug: string,
     data: Partial<Pick<OrgData, "name" | "description" | "kind" | "siret" | "logoUrl">>,
 ): Promise<{ error?: string; newSlug?: string }> {
-    const session = await auth.api.getSession({ headers: await headers() });
+    const session = await getSession();
     if (!session) return { error: "Non authentifié" };
 
     const role = await getCallerRole(orgSlug, session.user.id);
@@ -168,7 +167,7 @@ export async function updateMemberRole(
     membershipId: string,
     newRole: "MANAGER" | "MEMBER",
 ): Promise<{ error?: string }> {
-    const session = await auth.api.getSession({ headers: await headers() });
+    const session = await getSession();
     if (!session) return { error: "Non authentifié" };
 
     const role = await getCallerRole(orgSlug, session.user.id);
@@ -196,7 +195,7 @@ export async function removeMember(
     orgSlug: string,
     membershipId: string,
 ): Promise<{ error?: string }> {
-    const session = await auth.api.getSession({ headers: await headers() });
+    const session = await getSession();
     if (!session) return { error: "Non authentifié" };
 
     const role = await getCallerRole(orgSlug, session.user.id);
@@ -224,7 +223,7 @@ export async function transferFounder(
     orgSlug: string,
     targetMembershipId: string,
 ): Promise<{ error?: string }> {
-    const session = await auth.api.getSession({ headers: await headers() });
+    const session = await getSession();
     if (!session) return { error: "Non authentifié" };
 
     const callerMembership = await db.query<{ id: string; role: OrgRole }>(
@@ -290,7 +289,7 @@ export async function resendInvitation(
     orgSlug: string,
     invitationId: string,
 ): Promise<{ error?: string }> {
-    const session = await auth.api.getSession({ headers: await headers() });
+    const session = await getSession();
     if (!session) return { error: "Non authentifié" };
 
     const callerRole = await getCallerRole(orgSlug, session.user.id);
@@ -347,7 +346,7 @@ export async function cancelInvitation(
     orgSlug: string,
     invitationId: string,
 ): Promise<{ error?: string }> {
-    const session = await auth.api.getSession({ headers: await headers() });
+    const session = await getSession();
     if (!session) return { error: "Non authentifié" };
 
     const callerRole = await getCallerRole(orgSlug, session.user.id);
@@ -368,7 +367,7 @@ export async function inviteMember(
     email: string,
     role: "MANAGER" | "MEMBER",
 ): Promise<{ error?: string }> {
-    const session = await auth.api.getSession({ headers: await headers() });
+    const session = await getSession();
     if (!session) return { error: "Non authentifié" };
 
     const callerRole = await getCallerRole(orgSlug, session.user.id);

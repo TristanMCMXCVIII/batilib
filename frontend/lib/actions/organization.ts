@@ -1,8 +1,7 @@
 "use server";
 
-import { auth } from "@/lib/auth";
+import { getSession } from "@/lib/session";
 import { db } from "@/lib/db";
-import { headers } from "next/headers";
 import { slugify } from "@/lib/slug";
 
 export type OrgKind = "BUILDING_COMPANY" | "CLIENT_COMPANY" | "INDIVIDUAL_CLIENT";
@@ -26,7 +25,7 @@ export async function createOrganization(input: {
     name: string;
     siret?: string;
 }): Promise<{ orgId: string; orgSlug: string }> {
-    const session = await auth.api.getSession({ headers: await headers() });
+    const session = await getSession();
     if (!session) throw new Error("Non authentifié");
 
     const { kind, name, siret } = input;
@@ -61,7 +60,7 @@ export async function createOrganization(input: {
 }
 
 export async function getUserPrimaryOrgSlug(): Promise<string | null> {
-    const session = await auth.api.getSession({ headers: await headers() });
+    const session = await getSession();
     if (!session) return null;
 
     const result = await db.query<{ slug: string }>(
@@ -88,7 +87,7 @@ export type OrgInfo = {
 export type PrimaryOrg = OrgInfo | null;
 
 export async function getUserPrimaryOrg(): Promise<PrimaryOrg> {
-    const session = await auth.api.getSession({ headers: await headers() });
+    const session = await getSession();
     if (!session) return null;
 
     const result = await db.query<{ organizationId: string; slug: string; name: string; kind: string; logoUrl: string | null }>(
@@ -107,7 +106,7 @@ export async function getUserPrimaryOrg(): Promise<PrimaryOrg> {
 }
 
 export async function getUserOrgs(): Promise<OrgInfo[]> {
-    const session = await auth.api.getSession({ headers: await headers() });
+    const session = await getSession();
     if (!session) return [];
 
     const result = await db.query<{ organizationId: string; slug: string; name: string; kind: string; logoUrl: string | null }>(

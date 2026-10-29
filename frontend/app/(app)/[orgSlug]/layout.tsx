@@ -1,6 +1,5 @@
-import { auth } from "@/lib/auth";
+import { getSession } from "@/lib/session";
 import { db } from "@/lib/db";
-import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import AppSidebar from "@/components/layout/app-sidebar";
 import SiteHeader from "@/components/layout/site-header";
@@ -15,7 +14,7 @@ type Props = {
 
 export default async function OrgLayout({ children, params }: Props) {
     const { orgSlug } = await params;
-    const session = await auth.api.getSession({ headers: await headers() });
+    const session = await getSession();
 
     if (!session) redirect("/login");
     if (!session.user.emailVerified) {

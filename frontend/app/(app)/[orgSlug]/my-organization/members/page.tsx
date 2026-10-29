@@ -1,6 +1,5 @@
 import { redirect } from "next/navigation";
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
+import { getSession } from "@/lib/session";
 import { getOrgWithRole, getOrgMembers, getOrgInvitations } from "@/lib/actions/organization-settings";
 import MembersClient from "../_components/members-client";
 
@@ -10,7 +9,7 @@ export default async function MembersPage({ params }: Props) {
     const { orgSlug } = await params;
 
     const [session, data, members, invitations] = await Promise.all([
-        auth.api.getSession({ headers: await headers() }),
+        getSession(),
         getOrgWithRole(orgSlug),
         getOrgMembers(orgSlug),
         getOrgInvitations(orgSlug),

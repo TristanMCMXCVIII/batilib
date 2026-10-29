@@ -1,8 +1,7 @@
 "use server";
 
-import { auth } from "@/lib/auth";
+import { getSession } from "@/lib/session";
 import { db } from "@/lib/db";
-import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { randomUUID } from "crypto";
 
@@ -63,7 +62,7 @@ export async function getWorkPackageTemplates(orgSlug: string): Promise<{
     tradeCategories: TradeCategoryItem[];
     callerRole: OrgRole | null;
 }> {
-    const session = await auth.api.getSession({ headers: await headers() });
+    const session = await getSession();
     if (!session) return { templates: [], tradeCategories: [], callerRole: null };
 
     const callerRole = await getCallerRole(orgSlug, session.user.id);
@@ -105,7 +104,7 @@ export async function createWorkPackageTemplate(
     orgSlug: string,
     data: WorkPackageTemplateFormData,
 ): Promise<{ error?: string; id?: string }> {
-    const session = await auth.api.getSession({ headers: await headers() });
+    const session = await getSession();
     if (!session) return { error: "Non authentifié" };
 
     const role = await getCallerRole(orgSlug, session.user.id);
@@ -147,7 +146,7 @@ export async function updateWorkPackageTemplate(
     templateId: string,
     data: WorkPackageTemplateFormData,
 ): Promise<{ error?: string }> {
-    const session = await auth.api.getSession({ headers: await headers() });
+    const session = await getSession();
     if (!session) return { error: "Non authentifié" };
 
     const role = await getCallerRole(orgSlug, session.user.id);

@@ -1,5 +1,4 @@
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
+import { getSession } from "@/lib/session";
 import { redirect } from "next/navigation";
 import { getUserPrimaryOrgSlug } from "@/lib/actions/organization";
 import OnboardingForm from "./_components/onboarding-form";
@@ -9,7 +8,7 @@ type Props = {
 };
 
 export default async function OnboardingPage({ searchParams }: Props) {
-    const session = await auth.api.getSession({ headers: await headers() });
+    const session = await getSession();
 
     if (!session?.user.emailVerified) {
         redirect(`/verify-email?email=${encodeURIComponent(session?.user.email ?? "")}`);

@@ -1,8 +1,7 @@
 "use server";
 
-import { auth } from "@/lib/auth";
+import { getSession } from "@/lib/session";
 import { db } from "@/lib/db";
-import { headers } from "next/headers";
 import { sendEmail } from "@/lib/mail/send-email";
 
 // ─── Types ────────────────────────────────────────────────
@@ -71,7 +70,7 @@ export async function getProjectMembers(
     orgSlug: string,
     projectSlug: string,
 ): Promise<ProjectMembersData | null> {
-    const session = await auth.api.getSession({ headers: await headers() });
+    const session = await getSession();
     if (!session) return null;
 
     const callerRole = await getCallerRole(orgSlug, session.user.id);
@@ -171,7 +170,7 @@ export async function getProjectClientInvitation(
     orgSlug: string,
     projectSlug: string,
 ): Promise<ProjectClientInvitation | null> {
-    const session = await auth.api.getSession({ headers: await headers() });
+    const session = await getSession();
     if (!session) return null;
 
     const callerRole = await getCallerRole(orgSlug, session.user.id);
@@ -202,7 +201,7 @@ export async function inviteClientToProject(
     projectSlug: string,
     clientEmail: string,
 ): Promise<{ error?: string }> {
-    const session = await auth.api.getSession({ headers: await headers() });
+    const session = await getSession();
     if (!session) return { error: "Non authentifié" };
 
     const callerRole = await getCallerRole(orgSlug, session.user.id);
@@ -277,7 +276,7 @@ export async function resendProjectInvitation(
     orgSlug: string,
     projectSlug: string,
 ): Promise<{ error?: string }> {
-    const session = await auth.api.getSession({ headers: await headers() });
+    const session = await getSession();
     if (!session) return { error: "Non authentifié" };
 
     const callerRole = await getCallerRole(orgSlug, session.user.id);
@@ -341,7 +340,7 @@ export async function cancelProjectInvitation(
     orgSlug: string,
     projectSlug: string,
 ): Promise<{ error?: string }> {
-    const session = await auth.api.getSession({ headers: await headers() });
+    const session = await getSession();
     if (!session) return { error: "Non authentifié" };
 
     const callerRole = await getCallerRole(orgSlug, session.user.id);
@@ -360,7 +359,7 @@ export async function removeProjectClient(
     orgSlug: string,
     projectSlug: string,
 ): Promise<{ error?: string }> {
-    const session = await auth.api.getSession({ headers: await headers() });
+    const session = await getSession();
     if (!session) return { error: "Non authentifié" };
 
     const callerRole = await getCallerRole(orgSlug, session.user.id);

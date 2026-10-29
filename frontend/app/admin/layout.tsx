@@ -1,12 +1,11 @@
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
+import { getSession } from "@/lib/session";
 import { redirect } from "next/navigation";
 import AdminSidebar from "@/components/layout/admin-sidebar";
 import AdminSiteHeader from "@/components/layout/admin-site-header";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
-    const session = await auth.api.getSession({ headers: await headers() });
+    const session = await getSession();
 
     if (!session) redirect("/login");
     if (!session.user.emailVerified) {
