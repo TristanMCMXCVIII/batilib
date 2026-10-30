@@ -79,19 +79,19 @@ function getProjectNavItems(
     switch (role) {
         case "CLIENT":
             return [
-                { label: "Projet",       href: `${base}/editors`,   icon: Pencil,     exact: false },
+                { label: "Chantier",     href: `${base}/chantier`,  icon: Pencil,     exact: false },
                 { label: "Intervenants", href: `${base}/members`,   icon: Users,      exact: false },
                 { label: "Documents",    href: `${base}/documents`, icon: FileText,   exact: false },
             ];
         case "SUBCONTRACTOR":
             return [
-                { label: "Mes lots",     href: `${base}/editors`,   icon: Pencil,     exact: false },
+                { label: "Mes lots",     href: `${base}/chantier`,  icon: Pencil,     exact: false },
                 { label: "Intervenants", href: `${base}/members`,   icon: Users,      exact: false },
                 { label: "Documents",    href: `${base}/documents`, icon: FileText,   exact: false },
             ];
         default: // LEAD
             return [
-                { label: "Éditeur",      href: `${base}/editors`,   icon: Pencil,     exact: false },
+                { label: "Chantier",     href: `${base}/chantier`,  icon: Pencil,     exact: false },
                 { label: "Intervenants", href: `${base}/members`,   icon: Users,      exact: false },
                 { label: "Documents",    href: `${base}/documents`, icon: FileText,   exact: false },
                 { label: "Économie",     href: `${base}/economics`, icon: TrendingUp, exact: false },

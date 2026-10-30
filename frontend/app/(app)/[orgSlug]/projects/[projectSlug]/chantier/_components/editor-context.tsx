@@ -4,6 +4,8 @@ import { createContext, useContext } from "react";
 import type { ProjectEditorData, WorkPackageItem } from "@/lib/actions/project-editor";
 import type { LibraryTree, WorkPackageTemplateRef } from "@/lib/actions/work-item-templates";
 
+export type PriceMode = "ht" | "ttc";
+
 type EditorContextValue = {
     orgSlug: string;
     projectSlug: string;
@@ -12,6 +14,7 @@ type EditorContextValue = {
     workPackages: WorkPackageItem[];
     libraryTree: LibraryTree;
     workPackageTemplates: WorkPackageTemplateRef[];
+    priceMode: PriceMode;
     onRefresh: () => void;
 };
 
@@ -22,12 +25,14 @@ export function EditorProvider({
     orgSlug,
     projectSlug,
     data,
+    priceMode,
     onRefresh,
 }: {
     children: React.ReactNode;
     orgSlug: string;
     projectSlug: string;
     data: ProjectEditorData;
+    priceMode: PriceMode;
     onRefresh: () => void;
 }) {
     return (
@@ -42,6 +47,7 @@ export function EditorProvider({
                 workPackages: data.workPackages,
                 libraryTree: data.libraryTree,
                 workPackageTemplates: data.workPackageTemplates,
+                priceMode,
                 onRefresh,
             }}
         >

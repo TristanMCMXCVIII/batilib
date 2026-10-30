@@ -162,7 +162,7 @@ export default function SpaceView({ spaces, setSpaces }: Props) {
 
     if (spaces.length === 0) {
         return (
-            <div className="page-outer pt-10 pb-10">
+            <div className="pt-10 pb-10">
                 <div className="flex flex-col items-center justify-center rounded-xl bg-subtle border border-border/50 py-20 text-center">
                     <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-background">
                         <Layers className="h-6 w-6 text-muted-foreground" />
@@ -193,7 +193,7 @@ export default function SpaceView({ spaces, setSpaces }: Props) {
             onDragStart={onDragStart}
             onDragEnd={onDragEnd}
         >
-            <div className="page-outer pt-6 pb-10 space-y-2">
+            <div className="pt-6 pb-10 space-y-2">
                 <SortableContext items={rootSpaceIds} strategy={verticalListSortingStrategy}>
                     {spaces.map((space) => (
                         <SpaceSection

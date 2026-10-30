@@ -181,8 +181,8 @@ app/
         page.tsx                    → liste des projets (ProjectsClient)
         [projectSlug]/
           layout.tsx                → resolveProjectAccess → SetActiveProject
-          page.tsx                  → redirect /editors
-          editors/page.tsx          → dispatcher LEAD→LeadEditorClient / CLIENT→ClientProjectView
+          page.tsx                  → redirect /chantier
+          chantier/page.tsx          → dispatcher LEAD→LeadEditorClient / CLIENT→ClientProjectView
           members/page.tsx          → intervenants projet (ProjectMembersClient)
           documents/page.tsx        → (placeholder)
           economics/page.tsx        → (placeholder)
@@ -421,11 +421,11 @@ Section "Invitations en attente" affichée dans la page membres **seulement si**
 ## 17. Éditeur de projet — architecture implémentée (26 oct 2026)
 
 ### Route
-`/[orgSlug]/projects/[projectSlug]/editors` — Server Component (`page.tsx`) + Client Components.
+`/[orgSlug]/projects/[projectSlug]/chantier` — Server Component (`page.tsx`) + Client Components.
 
 ### Fichiers
 ```
-app/(app)/[orgSlug]/projects/[projectSlug]/editors/
+app/(app)/[orgSlug]/projects/[projectSlug]/chantier/
   page.tsx                    → Server Component, dispatcher LEAD/CLIENT via resolveProjectAccess
   _components/
     editor-client.tsx         → LeadEditorClient : toggle vue (espace/lot), state local, EditorProvider

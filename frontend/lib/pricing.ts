@@ -93,13 +93,31 @@ export function computeLotTotals(
 
 // ─── Formatage ────────────────────────────────────────────────────────────────
 
-/** Formate un montant en euros (ex : 1 200 €) */
+/** Formate un montant en euros sans décimales (ex : 1 200 €) */
 export function formatCurrency(value: number): string {
     return new Intl.NumberFormat("fr-FR", {
         style: "currency",
         currency: "EUR",
         minimumFractionDigits: 0,
         maximumFractionDigits: 0,
+    }).format(value);
+}
+
+/** Formate un montant en euros avec 2 décimales (ex : 1 200,50 €) */
+export function formatPrice(value: number): string {
+    return new Intl.NumberFormat("fr-FR", {
+        style: "currency",
+        currency: "EUR",
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+    }).format(value);
+}
+
+/** Formate une quantité avec 2 décimales max, sans zéros inutiles (ex : 28, 2,5) */
+export function formatQty(value: number): string {
+    return new Intl.NumberFormat("fr-FR", {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 2,
     }).format(value);
 }
 

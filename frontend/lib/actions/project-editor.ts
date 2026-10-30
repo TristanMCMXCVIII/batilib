@@ -13,6 +13,7 @@ export type WorkItemStatus = "DRAFT" | "IN_PROGRESS" | "DONE" | "CANCELLED";
 export type WorkItemItem = {
     id: string;
     projectSpaceId: string | null;
+    projectSpaceName: string | null;
     workPackageId: string | null;
     workPackageName: string | null;
     workPackageColor: string | null;
@@ -103,7 +104,7 @@ function buildSpacesTree(
 }
 
 function revalidate(orgSlug: string, projectSlug: string) {
-    revalidatePath(`/${orgSlug}/projects/${projectSlug}/editors`);
+    revalidatePath(`/${orgSlug}/projects/${projectSlug}/chantier`);
 }
 
 // ─── Read ──────────────────────────────────────────────────
@@ -142,6 +143,7 @@ export async function getProjectEditorData(
             `SELECT
                 wi.id,
                 wi."projectSpaceId",
+                ps.name                       AS "projectSpaceName",
                 wi."workPackageId",
                 wp.name                       AS "workPackageName",
                 wp.color::text                AS "workPackageColor",
@@ -159,6 +161,7 @@ export async function getProjectEditorData(
                 wi."tauxTva"::text            AS "tauxTva"
              FROM "WorkItem" wi
              LEFT JOIN "WorkPackage" wp ON wp.id = wi."workPackageId"
+             LEFT JOIN "ProjectSpace" ps ON ps.id = wi."projectSpaceId"
              WHERE wi."projectId" = $1
              ORDER BY wi.position ASC`,
             [project.id],
