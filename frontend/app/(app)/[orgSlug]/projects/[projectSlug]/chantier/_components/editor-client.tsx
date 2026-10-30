@@ -2,10 +2,10 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Layers, Package } from "lucide-react";
+import { Layers, Package, Wrench } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { ProjectEditorData, ProjectSpaceItem, WorkItemItem, WorkPackageItem } from "@/lib/actions/project-editor";
-import { computeWorkItemFinancials, workItemToInput, formatCurrency, formatPrice, formatPercent } from "@/lib/pricing";
+import { computeWorkItemFinancials, workItemToInput, formatPrice, formatPercent } from "@/lib/pricing";
 import { EditorProvider, type PriceMode } from "./editor-context";
 import SpaceView from "./space-view";
 import PackageView from "./package-view";
@@ -115,38 +115,40 @@ export default function LeadEditorClient({ orgSlug, projectSlug, data }: Props) 
                         <div>
                             <p className="caption font-medium mb-3">Récapitulatif</p>
                             {projectTotals.totalAfficheHt > 0 ? (
-                                <div className="space-y-3">
-                                    <div>
-                                        <p className="text-xl font-bold text-foreground tabular-nums leading-tight">
-                                            {formatPrice(projectTotals.totalAfficheHt)}
-                                        </p>
-                                        <p className="text-xs text-muted-foreground mt-0.5">
-                                            Total HT
-                                            {projectTotals.effectiveMarkup > 0 && (
-                                                <span className="ml-1.5 font-medium text-foreground">
-                                                    +{formatPercent(projectTotals.effectiveMarkup)}
-                                                </span>
-                                            )}
-                                        </p>
-                                    </div>
-                                    <div>
-                                        <p className="text-sm font-medium tabular-nums text-foreground">
-                                            {formatCurrency(projectTotals.totalTtc)}
-                                        </p>
-                                        <p className="text-xs text-muted-foreground">Total TTC</p>
-                                    </div>
-                                    {projectTotals.totalCostHt > 0 && (
+                                <div className="space-y-2.5">
+                                    {/* Montant principal — suit le toggle HT/TTC */}
+                                    <p className="text-xl font-bold text-foreground tabular-nums leading-tight">
+                                        {formatPrice(priceMode === "ht" ? projectTotals.totalAfficheHt : projectTotals.totalTtc)}
+                                        <sup className="text-[0.55em] font-semibold ml-px tracking-wide">
+                                            {priceMode.toUpperCase()}
+                                        </sup>
+                                    </p>
+                                    {/* Marge */}
+                                    {(projectTotals.totalAfficheHt - projectTotals.totalCostHt) > 0 && (
                                         <div>
-                                            <p className="text-sm tabular-nums text-muted-foreground">
-                                                {formatCurrency(projectTotals.totalCostHt)}
+                                            <p className="text-sm font-medium tabular-nums text-foreground">
+                                                Marge {formatPrice(projectTotals.totalAfficheHt - projectTotals.totalCostHt)}
+                                                <sup className="text-[0.55em] font-semibold ml-px">HT</sup>
                                             </p>
-                                            <p className="text-xs text-muted-foreground">Coût de revient</p>
+                                            <p className="text-xs text-muted-foreground">
+                                                soit {formatPercent(projectTotals.effectiveMarkup)} de marge
+                                            </p>
                                         </div>
                                     )}
-                                    <div className="pt-2 border-t border-border flex flex-col gap-1">
-                                        <span className="caption">{projectTotals.nbOuvrages} ouvrage{projectTotals.nbOuvrages !== 1 ? "s" : ""}</span>
-                                        <span className="caption">{projectTotals.nbLots} lot{projectTotals.nbLots !== 1 ? "s" : ""}</span>
-                                        <span className="caption">{projectTotals.nbSpaces} espace{projectTotals.nbSpaces !== 1 ? "s" : ""}</span>
+                                    {/* Compteurs */}
+                                    <div className="pt-2 border-t border-border flex items-center gap-3">
+                                        <span className="flex items-center gap-1 caption">
+                                            <Wrench className="h-3 w-3" />
+                                            {projectTotals.nbOuvrages}
+                                        </span>
+                                        <span className="flex items-center gap-1 caption">
+                                            <Package className="h-3 w-3" />
+                                            {projectTotals.nbLots}
+                                        </span>
+                                        <span className="flex items-center gap-1 caption">
+                                            <Layers className="h-3 w-3" />
+                                            {projectTotals.nbSpaces}
+                                        </span>
                                     </div>
                                 </div>
                             ) : (

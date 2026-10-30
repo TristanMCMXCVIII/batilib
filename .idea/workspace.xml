@@ -6,8 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="91bb42b5-23ba-4990-b282-3e17123ba51e" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/app/(app)/[orgSlug]/projects/[projectSlug]/chantier/_components/space-section.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/app/(app)/[orgSlug]/projects/[projectSlug]/chantier/_components/space-section.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/app/(app)/[orgSlug]/projects/[projectSlug]/chantier/_components/work-package-section.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/app/(app)/[orgSlug]/projects/[projectSlug]/chantier/_components/work-package-section.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/app/(app)/[orgSlug]/projects/[projectSlug]/chantier/_components/editor-client.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/app/(app)/[orgSlug]/projects/[projectSlug]/chantier/_components/editor-client.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -69,7 +68,7 @@
       <workItem from="1792073546981" duration="1027000" />
       <workItem from="1792081384549" duration="152070000" />
       <workItem from="1793272782576" duration="677000" />
-      <workItem from="1793274866140" duration="29569000" />
+      <workItem from="1793274866140" duration="31895000" />
     </task>
     <servers />
   </component>
