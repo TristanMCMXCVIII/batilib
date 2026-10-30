@@ -94,7 +94,7 @@ export default function SpaceSection({ space, depth }: Props) {
     return (
         <div ref={setNodeRef} style={style} {...attributes} className="mb-3">
             <div
-                className="rounded-lg border border-border bg-neutral-100/50 overflow-hidden"
+                className="rounded-lg border border-border bg-neutral-100/30 overflow-hidden"
                 style={{ marginLeft: depth * 20 }}
             >
                 {/* En-tête de l'espace */}

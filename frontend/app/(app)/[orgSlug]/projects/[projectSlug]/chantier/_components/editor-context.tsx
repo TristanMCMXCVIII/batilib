@@ -11,6 +11,7 @@ type EditorContextValue = {
     projectSlug: string;
     projectId: string;
     projectDefaultMarginRate: number | null;
+    leadOrg: { name: string; logoUrl: string | null };
     workPackages: WorkPackageItem[];
     libraryTree: LibraryTree;
     workPackageTemplates: WorkPackageTemplateRef[];
@@ -44,6 +45,7 @@ export function EditorProvider({
                 projectDefaultMarginRate: data.project.defaultMarginRate
                     ? parseFloat(data.project.defaultMarginRate)
                     : null,
+                leadOrg: data.leadOrg,
                 workPackages: data.workPackages,
                 libraryTree: data.libraryTree,
                 workPackageTemplates: data.workPackageTemplates,

@@ -48,11 +48,14 @@ export type WorkPackageItem = {
     color: string | null;
     marginRate: string | null;
     position: number;
+    assignedOrgName: string | null;
+    assignedOrgLogoUrl: string | null;
     workItems: WorkItemItem[];
 };
 
 export type ProjectEditorData = {
     project: { id: string; name: string; slug: string; defaultMarginRate: string | null };
+    leadOrg: { name: string; logoUrl: string | null };
     spaces: ProjectSpaceItem[];
     workPackages: WorkPackageItem[];
     libraryTree: LibraryTree;
@@ -119,8 +122,12 @@ export async function getProjectEditorData(
     const membershipId = await getMembership(orgSlug, session.user.id);
     if (!membershipId) return null;
 
-    const projectResult = await db.query<{ id: string; name: string; slug: string; defaultMarginRate: string | null }>(
-        `SELECT p.id, p.name, p.slug, p."defaultMarginRate"::text AS "defaultMarginRate"
+    const projectResult = await db.query<{
+        id: string; name: string; slug: string; defaultMarginRate: string | null;
+        leadOrgName: string; leadOrgLogoUrl: string | null;
+    }>(
+        `SELECT p.id, p.name, p.slug, p."defaultMarginRate"::text AS "defaultMarginRate",
+                o.name AS "leadOrgName", o."logoUrl" AS "leadOrgLogoUrl"
          FROM "Project" p
          JOIN "ProjectParticipant" pp ON pp."projectId" = p.id
          JOIN "Organization" o ON o.id = pp."organizationId"
@@ -129,7 +136,7 @@ export async function getProjectEditorData(
         [projectSlug, orgSlug],
     );
     if (!projectResult.rows.length) return null;
-    const project = projectResult.rows[0];
+    const { leadOrgName, leadOrgLogoUrl, ...project } = projectResult.rows[0];
 
     const [spacesResult, itemsResult, packagesResult] = await Promise.all([
         db.query<{ id: string; parentId: string | null; name: string; position: number }>(
@@ -166,11 +173,19 @@ export async function getProjectEditorData(
              ORDER BY wi.position ASC`,
             [project.id],
         ),
-        db.query<{ id: string; name: string; description: string | null; color: string | null; marginRate: string | null; position: number }>(
-            `SELECT id, name, description, color::text AS color, "marginRate"::text AS "marginRate", position
-             FROM "WorkPackage"
-             WHERE "projectId" = $1
-             ORDER BY position ASC`,
+        db.query<{
+            id: string; name: string; description: string | null; color: string | null;
+            marginRate: string | null; position: number;
+            assignedOrgName: string | null; assignedOrgLogoUrl: string | null;
+        }>(
+            `SELECT wp.id, wp.name, wp.description, wp.color::text AS color,
+                    wp."marginRate"::text AS "marginRate", wp.position,
+                    ao.name AS "assignedOrgName", ao."logoUrl" AS "assignedOrgLogoUrl"
+             FROM "WorkPackage" wp
+             LEFT JOIN "ProjectParticipant" pp ON pp.id = wp."assignedProjectParticipantId"
+             LEFT JOIN "Organization" ao ON ao.id = pp."organizationId"
+             WHERE wp."projectId" = $1
+             ORDER BY wp.position ASC`,
             [project.id],
         ),
     ]);
@@ -197,6 +212,7 @@ export async function getProjectEditorData(
 
     return {
         project,
+        leadOrg: { name: leadOrgName, logoUrl: leadOrgLogoUrl },
         spaces: buildSpacesTree(spacesResult.rows, itemsBySpace),
         workPackages,
         libraryTree,
