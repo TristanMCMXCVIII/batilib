@@ -1,6 +1,6 @@
 # CLAUDE.md — BatiLib
 
-> Document d'entrée pour les agents de code. Reflète l'état réel du dépôt au 29 octobre 2026.
+> Document d'entrée pour les agents de code. Reflète l'état réel du dépôt au 31 octobre 2026.
 > **Inspecter le code avant toute modification.** Ce fichier fait foi sur `docs/PROJECT_CONTEXT.md` pour l'état courant.
 
 ---
@@ -90,6 +90,9 @@ pnpm prisma migrate dev --name <nom>   # seulement si migration nécessaire
 
 ### Couleurs
 - **`LotColor`** (enum) : `NAVY | BLUE | SKY | CYAN | INDIGO | VIOLET | PURPLE | FUCHSIA | PINK | ROSE | RED | ORANGE | AMBER | YELLOW | SLATE | ZINC | STONE`. Utilitaires dans `frontend/lib/lot-colors.ts` (`LOT_COLORS`, `LOT_COLOR_MAP`). Cast SQL : `$1::"LotColor"`.
+- **`DocumentCategory`** (enum) : `PLAN | ADMIN | FINANCE | TECHNIQUE | EXPERTISE | CONTRACT | PV | PHOTO | OTHER`. Labels FR dans `frontend/lib/document-constants.ts`.
+- **`DocumentScope`** (enum) : `GLOBAL | CLIENT | WORKPACKAGE`. Détermine qui voit le document.
+- **`DocumentRequestStatus`** (enum) : `PENDING | FULFILLED | CANCELLED`.
 
 ### Organisation (multi-tenant)
 - **`Organization`** : `id`, `slug` (unique global, immutable), `kind` (enum `OrganizationKind`: `BUILDING_COMPANY` / `CLIENT_COMPANY` / `INDIVIDUAL_CLIENT`), `name`, `description`, `legalName`, `siren`, `siret`, `vatNumber`, `logoUrl`.
@@ -114,6 +117,13 @@ pnpm prisma migrate dev --name <nom>   # seulement si migration nécessaire
 - **`LibraryFolder`** : dossier hiérarchique N niveaux, `workPackageTemplateId?` (tag sémantique "ce dossier = ce lot").
 - **`WorkItemTemplate`** : ouvrage modèle, `folderId?`, `name`, `unit`, `defaultUnitPrice?`, `estimatedUnitCost?`, `defaultTaxRate?`, `quantityExpression?`, `defaultChecklist` (Json), `position`.
 - **`WorkPackageTemplate`** : blueprint de lot, `folderId?`, `name`, `color?` (LotColor), `defaultMarginRate?`, `position`. Relation inverse : `taggedFolders LibraryFolder[]`.
+
+### Documents projet
+- **`ProjectDocument`** : `id`, `projectId`, `uploadedByMembershipId`, `name`, `fileKey` (clé R2), `mimeType`, `sizeBytes` (BIGINT), `category` (`DocumentCategory`), `scope` (`DocumentScope`), `workPackageId?`, `createdAt`.
+- **`ProjectDocumentRequest`** : `id`, `projectId`, `label`, `category`, `requestedByMembershipId`, `requestedFromRole` (`ProjectParticipantRole`), `requestedFromWorkPackageId?`, `dueDate?`, `status` (`DocumentRequestStatus`), `createdAt`, `updatedAt`.
+- Stockage : `SUM(sizeBytes)` dynamique — imputé à l'org LEAD. Pas de colonne dénormalisée.
+- Filtrage scope : LEAD voit tout · CLIENT voit `GLOBAL + CLIENT` · SUBCONTRACTOR voit tout pour l'instant.
+- Constantes (labels) dans `frontend/lib/document-constants.ts` — **ne jamais exporter des objets/constantes depuis un fichier `"use server"`** (voir section 12).
 
 ### Règles d'autorisation organisation (côté serveur)
 Toutes les mutations organisation vérifient le rôle via `getCallerRole()` dans `frontend/lib/actions/organization-settings.ts`. Seul le `FOUNDER` peut : modifier l'identité, changer les rôles, retirer des membres, inviter, transférer le rôle fondateur. Le transfert de fondateur est une transaction atomique (BEGIN/COMMIT).
@@ -184,7 +194,7 @@ app/
           page.tsx                  → redirect /chantier
           chantier/page.tsx          → dispatcher LEAD→LeadEditorClient / CLIENT→ClientProjectView
           members/page.tsx          → intervenants projet (ProjectMembersClient)
-          documents/page.tsx        → (placeholder)
+          documents/page.tsx        → getProjectDocuments → DocumentsClient (upload, demandes, stockage)
           economics/page.tsx        → (placeholder)
       library/
         layout.tsx                  → layout onglets bibliothèque
@@ -203,6 +213,7 @@ app/
     auth/[...all]/route.ts          → Better Auth handler
     upload/avatar/route.ts          → POST upload avatar → R2
     upload/org-logo/route.ts        → POST upload logo org → R2
+    upload/project-document/route.ts → POST upload doc projet → R2 (bloque extensions exécutables, pas de limite taille)
     files/[...key]/route.ts         → GET proxy R2 → signed URL (302)
 ```
 
@@ -238,6 +249,7 @@ Fichiers actions :
 - `project-invitation.ts` : `getProjectInvitationPreview`, `acceptProjectInvitation`, `declineProjectInvitation`
 - `work-item-templates.ts` : `getLibraryTree`, `createWorkItemTemplate`, `updateWorkItemTemplate`, `deleteWorkItemTemplate`, `reorderItems`, `reorderFolders`, `createFolder`, `renameFolder`, `setFolderWpt`, `deleteFolder`
 - `work-package-templates.ts` : WPT CRUD
+- `project-documents.ts` : `getProjectDocuments`, `registerProjectDocument`, `deleteProjectDocument`, `createDocumentRequest`, `cancelDocumentRequest`, `fulfillDocumentRequest`
 - `invitation.ts` : invitations organisation (accepter/refuser depuis /join)
 - `work-templates.ts` : **déprécié** — re-exporte work-item-templates.ts (ne pas utiliser)
 
@@ -264,10 +276,17 @@ Fonctions implémentées dans `ProfileClient` :
 - Supprime l'ancien avatar R2 si `user.image` commence par `/api/files/`
 - Retourne `{ url: "/api/files/avatars/..." }`
 
+### Upload document projet
+- `POST /api/upload/project-document` : auth requise, tous types sauf exécutables (.exe/.sh/.dll/.apk etc.), pas de limite de taille.
+- Vérifie l'accès orgSlug+projectSlug côté serveur (session + participant).
+- Clé R2 : `documents/{orgId}/{projectId}/{uuid}.{ext}`
+- Retourne `{ fileKey, sizeBytes, mimeType }` — à passer ensuite à `registerProjectDocument`.
+- **Pas de compression** (contrairement aux avatars) — les fichiers sont stockés tels quels.
+
 ### Accès fichiers
 - `GET /api/files/[...key]` : génère une URL signée R2 (`expiresIn: 3600`) → redirect 302.
 - Avatars : accès public intentionnel (pas de vérification de session).
-- **Pour les futurs fichiers sensibles** (docs, factures) : ajouter vérification session + droits dans cette route avant de générer l'URL.
+- **Docs projet** : ajouter vérification session + droits participant dans cette route avant démo client (actuellement public via URL signée).
 
 ---
 
@@ -277,6 +296,7 @@ Fonctions implémentées dans `ProfileClient` :
 **Usages actuels** :
 - OTP vérification email (via plugin `emailOTP` de Better Auth)
 - Lien reset mot de passe (via `emailAndPassword.sendResetPassword`)
+- Notification demande de document (via `createDocumentRequest` — envoi aux FOUNDER/MANAGER de l'org cible, fire-and-forget)
 
 Template OTP : HTML inline simple (no-framework). Clé `BREVO_API_KEY` côté serveur uniquement.
 
@@ -330,10 +350,11 @@ Template OTP : HTML inline simple (no-framework). Clé `BREVO_API_KEY` côté se
 5. **Migrations** : inspecter le SQL avant `prisma migrate dev`. Jamais de `migrate reset` sans approbation explicite.
 6. **Secrets** : jamais dans le code ni les commits. `.env.local` et `.env` dans `.gitignore`.
 7. **Nest** : aucun endpoint authentifié pour l'instant — ne pas exposer d'API métier sensible sans guard d'auth.
+8. **Fichiers `"use server"`** : ne peuvent exporter **que des `async function`** et des `export type` (effacés à la compilation). Ne jamais exporter des constantes/objets — les mettre dans un fichier séparé sans directive (ex. `lib/document-constants.ts`).
 
 ---
 
-## 13. État fonctionnel — 29 octobre 2026
+## 13. État fonctionnel — 31 octobre 2026
 
 | Fonctionnalité | Statut |
 |----------------|--------|
@@ -363,6 +384,8 @@ Template OTP : HTML inline simple (no-framework). Clé `BREVO_API_KEY` côté se
 | Invitation client sur un projet (`ProjectInvitation` + `/join-project`) | ✅ Fait |
 | Dispatcher LEAD → `LeadEditorClient` / CLIENT → `ClientProjectView` | ✅ Fait |
 | Sidebar nav projet role-aware (LEAD/CLIENT/SUBCONTRACTOR) | ✅ Fait |
+| Documents projet : upload R2, scopes (GLOBAL/CLIENT/LOT), catégories, demandes + email Brevo | ✅ Fait |
+| Documents projet : auto-fulfill demande à l'upload, suppression demandes résolues | ✅ Fait |
 | Nest : endpoints métier authentifiés | ❌ Non fait |
 
 ---
@@ -370,9 +393,13 @@ Template OTP : HTML inline simple (no-framework). Clé `BREVO_API_KEY` côté se
 ## 14. Prochaines priorités
 
 1. **Filtre CLIENT** : dans `getProjectEditorData`, ne pas retourner les champs financiers (`puEstimeHt`, `puSubcontractorHt`, `marginRate`, etc.) si `callerParticipantRole === "CLIENT"`. **Blocker avant démo client.**
-2. **defaultMarginRate projet** : aucune UI pour le définir — à ajouter dans les settings projet.
-3. **API Nest** : guard d'auth (valider le cookie de session Better Auth) avant tout endpoint métier.
-4. **Éditeur — temps réel** : Socket.io Gateway Nest, rooms par projet (voir section 16).
+2. **Accès fichiers R2 sécurisé** : `GET /api/files/[...key]` est actuellement public — ajouter vérification session + droits participant avant démo client (surtout pour les docs finance/contrats).
+3. **hasClient réel** : dans `DocumentsClient`, `hasClient` est hardcodé à `true` — implémenter une query `resolveProjectAccess` côté page pour passer la vraie valeur (ou ajouter un champ dans `ProjectDocumentsData`).
+4. **Filtre SUBCONTRACTOR documents** : actuellement SUBCONTRACTOR voit tous les docs — implémenter le filtrage (GLOBAL + leurs lots assignés).
+5. **Jauge stockage organisation** : page `my-organization/` — total `SUM(sizeBytes)` sur tous les projets LEAD + quota/upsell.
+6. **defaultMarginRate projet** : aucune UI pour le définir — à ajouter dans les settings projet.
+7. **API Nest** : guard d'auth (valider le cookie de session Better Auth) avant tout endpoint métier.
+8. **Éditeur — temps réel** : Socket.io Gateway Nest, rooms par projet (voir section 16).
 
 ---
 

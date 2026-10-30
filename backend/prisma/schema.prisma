@@ -148,6 +148,8 @@ model OrganizationMembership {
   @@unique([organizationId, userId])
 
   projectParticipantMembers ProjectParticipantMember[]
+  uploadedDocuments         ProjectDocument[]          @relation("UploadedDocuments")
+  requestedDocuments        ProjectDocumentRequest[]   @relation("RequestedDocuments")
 }
 
 model OrganizationInvitation {
@@ -202,6 +204,8 @@ model Project {
   workPackages      WorkPackage[]
   workItems         WorkItem[]
   clientInvitation  ProjectInvitation?
+  documents         ProjectDocument[]
+  documentRequests  ProjectDocumentRequest[]
 
   @@unique([leadOrganizationId, slug])
 }
@@ -255,6 +259,30 @@ enum WorkItemStatus {
   CANCELLED
 }
 
+enum DocumentCategory {
+  PLAN
+  ADMIN
+  FINANCE
+  TECHNIQUE
+  EXPERTISE
+  CONTRACT
+  PV
+  PHOTO
+  OTHER
+}
+
+enum DocumentScope {
+  GLOBAL
+  CLIENT
+  WORKPACKAGE
+}
+
+enum DocumentRequestStatus {
+  PENDING
+  FULFILLED
+  CANCELLED
+}
+
 model ProjectSpace {
   id        String        @id @default(cuid())
   projectId String
@@ -286,8 +314,10 @@ model WorkPackage {
   createdAt                      DateTime             @default(now())
   updatedAt                      DateTime             @updatedAt
 
-  tradeCategories WorkPackageTradeCategory[]
-  workItems       WorkItem[]
+  tradeCategories  WorkPackageTradeCategory[]
+  workItems        WorkItem[]
+  documents        ProjectDocument[]
+  documentRequests ProjectDocumentRequest[] @relation("RequestedFromWP")
 }
 
 model WorkPackageTradeCategory {
@@ -397,4 +427,38 @@ model Verification {
   expiresAt  DateTime
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
+}
+
+model ProjectDocument {
+  id                     String                 @id @default(cuid())
+  projectId              String
+  project                Project                @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  uploadedByMembershipId String
+  uploadedBy             OrganizationMembership @relation("UploadedDocuments", fields: [uploadedByMembershipId], references: [id], onDelete: Restrict)
+  name                   String
+  fileKey                String
+  mimeType               String
+  sizeBytes              BigInt
+  category               DocumentCategory       @default(OTHER)
+  scope                  DocumentScope          @default(GLOBAL)
+  workPackageId          String?
+  workPackage            WorkPackage?           @relation(fields: [workPackageId], references: [id], onDelete: SetNull)
+  createdAt              DateTime               @default(now())
+}
+
+model ProjectDocumentRequest {
+  id                         String                 @id @default(cuid())
+  projectId                  String
+  project                    Project                @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  label                      String
+  category                   DocumentCategory       @default(OTHER)
+  requestedByMembershipId    String
+  requestedBy                OrganizationMembership @relation("RequestedDocuments", fields: [requestedByMembershipId], references: [id], onDelete: Restrict)
+  requestedFromRole          ProjectParticipantRole
+  requestedFromWorkPackageId String?
+  requestedFromWorkPackage   WorkPackage?           @relation("RequestedFromWP", fields: [requestedFromWorkPackageId], references: [id], onDelete: SetNull)
+  dueDate                    DateTime?
+  status                     DocumentRequestStatus  @default(PENDING)
+  createdAt                  DateTime               @default(now())
+  updatedAt                  DateTime               @updatedAt
 }
