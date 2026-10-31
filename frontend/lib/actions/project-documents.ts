@@ -70,6 +70,7 @@ export type ProjectDocumentsData = {
 
 function revalidate(orgSlug: string, projectSlug: string) {
     revalidatePath(`/${orgSlug}/projects/${projectSlug}/documents`);
+    revalidatePath(`/${orgSlug}/documents`);
 }
 
 async function getMembershipId(orgSlug: string, userId: string): Promise<string | null> {
@@ -448,6 +449,99 @@ export async function deleteDocumentRequest(
 
     revalidate(orgSlug, projectSlug);
     return {};
+}
+
+// ─── Org-level documents ─────────────────────────────────────────────────────
+
+export type OrgDocumentItem = DocumentItem & {
+    projectId: string;
+    projectSlug: string;
+    projectName: string;
+};
+
+export type OrgDocumentsData = {
+    documents: OrgDocumentItem[];
+    storageBytes: string;
+    projects: { id: string; slug: string; name: string }[];
+};
+
+export async function getOrgDocuments(orgSlug: string): Promise<OrgDocumentsData | null> {
+    const session = await getSession();
+    if (!session) return null;
+
+    const orgRow = await db.query<{ id: string }>(
+        `SELECT o.id FROM "Organization" o
+         JOIN "OrganizationMembership" om ON om."organizationId" = o.id
+         WHERE o.slug = $1 AND om."userId" = $2 AND om.status = 'ACTIVE'
+         LIMIT 1`,
+        [orgSlug, session.user.id],
+    );
+    if (!orgRow.rows.length) return null;
+    const orgId = orgRow.rows[0].id;
+
+    const [docsResult, storageResult, projectsResult] = await Promise.all([
+        db.query<OrgDocumentItem>(
+            `SELECT
+                pd.id,
+                pd.name,
+                pd."fileKey",
+                pd."mimeType",
+                pd."sizeBytes"::text        AS "sizeBytes",
+                pd.category::text           AS category,
+                pd.scope::text              AS scope,
+                pd."workPackageId",
+                wp.name                     AS "workPackageName",
+                wp.color::text              AS "workPackageColor",
+                o_up.name                   AS "uploaderOrgName",
+                pp_up.role::text            AS "uploaderParticipantRole",
+                pd."createdAt"::text        AS "createdAt",
+                pd."linkedRequestNote",
+                pd."linkedRequestedByOrgName",
+                p.id                        AS "projectId",
+                p.slug                      AS "projectSlug",
+                p.name                      AS "projectName"
+             FROM "ProjectDocument" pd
+             JOIN "Project" p ON p.id = pd."projectId"
+             JOIN "ProjectParticipant" pp_lead
+                 ON pp_lead."projectId" = p.id
+                 AND pp_lead."organizationId" = $1
+                 AND pp_lead.role = 'LEAD'
+             JOIN "OrganizationMembership" om ON om.id = pd."uploadedByMembershipId"
+             JOIN "Organization" o_up ON o_up.id = om."organizationId"
+             LEFT JOIN "ProjectParticipant" pp_up
+                 ON pp_up."projectId" = pd."projectId"
+                 AND pp_up."organizationId" = om."organizationId"
+             LEFT JOIN "WorkPackage" wp ON wp.id = pd."workPackageId"
+             ORDER BY pd."createdAt" DESC`,
+            [orgId],
+        ),
+        db.query<{ total: string }>(
+            `SELECT COALESCE(SUM(pd."sizeBytes"), 0)::text AS total
+             FROM "ProjectDocument" pd
+             JOIN "Project" p ON p.id = pd."projectId"
+             JOIN "ProjectParticipant" pp
+                 ON pp."projectId" = p.id
+                 AND pp."organizationId" = $1
+                 AND pp.role = 'LEAD'`,
+            [orgId],
+        ),
+        db.query<{ id: string; slug: string; name: string }>(
+            `SELECT DISTINCT p.id, p.slug, p.name
+             FROM "Project" p
+             JOIN "ProjectParticipant" pp
+                 ON pp."projectId" = p.id
+                 AND pp."organizationId" = $1
+                 AND pp.role = 'LEAD'
+             ORDER BY p.name ASC`,
+            [orgId],
+        ),
+    ]);
+
+    return {
+        documents: docsResult.rows,
+        storageBytes: storageResult.rows[0]?.total ?? "0",
+        projects: projectsResult.rows,
+    };
 }
 
 // ─── Email ───────────────────────────────────────────────────────────────────
