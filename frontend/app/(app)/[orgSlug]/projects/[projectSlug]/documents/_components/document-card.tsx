@@ -11,6 +11,7 @@ import {
     Download,
     Trash2,
     ExternalLink,
+    Lock,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -34,6 +35,13 @@ import { DOCUMENT_CATEGORIES, DOCUMENT_SCOPES } from "@/lib/document-constants";
 import { LOT_COLOR_MAP } from "@/lib/lot-colors";
 import type { LotColorKey } from "@/lib/lot-colors";
 import { cn } from "@/lib/utils";
+
+function participantRoleLabel(role: string): string {
+    if (role === "LEAD") return "Pilote";
+    if (role === "CLIENT") return "Client";
+    if (role === "SUBCONTRACTOR") return "Sous-traitant";
+    return role;
+}
 
 function FileIcon({ mimeType, className }: { mimeType: string; className?: string }) {
     if (mimeType.startsWith("image/")) return <Image className={className} />;
@@ -138,12 +146,29 @@ export function DocumentCard({ doc, isLead, orgSlug, projectSlug, onRefresh }: P
                             </Badge>
                         )}
                     </div>
-                    <p className="caption mt-0.5">
+                    <p className="caption mt-0.5 flex items-center gap-1.5 flex-wrap">
                         {formatBytes(doc.sizeBytes)}
-                        <span className="mx-1.5">·</span>
-                        {doc.uploaderName}
-                        <span className="mx-1.5">·</span>
+                        <span>·</span>
+                        <span>
+                            {doc.uploaderOrgName}
+                            {doc.uploaderParticipantRole && (
+                                <span className="text-muted-foreground/70"> ({participantRoleLabel(doc.uploaderParticipantRole)})</span>
+                            )}
+                        </span>
+                        <span>·</span>
                         {formatDate(doc.createdAt)}
+                        {doc.linkedRequestNote && (
+                            <>
+                                <span>·</span>
+                                <span className="flex items-center gap-1">
+                                    <Lock className="h-3 w-3 shrink-0" />
+                                    {`«\u00a0${doc.linkedRequestNote}\u00a0»`}
+                                    {doc.linkedRequestedByOrgName && (
+                                        <span className="text-muted-foreground/70">à la demande de {doc.linkedRequestedByOrgName}</span>
+                                    )}
+                                </span>
+                            </>
+                        )}
                     </p>
                 </div>
 

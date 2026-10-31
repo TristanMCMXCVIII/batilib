@@ -2,19 +2,40 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Upload, MessageSquarePlus, FileX } from "lucide-react";
+import { Upload, MessageSquarePlus, FileX, Inbox } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { StorageBar } from "./storage-bar";
 import { DocumentCard } from "./document-card";
 import { RequestCard } from "./request-card";
+import { FilterPill } from "@/components/ui/filter-pill";
 import { UploadDocumentSheet } from "./upload-document-sheet";
 import { RequestDocumentSheet } from "./request-document-sheet";
 import { DOCUMENT_CATEGORIES, type DocumentCategory } from "@/lib/document-constants";
 import type { ProjectDocumentsData } from "@/lib/actions/project-documents";
-import { cn } from "@/lib/utils";
 
-type FilterCategory = "ALL" | DocumentCategory;
+// ─── Helpers ─────────────────────────────────────────────────────────────────
+
+function isDueDatePast(dueDateStr: string | null): boolean {
+    if (!dueDateStr) return false;
+    return new Date(dueDateStr) < new Date();
+}
+
+// ─── Filter options ───────────────────────────────────────────────────────────
+
+const REQUEST_STATUS_OPTIONS = [
+    { value: "PENDING", label: "En attente" },
+    { value: "FULFILLED", label: "Fourni" },
+    { value: "OVERDUE", label: "En retard" },
+];
+
+const REQUEST_RECIPIENT_OPTIONS = [
+    { value: "CLIENT", label: "Client" },
+    { value: "LEAD", label: "Pilote" },
+    { value: "SUBCONTRACTOR", label: "Lot" },
+];
+
+// ─── Component ───────────────────────────────────────────────────────────────
 
 type Props = {
     orgSlug: string;
@@ -28,34 +49,56 @@ export default function DocumentsClient({ orgSlug, projectSlug, projectName, ini
     const [data, setData] = useState(initialData);
     const [uploadOpen, setUploadOpen] = useState(false);
     const [requestOpen, setRequestOpen] = useState(false);
-    const [activeCategory, setActiveCategory] = useState<FilterCategory>("ALL");
+
+    // Filtres demandes
+    const [statusFilter, setStatusFilter] = useState<string[]>([]);
+    const [recipientFilter, setRecipientFilter] = useState<string[]>([]);
+
+    // Filtres documents
+    const [categoryFilter, setCategoryFilter] = useState<string[]>([]);
 
     useEffect(() => {
         setData(initialData);
     }, [initialData]);
 
     const isLead = data.callerParticipantRole === "LEAD";
+    const hasClient = true;
 
-    // Détermine si un client participant existe sur ce projet
-    // On le déduit des demandes ou de la liste de docs (pas d'accès direct ici)
-    // Pour les besoins du sheet, on passe hasClient=true si LEAD (il a l'info)
-    // En réalité il faudrait le vérifier server-side — pour l'instant on laisse le sheet gérer le cas
-    const hasClient = true; // le sheet désactivera le bouton "Client" si pas de participant
+    // ─── Requests filtering ───────────────────────────────────────────────────
 
-    const pendingRequests = data.requests.filter((r) => r.status === "PENDING");
-    const fulfilledRequests = data.requests.filter((r) => r.status === "FULFILLED");
+    const pendingCount = data.requests.filter((r) => r.status === "PENDING").length;
+
+    const filteredRequests = data.requests.filter((r) => {
+        if (statusFilter.length > 0) {
+            const isOverdue = r.status === "PENDING" && isDueDatePast(r.dueDate);
+            const matches = statusFilter.some(
+                (s) =>
+                    (s === "PENDING" && r.status === "PENDING" && !isOverdue) ||
+                    (s === "FULFILLED" && r.status === "FULFILLED") ||
+                    (s === "OVERDUE" && isOverdue),
+            );
+            if (!matches) return false;
+        }
+        if (recipientFilter.length > 0 && !recipientFilter.includes(r.requestedFromRole)) {
+            return false;
+        }
+        return true;
+    });
+
+    // ─── Documents filtering ──────────────────────────────────────────────────
 
     const filteredDocs =
-        activeCategory === "ALL"
-            ? data.documents
-            : data.documents.filter((d) => d.category === activeCategory);
+        categoryFilter.length > 0
+            ? data.documents.filter((d) => categoryFilter.includes(d.category))
+            : data.documents;
 
-    // Catégories présentes dans les docs (pour afficher uniquement les filtres pertinents)
-    const presentCategories = new Set(data.documents.map((d) => d.category));
-    const filterCategories: FilterCategory[] = [
-        "ALL",
-        ...(Object.keys(DOCUMENT_CATEGORIES) as DocumentCategory[]).filter((c) => presentCategories.has(c)),
-    ];
+    // Options catégories présentes uniquement
+    const presentCategoryOptions = (Object.entries(DOCUMENT_CATEGORIES) as [DocumentCategory, { label: string }][])
+        .filter(([key]) => data.documents.some((d) => d.category === key))
+        .map(([key, { label }]) => ({ value: key, label }));
+
+    const hasActiveDocFilters = categoryFilter.length > 0;
+    const hasActiveRequestFilters = statusFilter.length > 0 || recipientFilter.length > 0;
 
     function handleRefresh() {
         router.refresh();
@@ -99,31 +142,67 @@ export default function DocumentsClient({ orgSlug, projectSlug, projectName, ini
 
                 <div className="space-y-10">
 
-                    {/* Demandes en attente */}
-                    {pendingRequests.length > 0 && (
+                    {/* ─── Demandes ─────────────────────────────────────────── */}
+                    {data.requests.length > 0 && (
                         <section>
-                            <div className="mb-3 flex items-center gap-2">
-                                <h2 className="section-title">Demandes en attente</h2>
-                                <Badge variant="warning" className="text-xs">
-                                    {pendingRequests.length}
-                                </Badge>
-                            </div>
-                            <div className="space-y-2">
-                                {pendingRequests.map((r) => (
-                                    <RequestCard
-                                        key={r.id}
-                                        request={r}
-                                        isLead={isLead}
-                                        orgSlug={orgSlug}
-                                        projectSlug={projectSlug}
-                                        onRefresh={handleRefresh}
+                            <div className="mb-4 flex items-center justify-between gap-4">
+                                <div className="flex items-center gap-2">
+                                    <h2 className="section-title">Demandes</h2>
+                                    {pendingCount > 0 && (
+                                        <Badge variant="warning" className="text-xs">
+                                            {pendingCount}
+                                        </Badge>
+                                    )}
+                                </div>
+
+                                <div className="flex items-center gap-1.5">
+                                    <FilterPill
+                                        label="Statut"
+                                        options={REQUEST_STATUS_OPTIONS}
+                                        selected={statusFilter}
+                                        onChange={setStatusFilter}
                                     />
-                                ))}
+                                    <FilterPill
+                                        label="Destinataire"
+                                        options={REQUEST_RECIPIENT_OPTIONS}
+                                        selected={recipientFilter}
+                                        onChange={setRecipientFilter}
+                                    />
+                                    {hasActiveRequestFilters && (
+                                        <button
+                                            onClick={() => { setStatusFilter([]); setRecipientFilter([]); }}
+                                            className="rounded-full px-2.5 py-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
+                                        >
+                                            Réinitialiser
+                                        </button>
+                                    )}
+                                </div>
                             </div>
+
+                            {filteredRequests.length === 0 ? (
+                                <div className="flex flex-col items-center justify-center rounded-xl bg-subtle border border-border/50 py-10 text-center">
+                                    <Inbox className="h-5 w-5 text-muted-foreground mb-2" />
+                                    <p className="body-sm font-medium">Aucune demande</p>
+                                    <p className="mt-0.5 caption">Modifiez les filtres pour voir d'autres résultats.</p>
+                                </div>
+                            ) : (
+                                <div className="-mx-3">
+                                    {filteredRequests.map((r) => (
+                                        <RequestCard
+                                            key={r.id}
+                                            request={r}
+                                            isLead={isLead}
+                                            orgSlug={orgSlug}
+                                            projectSlug={projectSlug}
+                                            onRefresh={handleRefresh}
+                                        />
+                                    ))}
+                                </div>
+                            )}
                         </section>
                     )}
 
-                    {/* Documents */}
+                    {/* ─── Documents ────────────────────────────────────────── */}
                     <section>
                         <div className="mb-4 flex items-center justify-between gap-4">
                             <h2 className="section-title">
@@ -135,27 +214,24 @@ export default function DocumentsClient({ orgSlug, projectSlug, projectName, ini
                                 )}
                             </h2>
 
-                            {/* Filtres catégorie */}
-                            {filterCategories.length > 1 && (
-                                <div className="flex flex-wrap gap-1">
-                                    {filterCategories.map((cat) => (
-                                        <button
-                                            key={cat}
-                                            onClick={() => setActiveCategory(cat)}
-                                            className={cn(
-                                                "rounded-full px-2.5 py-1 text-xs font-medium transition-colors",
-                                                activeCategory === cat
-                                                    ? "bg-foreground text-background"
-                                                    : "bg-subtle text-muted-foreground hover:bg-hover hover:text-foreground",
-                                            )}
-                                        >
-                                            {cat === "ALL"
-                                                ? "Tous"
-                                                : DOCUMENT_CATEGORIES[cat]?.label ?? cat}
-                                        </button>
-                                    ))}
-                                </div>
-                            )}
+                            <div className="flex items-center gap-1.5">
+                                {presentCategoryOptions.length > 0 && (
+                                    <FilterPill
+                                        label="Catégorie"
+                                        options={presentCategoryOptions}
+                                        selected={categoryFilter}
+                                        onChange={setCategoryFilter}
+                                    />
+                                )}
+                                {hasActiveDocFilters && (
+                                    <button
+                                        onClick={() => setCategoryFilter([])}
+                                        className="rounded-full px-2.5 py-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
+                                    >
+                                        Réinitialiser
+                                    </button>
+                                )}
+                            </div>
                         </div>
 
                         {filteredDocs.length === 0 ? (
@@ -164,16 +240,16 @@ export default function DocumentsClient({ orgSlug, projectSlug, projectName, ini
                                     <FileX className="h-6 w-6 text-muted-foreground" />
                                 </div>
                                 <p className="body-sm font-medium">
-                                    {activeCategory === "ALL"
+                                    {categoryFilter.length === 0
                                         ? "Aucun document déposé"
-                                        : `Aucun document dans la catégorie «\u00a0${DOCUMENT_CATEGORIES[activeCategory]?.label}\u00a0»`}
+                                        : "Aucun document pour ces filtres"}
                                 </p>
                                 <p className="mt-1 caption max-w-xs">
-                                    {activeCategory === "ALL"
+                                    {categoryFilter.length === 0
                                         ? "Déposez le premier document du projet."
-                                        : "Essayez un autre filtre ou déposez un document."}
+                                        : "Essayez d'autres filtres ou déposez un document."}
                                 </p>
-                                {activeCategory === "ALL" && (
+                                {categoryFilter.length === 0 && (
                                     <Button
                                         size="sm"
                                         variant="outline"
@@ -201,27 +277,6 @@ export default function DocumentsClient({ orgSlug, projectSlug, projectName, ini
                         )}
                     </section>
 
-                    {/* Demandes résolues */}
-                    {fulfilledRequests.length > 0 && (
-                        <section>
-                            <h2 className="section-title mb-3 text-muted-foreground">
-                                Demandes résolues
-                                <span className="ml-2 caption font-normal">({fulfilledRequests.length})</span>
-                            </h2>
-                            <div className="space-y-2">
-                                {fulfilledRequests.map((r) => (
-                                    <RequestCard
-                                        key={r.id}
-                                        request={r}
-                                        isLead={isLead}
-                                        orgSlug={orgSlug}
-                                        projectSlug={projectSlug}
-                                        onRefresh={handleRefresh}
-                                    />
-                                ))}
-                            </div>
-                        </section>
-                    )}
                 </div>
             </div>
 
@@ -231,7 +286,7 @@ export default function DocumentsClient({ orgSlug, projectSlug, projectName, ini
                 orgSlug={orgSlug}
                 projectSlug={projectSlug}
                 workPackages={data.workPackages}
-                pendingRequests={pendingRequests}
+                pendingRequests={data.requests.filter((r) => r.status === "PENDING")}
                 onSuccess={handleRefresh}
             />
 

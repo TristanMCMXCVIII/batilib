@@ -5,8 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="91bb42b5-23ba-4990-b282-3e17123ba51e" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.claude/commands/batilib-ui.md" beforeDir="false" afterPath="$PROJECT_DIR$/.claude/commands/batilib-ui.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/app/(app)/[orgSlug]/projects/[projectSlug]/documents/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/app/(app)/[orgSlug]/projects/[projectSlug]/documents/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CLAUDE.md" beforeDir="false" afterPath="$PROJECT_DIR$/CLAUDE.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/app/(app)/[orgSlug]/projects/[projectSlug]/documents/_components/document-card.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/app/(app)/[orgSlug]/projects/[projectSlug]/documents/_components/document-card.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/app/(app)/[orgSlug]/projects/[projectSlug]/documents/_components/documents-client.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/app/(app)/[orgSlug]/projects/[projectSlug]/documents/_components/documents-client.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/app/(app)/[orgSlug]/projects/[projectSlug]/documents/_components/request-card.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/app/(app)/[orgSlug]/projects/[projectSlug]/documents/_components/request-card.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/app/(app)/[orgSlug]/projects/[projectSlug]/documents/_components/upload-document-sheet.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/app/(app)/[orgSlug]/projects/[projectSlug]/documents/_components/upload-document-sheet.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/lib/actions/project-documents.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/lib/actions/project-documents.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -68,7 +74,7 @@
       <workItem from="1792073546981" duration="1027000" />
       <workItem from="1792081384549" duration="152070000" />
       <workItem from="1793272782576" duration="677000" />
-      <workItem from="1793274866140" duration="35941000" />
+      <workItem from="1793274866140" duration="42993000" />
     </task>
     <servers />
   </component>

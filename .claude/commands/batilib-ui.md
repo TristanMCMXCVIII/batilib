@@ -68,6 +68,62 @@ Les composants enfants n'ont qu'à mettre `py-10 max-w-2xl`.
 `Button`, `Input`, `Label`, `Badge`, `Avatar`, `Card`,
 `Sheet`, `Dialog`, `DropdownMenu`
 
+---
+
+## FilterPill — filtre multi-sélection
+
+Composant partagé : `@/components/ui/filter-pill`.
+Usage : barre de filtres au-dessus d'une liste. Plusieurs pills peuvent coexister (une par dimension de filtre).
+
+```tsx
+import { FilterPill, type FilterOption } from "@/components/ui/filter-pill";
+
+const STATUS_OPTIONS: FilterOption[] = [
+    { value: "ACTIVE", label: "Actif" },
+    { value: "PENDING", label: "En attente" },
+];
+
+const [statusFilter, setStatusFilter] = useState<string[]>([]);
+
+<FilterPill
+    label="Statut"
+    options={STATUS_OPTIONS}
+    selected={statusFilter}
+    onChange={setStatusFilter}
+/>
+```
+
+**Comportement :**
+- Pill grise inactive → noire active (bg-foreground text-background)
+- Label : nom du filtre si rien de sélectionné · labels joints par " · " si 1-2 sélections · "Statut (N)" si 3+
+- Dropdown reste ouvert après chaque sélection (`e.preventDefault()` sur `onSelect`)
+- Icône checkbox **carrée** (multi-sélection) — pleine si cochée, contour si non
+
+**Convention icône checkbox :**
+- **Carré** → choix multiples simultanés (FilterPill)
+- **Rond** → choix unique (radio — ex. sélecteur de scope dans un formulaire)
+
+**Bouton Réinitialiser :**
+```tsx
+{hasActiveFilters && (
+    <button
+        onClick={() => setFilter([])}
+        className="rounded-full px-2.5 py-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
+    >
+        Réinitialiser
+    </button>
+)}
+```
+
+**Disposition recommandée :**
+```tsx
+<div className="flex items-center gap-1.5">
+    <FilterPill label="Statut" options={STATUS_OPTIONS} selected={statusFilter} onChange={setStatusFilter} />
+    <FilterPill label="Type" options={TYPE_OPTIONS} selected={typeFilter} onChange={setTypeFilter} />
+    {hasActiveFilters && <button onClick={resetAll} ...>Réinitialiser</button>}
+</div>
+```
+
 ### Badge — variants disponibles
 ```tsx
 <Badge variant="success">Actif</Badge>

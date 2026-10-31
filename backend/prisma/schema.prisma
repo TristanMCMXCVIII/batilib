@@ -430,20 +430,24 @@ model Verification {
 }
 
 model ProjectDocument {
-  id                     String                 @id @default(cuid())
+  id                     String                  @id @default(cuid())
   projectId              String
-  project                Project                @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  project                Project                 @relation(fields: [projectId], references: [id], onDelete: Cascade)
   uploadedByMembershipId String
-  uploadedBy             OrganizationMembership @relation("UploadedDocuments", fields: [uploadedByMembershipId], references: [id], onDelete: Restrict)
+  uploadedBy             OrganizationMembership  @relation("UploadedDocuments", fields: [uploadedByMembershipId], references: [id], onDelete: Restrict)
   name                   String
   fileKey                String
   mimeType               String
   sizeBytes              BigInt
-  category               DocumentCategory       @default(OTHER)
-  scope                  DocumentScope          @default(GLOBAL)
+  category               DocumentCategory        @default(OTHER)
+  scope                  DocumentScope           @default(GLOBAL)
   workPackageId          String?
-  workPackage            WorkPackage?           @relation(fields: [workPackageId], references: [id], onDelete: SetNull)
-  createdAt              DateTime               @default(now())
+  workPackage                WorkPackage?            @relation(fields: [workPackageId], references: [id], onDelete: SetNull)
+  linkedRequestNote          String?
+  linkedRequestedByOrgName   String?
+  createdAt                  DateTime               @default(now())
+
+  fulfillingRequests         ProjectDocumentRequest[] @relation("FulfilledDocument")
 }
 
 model ProjectDocumentRequest {
@@ -459,6 +463,9 @@ model ProjectDocumentRequest {
   requestedFromWorkPackage   WorkPackage?           @relation("RequestedFromWP", fields: [requestedFromWorkPackageId], references: [id], onDelete: SetNull)
   dueDate                    DateTime?
   status                     DocumentRequestStatus  @default(PENDING)
+  fulfilledDocumentId        String?
+  fulfilledDocument          ProjectDocument?       @relation("FulfilledDocument", fields: [fulfilledDocumentId], references: [id], onDelete: SetNull)
+  fulfilledAt                DateTime?
   createdAt                  DateTime               @default(now())
   updatedAt                  DateTime               @updatedAt
 }

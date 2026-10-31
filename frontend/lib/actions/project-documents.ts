@@ -27,8 +27,11 @@ export type DocumentItem = {
     workPackageId: string | null;
     workPackageName: string | null;
     workPackageColor: string | null;
-    uploaderName: string;
+    uploaderOrgName: string;
+    uploaderParticipantRole: string | null;
     createdAt: string;
+    linkedRequestNote: string | null;
+    linkedRequestedByOrgName: string | null;
 };
 
 export type DocumentRequestItem = {
@@ -38,9 +41,14 @@ export type DocumentRequestItem = {
     requestedFromRole: string;
     requestedFromWorkPackageId: string | null;
     requestedFromWorkPackageName: string | null;
-    requestedByName: string;
+    requestedFromOrgName: string | null;
+    requestedByOrgName: string;
+    requestedByParticipantRole: string;
     dueDate: string | null;
     status: DocumentRequestStatus;
+    fulfilledAt: string | null;
+    fulfilledDocumentId: string | null;
+    fulfilledByOrgName: string | null;
     createdAt: string;
 };
 
@@ -108,7 +116,7 @@ export async function getProjectDocuments(
             : ""; // LEAD et SUBCONTRACTOR voient tout pour l'instant
 
     const [docsResult, requestsResult, storageResult, wpResult] = await Promise.all([
-        db.query<DocumentItem & { workPackageColor: string | null }>(
+        db.query<DocumentItem>(
             `SELECT
                 pd.id,
                 pd.name,
@@ -120,11 +128,17 @@ export async function getProjectDocuments(
                 pd."workPackageId",
                 wp.name                    AS "workPackageName",
                 wp.color::text             AS "workPackageColor",
-                u.name                     AS "uploaderName",
-                pd."createdAt"::text       AS "createdAt"
+                o_up.name                  AS "uploaderOrgName",
+                pp_up.role::text           AS "uploaderParticipantRole",
+                pd."createdAt"::text       AS "createdAt",
+                pd."linkedRequestNote",
+                pd."linkedRequestedByOrgName"
              FROM "ProjectDocument" pd
              JOIN "OrganizationMembership" om ON om.id = pd."uploadedByMembershipId"
-             JOIN "User" u ON u.id = om."userId"
+             JOIN "Organization" o_up ON o_up.id = om."organizationId"
+             LEFT JOIN "ProjectParticipant" pp_up
+                 ON pp_up."projectId" = pd."projectId"
+                 AND pp_up."organizationId" = om."organizationId"
              LEFT JOIN "WorkPackage" wp ON wp.id = pd."workPackageId"
              WHERE pd."projectId" = $1 ${scopeFilter}
              ORDER BY pd."createdAt" DESC`,
@@ -138,14 +152,37 @@ export async function getProjectDocuments(
                 pdr."requestedFromRole"::text              AS "requestedFromRole",
                 pdr."requestedFromWorkPackageId",
                 wp.name                                    AS "requestedFromWorkPackageName",
-                u.name                                     AS "requestedByName",
+                o_by.name                                  AS "requestedByOrgName",
+                pp_by.role::text                           AS "requestedByParticipantRole",
+                CASE
+                    WHEN pdr."requestedFromRole" = 'LEAD'          THEN o_lead.name
+                    WHEN pdr."requestedFromRole" = 'CLIENT'        THEN o_client.name
+                    WHEN pdr."requestedFromRole" = 'SUBCONTRACTOR' THEN o_sub.name
+                END                                        AS "requestedFromOrgName",
                 pdr."dueDate"::text                        AS "dueDate",
                 pdr.status::text                           AS status,
+                pdr."fulfilledAt"::text                    AS "fulfilledAt",
+                pdr."fulfilledDocumentId",
+                o_ful.name                                 AS "fulfilledByOrgName",
                 pdr."createdAt"::text                      AS "createdAt"
              FROM "ProjectDocumentRequest" pdr
              JOIN "OrganizationMembership" om ON om.id = pdr."requestedByMembershipId"
-             JOIN "User" u ON u.id = om."userId"
+             JOIN "Organization" o_by ON o_by.id = om."organizationId"
+             LEFT JOIN "ProjectParticipant" pp_by
+                 ON pp_by."projectId" = pdr."projectId"
+                 AND pp_by."organizationId" = om."organizationId"
              LEFT JOIN "WorkPackage" wp ON wp.id = pdr."requestedFromWorkPackageId"
+             LEFT JOIN "ProjectParticipant" pp_lead
+                 ON pp_lead."projectId" = pdr."projectId" AND pp_lead.role = 'LEAD'
+             LEFT JOIN "Organization" o_lead ON o_lead.id = pp_lead."organizationId"
+             LEFT JOIN "ProjectParticipant" pp_client
+                 ON pp_client."projectId" = pdr."projectId" AND pp_client.role = 'CLIENT'
+             LEFT JOIN "Organization" o_client ON o_client.id = pp_client."organizationId"
+             LEFT JOIN "ProjectParticipant" pp_sub ON pp_sub.id = wp."assignedProjectParticipantId"
+             LEFT JOIN "Organization" o_sub ON o_sub.id = pp_sub."organizationId"
+             LEFT JOIN "ProjectDocument" pdf ON pdf.id = pdr."fulfilledDocumentId"
+             LEFT JOIN "OrganizationMembership" om_ful ON om_ful.id = pdf."uploadedByMembershipId"
+             LEFT JOIN "Organization" o_ful ON o_ful.id = om_ful."organizationId"
              WHERE pdr."projectId" = $1
                AND pdr.status != 'CANCELLED'
              ORDER BY pdr."createdAt" DESC`,
@@ -185,7 +222,7 @@ export type RegisterDocumentInput = {
     fileKey: string;
     sizeBytes: number;
     mimeType: string;
-    /** Si fourni, la demande est automatiquement marquée FULFILLED */
+    /** Si fourni, la demande est auto-annulée et son label est conservé en note sur le document */
     linkedRequestId?: string | null;
 };
 
@@ -217,22 +254,41 @@ export async function registerProjectDocument(
 
     const workPackageId = input.scope === "WORKPACKAGE" ? (input.workPackageId ?? null) : null;
 
+    // Si lié à une demande : stocker label + org demandeur en note, puis marquer FULFILLED
+    let linkedRequestNote: string | null = null;
+    let linkedRequestedByOrgName: string | null = null;
+    if (input.linkedRequestId) {
+        const reqRow = await db.query<{ label: string; orgName: string }>(
+            `SELECT pdr.label, o.name AS "orgName"
+             FROM "ProjectDocumentRequest" pdr
+             JOIN "OrganizationMembership" om ON om.id = pdr."requestedByMembershipId"
+             JOIN "Organization" o ON o.id = om."organizationId"
+             WHERE pdr.id = $1 AND pdr."projectId" = $2 AND pdr.status = 'PENDING'
+             LIMIT 1`,
+            [input.linkedRequestId, projectId],
+        );
+        if (reqRow.rows[0]) {
+            linkedRequestNote = reqRow.rows[0].label;
+            linkedRequestedByOrgName = reqRow.rows[0].orgName;
+        }
+    }
+
     const id = randomUUID();
     await db.query(
         `INSERT INTO "ProjectDocument"
-            (id, "projectId", "uploadedByMembershipId", name, "fileKey", "mimeType", "sizeBytes", category, scope, "workPackageId", "createdAt")
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8::\"DocumentCategory\", $9::\"DocumentScope\", $10, NOW())`,
+            (id, "projectId", "uploadedByMembershipId", name, "fileKey", "mimeType", "sizeBytes", category, scope, "workPackageId", "linkedRequestNote", "linkedRequestedByOrgName", "createdAt")
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8::\"DocumentCategory\", $9::\"DocumentScope\", $10, $11, $12, NOW())`,
         [id, projectId, membershipId, name, input.fileKey, input.mimeType, input.sizeBytes,
-         input.category, input.scope, workPackageId],
+         input.category, input.scope, workPackageId, linkedRequestNote, linkedRequestedByOrgName],
     );
 
-    // Auto-fulfill la demande liée si fournie
-    if (input.linkedRequestId) {
+    // Marquer la demande comme FULFILLED avec lien vers le document
+    if (input.linkedRequestId && linkedRequestNote) {
         await db.query(
             `UPDATE "ProjectDocumentRequest"
-             SET status = 'FULFILLED', "updatedAt" = NOW()
-             WHERE id = $1 AND "projectId" = $2 AND status = 'PENDING'`,
-            [input.linkedRequestId, projectId],
+             SET status = 'FULFILLED', "fulfilledDocumentId" = $1, "fulfilledAt" = NOW(), "updatedAt" = NOW()
+             WHERE id = $2`,
+            [id, input.linkedRequestId],
         );
     }
 
@@ -253,16 +309,18 @@ export async function deleteProjectDocument(
     if (!access) return { error: "Accès refusé" };
     if (access.callerParticipantRole !== "LEAD") return { error: "Seul le pilote peut supprimer des documents" };
 
-    const docResult = await db.query<{ fileKey: string }>(
-        `DELETE FROM "ProjectDocument"
-         WHERE id = $1 AND "projectId" = $2
-         RETURNING "fileKey"`,
+    const docCheck = await db.query<{ fileKey: string }>(
+        `SELECT "fileKey" FROM "ProjectDocument" WHERE id = $1 AND "projectId" = $2`,
         [docId, access.projectId],
     );
-    if (!docResult.rows.length) return { error: "Document introuvable" };
+    if (!docCheck.rows.length) return { error: "Document introuvable" };
+
+    const { fileKey } = docCheck.rows[0];
+
+    await db.query(`DELETE FROM "ProjectDocument" WHERE id = $1`, [docId]);
 
     // Suppression R2 en fire-and-forget
-    r2.send(new DeleteObjectCommand({ Bucket: R2_BUCKET, Key: docResult.rows[0].fileKey })).catch(() => {});
+    r2.send(new DeleteObjectCommand({ Bucket: R2_BUCKET, Key: fileKey })).catch(() => {});
 
     revalidate(orgSlug, projectSlug);
     return {};
@@ -372,7 +430,7 @@ export async function cancelDocumentRequest(
     return {};
 }
 
-export async function fulfillDocumentRequest(
+export async function deleteDocumentRequest(
     orgSlug: string,
     projectSlug: string,
     requestId: string,
@@ -384,9 +442,7 @@ export async function fulfillDocumentRequest(
     if (!access) return { error: "Accès refusé" };
 
     await db.query(
-        `UPDATE "ProjectDocumentRequest"
-         SET status = 'FULFILLED', "updatedAt" = NOW()
-         WHERE id = $1 AND "projectId" = $2`,
+        `DELETE FROM "ProjectDocumentRequest" WHERE id = $1 AND "projectId" = $2`,
         [requestId, access.projectId],
     );
 

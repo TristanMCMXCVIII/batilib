@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Upload, X, File, FileText, Image, FileSpreadsheet } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -67,6 +67,21 @@ export function UploadDocumentSheet({ open, onOpenChange, orgSlug, projectSlug, 
     const [scope, setScope] = useState<DocumentScope>("GLOBAL");
     const [workPackageId, setWorkPackageId] = useState("");
     const [linkedRequestId, setLinkedRequestId] = useState("");
+
+    // Pré-remplir le scope selon la demande sélectionnée
+    useEffect(() => {
+        if (!linkedRequestId) return;
+        const req = pendingRequests.find((r) => r.id === linkedRequestId);
+        if (!req) return;
+        if (req.requestedFromRole === "CLIENT") {
+            setScope("CLIENT");
+        } else if (req.requestedFromRole === "SUBCONTRACTOR" && req.requestedFromWorkPackageId) {
+            setScope("WORKPACKAGE");
+            setWorkPackageId(req.requestedFromWorkPackageId);
+        } else {
+            setScope("GLOBAL");
+        }
+    }, [linkedRequestId, pendingRequests]);
     const [uploading, setUploading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 

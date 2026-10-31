@@ -119,8 +119,10 @@ pnpm prisma migrate dev --name <nom>   # seulement si migration nécessaire
 - **`WorkPackageTemplate`** : blueprint de lot, `folderId?`, `name`, `color?` (LotColor), `defaultMarginRate?`, `position`. Relation inverse : `taggedFolders LibraryFolder[]`.
 
 ### Documents projet
-- **`ProjectDocument`** : `id`, `projectId`, `uploadedByMembershipId`, `name`, `fileKey` (clé R2), `mimeType`, `sizeBytes` (BIGINT), `category` (`DocumentCategory`), `scope` (`DocumentScope`), `workPackageId?`, `createdAt`.
-- **`ProjectDocumentRequest`** : `id`, `projectId`, `label`, `category`, `requestedByMembershipId`, `requestedFromRole` (`ProjectParticipantRole`), `requestedFromWorkPackageId?`, `dueDate?`, `status` (`DocumentRequestStatus`), `createdAt`, `updatedAt`.
+- **`ProjectDocument`** : `id`, `projectId`, `uploadedByMembershipId`, `name`, `fileKey` (clé R2), `mimeType`, `sizeBytes` (BIGINT), `category` (`DocumentCategory`), `scope` (`DocumentScope`), `workPackageId?`, `linkedRequestNote?` (texte dénormalisé du label de la demande), `linkedRequestedByOrgName?` (texte dénormalisé pour durabilité), `createdAt`.
+- **`ProjectDocumentRequest`** : `id`, `projectId`, `label`, `category`, `requestedByMembershipId`, `requestedFromRole` (`ProjectParticipantRole`), `requestedFromWorkPackageId?`, `dueDate?`, `status` (`DocumentRequestStatus`), `fulfilledDocumentId?` (FK → ProjectDocument, relation `"FulfilledDocument"`), `fulfilledAt?`, `createdAt`, `updatedAt`.
+- **Cycle de vie** : quand un doc est uploadé en réponse à une demande → demande passe `FULFILLED` + `fulfilledDocumentId` + `fulfilledAt`. La demande reste visible (LEAD peut la supprimer manuellement). Pas d'action "Marquer comme fourni" — uniquement via upload.
+- **Durabilité** : `linkedRequestNote` + `linkedRequestedByOrgName` copiés en texte sur le document à l'upload → contexte préservé même si la demande est supprimée.
 - Stockage : `SUM(sizeBytes)` dynamique — imputé à l'org LEAD. Pas de colonne dénormalisée.
 - Filtrage scope : LEAD voit tout · CLIENT voit `GLOBAL + CLIENT` · SUBCONTRACTOR voit tout pour l'instant.
 - Constantes (labels) dans `frontend/lib/document-constants.ts` — **ne jamais exporter des objets/constantes depuis un fichier `"use server"`** (voir section 12).
@@ -249,7 +251,7 @@ Fichiers actions :
 - `project-invitation.ts` : `getProjectInvitationPreview`, `acceptProjectInvitation`, `declineProjectInvitation`
 - `work-item-templates.ts` : `getLibraryTree`, `createWorkItemTemplate`, `updateWorkItemTemplate`, `deleteWorkItemTemplate`, `reorderItems`, `reorderFolders`, `createFolder`, `renameFolder`, `setFolderWpt`, `deleteFolder`
 - `work-package-templates.ts` : WPT CRUD
-- `project-documents.ts` : `getProjectDocuments`, `registerProjectDocument`, `deleteProjectDocument`, `createDocumentRequest`, `cancelDocumentRequest`, `fulfillDocumentRequest`
+- `project-documents.ts` : `getProjectDocuments`, `registerProjectDocument`, `deleteProjectDocument`, `createDocumentRequest`, `cancelDocumentRequest` (PENDING only), `deleteDocumentRequest` (FULFILLED — hard delete)
 - `invitation.ts` : invitations organisation (accepter/refuser depuis /join)
 - `work-templates.ts` : **déprécié** — re-exporte work-item-templates.ts (ne pas utiliser)
 
@@ -336,6 +338,7 @@ Template OTP : HTML inline simple (no-framework). Clé `BREVO_API_KEY` côté se
 - **Sheet** (panneau latéral) : édition de formulaires (profil, identité org, SIRET)
 - **Dialog** : confirmations destructives (suppression compte)
 - **Badge** variants : `success`, `neutral`, `warning`, `info`, `destructive`
+- **FilterPill** (`@/components/ui/filter-pill`) : filtre multi-sélection en pill arrondie. Inactive = grise, active = noire. Icône carré pour multi-sélect, ronde pour choix unique. Voir `batilib-ui` skill pour usage complet.
 - Sidebar : `w-56`, bordure droite, logo en haut, nav centrale, dropdown user en bas
 - Contenu principal : `flex-1 overflow-auto bg-background`, padding `p-8`, `max-w-2xl` ou `max-w-5xl`
 
@@ -385,7 +388,9 @@ Template OTP : HTML inline simple (no-framework). Clé `BREVO_API_KEY` côté se
 | Dispatcher LEAD → `LeadEditorClient` / CLIENT → `ClientProjectView` | ✅ Fait |
 | Sidebar nav projet role-aware (LEAD/CLIENT/SUBCONTRACTOR) | ✅ Fait |
 | Documents projet : upload R2, scopes (GLOBAL/CLIENT/LOT), catégories, demandes + email Brevo | ✅ Fait |
-| Documents projet : auto-fulfill demande à l'upload, suppression demandes résolues | ✅ Fait |
+| Documents projet : auto-fulfill demande à l'upload (FK + texte dénormalisé), suppression demandes par LEAD | ✅ Fait |
+| Documents projet : filtres multi-sélection (statut, destinataire, catégorie) via FilterPill | ✅ Fait |
+| Documents projet : métadonnées org uploader + "à la demande de" sur les docs liés | ✅ Fait |
 | Nest : endpoints métier authentifiés | ❌ Non fait |
 
 ---
