@@ -59,7 +59,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import {
     createWorkItemTemplate,
-    updateWorkItemTemplate,
     deleteWorkItemTemplate,
     createFolder,
     renameFolder,
@@ -76,6 +75,7 @@ import {
 } from "@/lib/actions/work-item-templates";
 import { LOT_COLOR_MAP, type LotColorKey } from "@/lib/lot-colors";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 // ─── Types ────────────────────────────────────────────────
 
@@ -88,7 +88,6 @@ type Props = {
 
 type SheetState =
     | { type: "item-create"; folderId: string | null }
-    | { type: "item-edit"; item: WorkItemTemplateItem }
     | { type: "folder-create"; parentId: string | null }
     | { type: "folder-rename"; folderId: string; currentName: string }
     | { type: "folder-wpt"; folderId: string; folderName: string; currentWptId: string | null };
@@ -107,7 +106,6 @@ type LibraryCtx = {
     activeDragType: "item" | "folder" | null;
     toggleFolder: (id: string) => void;
     openCreateItem: (folderId: string | null) => void;
-    openEditItem: (item: WorkItemTemplateItem) => void;
     handleDeleteItem: (id: string) => void;
     openCreateSubfolder: (parentId: string) => void;
     openRenameFolder: (folderId: string, currentName: string) => void;
@@ -180,7 +178,7 @@ type ItemRowProps = {
 };
 
 function SortableItemRow({ item, depth, isOverlay }: ItemRowProps) {
-    const { canEdit, openEditItem, handleDeleteItem } = useContext(LibraryContext);
+    const { orgSlug, canEdit, handleDeleteItem } = useContext(LibraryContext);
     const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
         id: item.id,
         data: { type: "item", folderId: item.folderId },
@@ -208,20 +206,21 @@ function SortableItemRow({ item, depth, isOverlay }: ItemRowProps) {
                 </button>
             )}
             <FileText className="h-3.5 w-3.5 text-muted-foreground/50 shrink-0" />
-            <div className="flex-1 min-w-0">
-                <span className="text-sm font-medium text-foreground truncate">{item.name}</span>
+            <Link
+                href={`/${orgSlug}/library/work-items/${item.id}`}
+                className="flex-1 min-w-0 hover:underline"
+                onClick={(e) => e.stopPropagation()}
+            >
+                <span className="text-sm font-medium text-foreground truncate block">{item.name}</span>
                 {item.description && (
                     <p className="caption truncate mt-0.5">{item.description}</p>
                 )}
-            </div>
+            </Link>
             <div className="flex items-center gap-4 shrink-0">
                 <span className="caption w-10 text-right tabular-nums">{item.unit}</span>
                 <span className="caption w-24 text-right tabular-nums">{formatPrice(item.defaultUnitPrice)}</span>
                 {canEdit && !isOverlay && (
                     <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button onClick={() => openEditItem(item)} className="p-1.5 rounded hover:bg-hover transition-colors">
-                            <Pencil className="h-3.5 w-3.5 text-muted-foreground" />
-                        </button>
                         <button onClick={() => handleDeleteItem(item.id)} className="p-1.5 rounded hover:bg-hover transition-colors">
                             <Trash2 className="h-3.5 w-3.5 text-muted-foreground hover:text-destructive" />
                         </button>
@@ -396,7 +395,15 @@ export default function WorkItemsClient({ orgSlug, tree, callerRole, workPackage
     }, [tree]);
     const [activeItemId, setActiveItemId] = useState<UniqueIdentifier | null>(null);
     const [activeDragType, setActiveDragType] = useState<"item" | "folder" | null>(null);
-    const [expandedFolders, setExpandedFolders] = useState<Set<string>>(() => new Set());
+    const storageKey = `batilib-library-expanded-${orgSlug}`;
+
+    const [expandedFolders, setExpandedFolders] = useState<Set<string>>(() => {
+        try {
+            const saved = sessionStorage.getItem(storageKey);
+            if (saved) return new Set(JSON.parse(saved) as string[]);
+        } catch { /* ignore */ }
+        return new Set();
+    });
 
     const [sheet, setSheet] = useState<SheetState | null>(null);
     const [saving, setSaving] = useState(false);
@@ -483,8 +490,13 @@ export default function WorkItemsClient({ orgSlug, tree, callerRole, workPackage
     // ─── Callbacks UI ─────────────────────────────────────
 
     const toggleFolder = useCallback((id: string) => {
-        setExpandedFolders((prev) => { const n = new Set(prev); if (n.has(id)) n.delete(id); else n.add(id); return n; });
-    }, []);
+        setExpandedFolders((prev) => {
+            const n = new Set(prev);
+            if (n.has(id)) n.delete(id); else n.add(id);
+            try { sessionStorage.setItem(storageKey, JSON.stringify([...n])); } catch { /* ignore */ }
+            return n;
+        });
+    }, [storageKey]);
 
     const openCreateItem = useCallback((folderId: string | null) => {
         setItemForm(EMPTY_ITEM_FORM);
@@ -492,11 +504,6 @@ export default function WorkItemsClient({ orgSlug, tree, callerRole, workPackage
         setSheet({ type: "item-create", folderId });
     }, []);
 
-    const openEditItem = useCallback((item: WorkItemTemplateItem) => {
-        setItemForm({ name: item.name, description: item.description ?? "", unit: item.unit, defaultUnitPrice: item.defaultUnitPrice ?? "", estimatedUnitCost: item.estimatedUnitCost ?? "", defaultTaxRate: item.defaultTaxRate ?? "" });
-        setError(null);
-        setSheet({ type: "item-edit", item });
-    }, []);
 
     const handleDeleteItem = useCallback(async (id: string) => {
         await deleteWorkItemTemplate(orgSlug, id);
@@ -533,14 +540,17 @@ export default function WorkItemsClient({ orgSlug, tree, callerRole, workPackage
     // ─── Save handlers ────────────────────────────────────
 
     async function handleSaveItem() {
-        if (!sheet || (sheet.type !== "item-create" && sheet.type !== "item-edit")) return;
+        if (!sheet || sheet.type !== "item-create") return;
         setSaving(true); setError(null);
         try {
-            const res = sheet.type === "item-create"
-                ? await createWorkItemTemplate(orgSlug, itemForm, sheet.folderId)
-                : await updateWorkItemTemplate(orgSlug, sheet.item.id, itemForm);
+            const res = await createWorkItemTemplate(orgSlug, itemForm, sheet.folderId);
             if (res.error) { setError(res.error); return; }
-            setSheet(null); router.refresh();
+            setSheet(null);
+            if (res.id) {
+                router.push(`/${orgSlug}/library/work-items/${res.id}`);
+            } else {
+                router.refresh();
+            }
         } finally { setSaving(false); }
     }
 
@@ -583,7 +593,7 @@ export default function WorkItemsClient({ orgSlug, tree, callerRole, workPackage
 
     const ctxValue: LibraryCtx = {
         orgSlug, canEdit, itemsMap, foldersMap, expandedFolders, activeDragType,
-        toggleFolder, openCreateItem, openEditItem, handleDeleteItem,
+        toggleFolder, openCreateItem, handleDeleteItem,
         openCreateSubfolder, openRenameFolder, openSetWpt, handleRemoveWpt, handleDeleteFolder,
     };
 
@@ -658,20 +668,24 @@ export default function WorkItemsClient({ orgSlug, tree, callerRole, workPackage
                 {/* Sheet */}
                 <Sheet open={sheet !== null} onOpenChange={(o) => { if (!o && !saving) setSheet(null); }}>
                     <SheetContent>
-                        {(sheet?.type === "item-create" || sheet?.type === "item-edit") && (
+                        {sheet?.type === "item-create" && (
                             <>
                                 <SheetHeader>
-                                    <SheetTitle>{sheet.type === "item-create" ? "Nouvel ouvrage" : "Modifier l'ouvrage"}</SheetTitle>
-                                    <SheetDescription>{sheet.type === "item-create" ? "Créez un ouvrage de référence." : "Modifiez les informations de cet ouvrage."}</SheetDescription>
+                                    <SheetTitle>Nouvel ouvrage</SheetTitle>
+                                    <SheetDescription>
+                                        Définissez le nom et l'unité. Vous pourrez compléter les détails sur la page de l'ouvrage.
+                                    </SheetDescription>
                                 </SheetHeader>
                                 <div className="mt-8 space-y-5 px-1">
                                     <div className="space-y-2">
                                         <Label>Nom <span className="text-destructive">*</span></Label>
-                                        <Input value={itemForm.name} onChange={(e) => setItemForm((f) => ({ ...f, name: e.target.value }))} placeholder="Ex : Pose de carrelage au sol" />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <Label>Description</Label>
-                                        <textarea value={itemForm.description} onChange={(e) => setItemForm((f) => ({ ...f, description: e.target.value }))} placeholder="Spécifications techniques…" rows={3} className="flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 resize-none" />
+                                        <Input
+                                            value={itemForm.name}
+                                            onChange={(e) => setItemForm((f) => ({ ...f, name: e.target.value }))}
+                                            placeholder="Ex : Pose de carrelage au sol"
+                                            autoFocus
+                                            onKeyDown={(e) => { if (e.key === "Enter") handleSaveItem(); }}
+                                        />
                                     </div>
                                     <div className="space-y-2">
                                         <Label>Unité <span className="text-destructive">*</span></Label>
@@ -680,26 +694,9 @@ export default function WorkItemsClient({ orgSlug, tree, callerRole, workPackage
                                             <SelectContent>{UNITS.map((u) => <SelectItem key={u} value={u}>{u}</SelectItem>)}</SelectContent>
                                         </Select>
                                     </div>
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <div className="space-y-2">
-                                            <Label>Prix HT / Unité</Label>
-                                            <Input type="number" min="0" step="0.01" value={itemForm.defaultUnitPrice} onChange={(e) => setItemForm((f) => ({ ...f, defaultUnitPrice: e.target.value }))} placeholder="0,00" />
-                                        </div>
-                                        <div className="space-y-2">
-                                            <Label>Coût est. / Unité</Label>
-                                            <Input type="number" min="0" step="0.01" value={itemForm.estimatedUnitCost} onChange={(e) => setItemForm((f) => ({ ...f, estimatedUnitCost: e.target.value }))} placeholder="0,00" />
-                                        </div>
-                                    </div>
-                                    <div className="space-y-2">
-                                        <Label>Taux de TVA</Label>
-                                        <Select value={itemForm.defaultTaxRate} onValueChange={(v) => setItemForm((f) => ({ ...f, defaultTaxRate: v }))}>
-                                            <SelectTrigger><SelectValue placeholder="Choisir un taux" /></SelectTrigger>
-                                            <SelectContent>{TAX_RATES.map((r) => <SelectItem key={r} value={r}>{r} %</SelectItem>)}</SelectContent>
-                                        </Select>
-                                    </div>
                                     {error && <p className="text-error text-sm">{error}</p>}
-                                    <Button onClick={handleSaveItem} disabled={saving} className="w-full">
-                                        {saving ? <><Loader2 className="h-4 w-4 animate-spin" /> Enregistrement…</> : sheet.type === "item-create" ? "Créer l'ouvrage" : "Enregistrer"}
+                                    <Button onClick={handleSaveItem} disabled={saving || !itemForm.name.trim() || !itemForm.unit} className="w-full">
+                                        {saving ? <><Loader2 className="h-4 w-4 animate-spin" /> Création…</> : "Créer et ouvrir"}
                                     </Button>
                                 </div>
                             </>

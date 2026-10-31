@@ -24,9 +24,48 @@ export type WorkItemTemplateItem = {
     defaultUnitPrice: string | null;
     estimatedUnitCost: string | null;
     defaultTaxRate: string | null;
+    quantityExpression: string | null;
     position: number;
     createdAt: string;
     updatedAt: string;
+};
+
+export type ChecklistTask = {
+    id: string;
+    label: string;
+    coefficient: number;
+};
+
+export type WorkItemTemplateDetail = {
+    id: string;
+    folderId: string | null;
+    folderName: string | null;
+    effectiveWptId: string | null;
+    effectiveWptName: string | null;
+    effectiveWptColor: string | null;
+    name: string;
+    description: string | null;
+    unit: string;
+    defaultUnitPrice: string | null;
+    estimatedUnitCost: string | null;
+    defaultTaxRate: string | null;
+    quantityExpression: string | null;
+    technicalDoc: string | null;
+    commercialDoc: string | null;
+    defaultChecklist: ChecklistTask[];
+};
+
+export type WorkItemTemplateUpdateData = {
+    name: string;
+    description: string;
+    unit: string;
+    defaultUnitPrice: string;
+    estimatedUnitCost: string;
+    defaultTaxRate: string;
+    quantityExpression: string;
+    technicalDoc: string | null;
+    commercialDoc: string | null;
+    defaultChecklist: ChecklistTask[];
 };
 
 export type LibraryFolderRaw = {
@@ -176,6 +215,7 @@ export async function getLibraryTree(orgSlug: string): Promise<{
                 ROUND(wit."defaultUnitPrice", 2)::text  AS "defaultUnitPrice",
                 ROUND(wit."estimatedUnitCost", 2)::text AS "estimatedUnitCost",
                 ROUND(wit."defaultTaxRate", 1)::text    AS "defaultTaxRate",
+                wit."quantityExpression",
                 wit.position,
                 wit."createdAt"::text                   AS "createdAt",
                 wit."updatedAt"::text                   AS "updatedAt"
@@ -476,6 +516,172 @@ export async function reorderFolders(
     );
 
     revalidatePath(`/${orgSlug}/library/work-items`);
+    return {};
+}
+
+// ─── Actions détail WorkItemTemplate ──────────────────────
+
+export async function getWorkItemTemplateDetail(
+    orgSlug: string,
+    templateId: string,
+): Promise<{ data?: WorkItemTemplateDetail; error?: string }> {
+    const session = await getSession();
+    if (!session) return { error: "Non authentifié" };
+
+    const callerRole = await getCallerRole(orgSlug, session.user.id);
+    if (!callerRole) return { error: "Accès refusé" };
+
+    const result = await db.query<{
+        id: string;
+        folderId: string | null;
+        folderName: string | null;
+        name: string;
+        description: string | null;
+        unit: string;
+        defaultUnitPrice: string | null;
+        estimatedUnitCost: string | null;
+        defaultTaxRate: string | null;
+        quantityExpression: string | null;
+        technicalDoc: string | null;
+        commercialDoc: string | null;
+        defaultChecklist: string;
+    }>(
+        `SELECT
+            wit.id,
+            wit."folderId",
+            lf.name                                         AS "folderName",
+            wit.name,
+            wit.description,
+            wit.unit,
+            ROUND(wit."defaultUnitPrice", 2)::text          AS "defaultUnitPrice",
+            ROUND(wit."estimatedUnitCost", 2)::text         AS "estimatedUnitCost",
+            ROUND(wit."defaultTaxRate", 1)::text            AS "defaultTaxRate",
+            wit."quantityExpression",
+            wit."technicalDoc",
+            wit."commercialDoc",
+            wit."defaultChecklist"::text                    AS "defaultChecklist"
+         FROM "WorkItemTemplate" wit
+         JOIN "Organization" o ON o.id = wit."organizationId"
+         LEFT JOIN "LibraryFolder" lf ON lf.id = wit."folderId"
+         WHERE wit.id = $1 AND o.slug = $2
+         LIMIT 1`,
+        [templateId, orgSlug],
+    );
+
+    if (!result.rows.length) return { error: "Ouvrage introuvable" };
+    const row = result.rows[0];
+
+    // Résolution du WPT effectif depuis l'arbre des dossiers
+    let effectiveWpt: { id: string; name: string; color: string | null } | null = null;
+    if (row.folderId) {
+        const foldersResult = await db.query<LibraryFolderRaw>(
+            `SELECT
+                lf.id,
+                lf."parentId",
+                lf."workPackageTemplateId",
+                wpt.name        AS "workPackageTemplateName",
+                wpt.color::text AS "workPackageTemplateColor",
+                lf.name,
+                lf.position
+             FROM "LibraryFolder" lf
+             JOIN "Organization" o ON o.id = lf."organizationId"
+             LEFT JOIN "WorkPackageTemplate" wpt ON wpt.id = lf."workPackageTemplateId"
+             WHERE o.slug = $1`,
+            [orgSlug],
+        );
+        const folderMap = new Map<string, LibraryFolderRaw>(
+            foldersResult.rows.map((f) => [f.id, f]),
+        );
+        effectiveWpt = resolveEffectiveWpt(row.folderId, folderMap);
+    }
+
+    let defaultChecklist: ChecklistTask[] = [];
+    try {
+        defaultChecklist = JSON.parse(row.defaultChecklist) as ChecklistTask[];
+    } catch {
+        defaultChecklist = [];
+    }
+
+    return {
+        data: {
+            id: row.id,
+            folderId: row.folderId,
+            folderName: row.folderName,
+            effectiveWptId: effectiveWpt?.id ?? null,
+            effectiveWptName: effectiveWpt?.name ?? null,
+            effectiveWptColor: effectiveWpt?.color ?? null,
+            name: row.name,
+            description: row.description,
+            unit: row.unit,
+            defaultUnitPrice: row.defaultUnitPrice,
+            estimatedUnitCost: row.estimatedUnitCost,
+            defaultTaxRate: row.defaultTaxRate,
+            quantityExpression: row.quantityExpression,
+            technicalDoc: row.technicalDoc,
+            commercialDoc: row.commercialDoc,
+            defaultChecklist,
+        },
+    };
+}
+
+export async function updateWorkItemTemplateDetail(
+    orgSlug: string,
+    templateId: string,
+    data: WorkItemTemplateUpdateData,
+): Promise<{ error?: string }> {
+    const session = await getSession();
+    if (!session) return { error: "Non authentifié" };
+
+    const role = await getCallerRole(orgSlug, session.user.id);
+    if (role !== "FOUNDER" && role !== "MANAGER") return { error: "Permissions insuffisantes" };
+
+    const name = data.name.trim();
+    const unit = data.unit.trim();
+    if (!name) return { error: "Le nom est requis" };
+    if (!unit) return { error: "L'unité est requise" };
+
+    const description = data.description.trim() || null;
+    const defaultUnitPrice = parseDecimal(data.defaultUnitPrice);
+    const estimatedUnitCost = parseDecimal(data.estimatedUnitCost);
+    const defaultTaxRate = parseDecimal(data.defaultTaxRate);
+    const quantityExpression = data.quantityExpression.trim() || null;
+
+    if (data.defaultUnitPrice.trim() && defaultUnitPrice === null) return { error: "Prix unitaire invalide" };
+    if (data.estimatedUnitCost.trim() && estimatedUnitCost === null) return { error: "Coût unitaire invalide" };
+    if (data.defaultTaxRate.trim() && defaultTaxRate === null) return { error: "Taux de TVA invalide" };
+
+    const checklistJson = JSON.stringify(data.defaultChecklist);
+
+    await db.query(
+        `UPDATE "WorkItemTemplate" wit
+         SET name                  = $3,
+             description           = $4,
+             unit                  = $5,
+             "defaultUnitPrice"    = $6,
+             "estimatedUnitCost"   = $7,
+             "defaultTaxRate"      = $8,
+             "quantityExpression"  = $9,
+             "technicalDoc"        = $10,
+             "commercialDoc"       = $11,
+             "defaultChecklist"    = $12::jsonb,
+             "updatedAt"           = NOW()
+         FROM "Organization" o
+         WHERE wit.id = $1
+           AND o.slug = $2
+           AND wit."organizationId" = o.id`,
+        [
+            templateId, orgSlug,
+            name, description, unit,
+            defaultUnitPrice, estimatedUnitCost, defaultTaxRate,
+            quantityExpression,
+            data.technicalDoc || null,
+            data.commercialDoc || null,
+            checklistJson,
+        ],
+    );
+
+    revalidatePath(`/${orgSlug}/library/work-items`);
+    revalidatePath(`/${orgSlug}/library/work-items/${templateId}`);
     return {};
 }
 

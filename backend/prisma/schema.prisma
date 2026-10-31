@@ -350,6 +350,9 @@ model WorkItem {
   quantitySubcontractor Decimal?
   marginRate            Decimal?
   tauxTva               Decimal        @default(0.10)
+  technicalDoc          String?
+  commercialDoc         String?
+  checklist             Json           @default("[]")
   status                WorkItemStatus @default(DRAFT)
   executions            Json           @default("[]")
   position              Int
@@ -392,6 +395,8 @@ model WorkItemTemplate {
   defaultUnitPrice Decimal?
   estimatedUnitCost Decimal?
   quantityExpression String?
+  technicalDoc       String?
+  commercialDoc      String?
   defaultChecklist  Json     @default("[]")
   position          Int      @default(0)
   createdAt         DateTime @default(now())

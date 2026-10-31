@@ -464,8 +464,8 @@ export async function createWorkItem(
     if (!name) return { error: "Le nom est requis" };
     if (!unit) return { error: "L'unité est requise" };
 
-    const quantity = parseFloat(data.quantity);
-    if (isNaN(quantity) || quantity < 0) return { error: "Quantité invalide" };
+    const parsedQuantity = parseFloat(data.quantity);
+    if (isNaN(parsedQuantity) || parsedQuantity < 0) return { error: "Quantité invalide" };
 
     const description = data.description.trim() || null;
     const spaceId = data.spaceId ?? null;
@@ -496,16 +496,54 @@ export async function createWorkItem(
     );
     const position = (posResult.rows[0]?.max ?? 0) + 1;
 
+    // Copie des champs riches depuis le template si présent
+    let quantity = parsedQuantity;
+    let technicalDoc: string | null = null;
+    let commercialDoc: string | null = null;
+    let checklistJson = "[]";
+    if (templateId) {
+        const tmplRow = await db.query<{
+            technicalDoc: string | null;
+            commercialDoc: string | null;
+            defaultChecklist: string;
+            quantityExpression: string | null;
+        }>(
+            `SELECT "technicalDoc", "commercialDoc", "defaultChecklist"::text AS "defaultChecklist", "quantityExpression"
+             FROM "WorkItemTemplate" WHERE id = $1 LIMIT 1`,
+            [templateId],
+        );
+        if (tmplRow.rows.length) {
+            const tmpl = tmplRow.rows[0];
+            technicalDoc = tmpl.technicalDoc;
+            commercialDoc = tmpl.commercialDoc;
+
+            // Copie checklist avec done: false sur chaque tâche
+            try {
+                type RawTask = { id: string; label: string; coefficient: number };
+                const tasks = JSON.parse(tmpl.defaultChecklist) as RawTask[];
+                checklistJson = JSON.stringify(tasks.map((t) => ({ ...t, done: false })));
+            } catch { checklistJson = "[]"; }
+
+            // Pré-remplir quantité depuis quantityExpression si c'est un nombre pur et que l'user n'a pas saisi autre chose que le défaut "1"
+            if (data.quantity === "1" && tmpl.quantityExpression) {
+                const n = parseFloat(tmpl.quantityExpression);
+                if (!isNaN(n) && isFinite(n) && n > 0) quantity = n;
+            }
+        }
+    }
+
     const id = randomUUID();
     await db.query(
         `INSERT INTO "WorkItem"
             (id, "projectId", "projectSpaceId", "workPackageId", "sourceWorkItemTemplateId",
              name, description, unit, quantity,
              "puEstimeHt", "puSubcontractorHt", "quantitySubcontractor", "marginRate", "tauxTva",
+             "technicalDoc", "commercialDoc", checklist,
              status, executions, position, "createdAt", "updatedAt")
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, 'DRAFT', '[]'::jsonb, $15, NOW(), NOW())`,
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17::jsonb, 'DRAFT', '[]'::jsonb, $18, NOW(), NOW())`,
         [id, projectId, spaceId, workPackageId, templateId, name, description, unit, quantity,
-         puEstimeHt, puSubcontractorHt, quantitySubcontractor, marginRate, tauxTva, position],
+         puEstimeHt, puSubcontractorHt, quantitySubcontractor, marginRate, tauxTva,
+         technicalDoc, commercialDoc, checklistJson, position],
     );
 
     revalidate(orgSlug, projectSlug);
